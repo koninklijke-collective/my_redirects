@@ -1,0 +1,75 @@
+/* line 14, Backend.scss */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+/* line 25, Backend.scss */
+.t3-icon-custom {
+    vertical-align: middle;
+}
+
+/* line 29, Backend.scss */
+.t3-select {
+    display: inline-block;
+    margin: 0 0.5em 0.5em 0;
+    padding: 3px 6px;
+    vertical-align: middle;
+}
+
+/* line 36, Backend.scss */
+.f3-widget-paginator {
+    *zoom: 1;
+}
+
+/* line 14, _mixins.scss */
+.f3-widget-paginator:before, .f3-widget-paginator:after {
+    display: table;
+    content: "";
+    line-height: 0;
+}
+
+/* line 22, _mixins.scss */
+.f3-widget-paginator:after {
+    clear: both;
+}
+
+/* line 39, Backend.scss */
+.f3-widget-paginator li {
+    float: left;
+    display: block;
+    margin: 0 2px;
+}
+
+/* line 44, Backend.scss */
+.f3-widget-paginator li.current,
+.f3-widget-paginator li > a {
+    display: block;
+    padding: 5px 10px;
+    background: #ffffff;
+    border: 1px solid #d7d7d7;
+}
+
+/* line 53, Backend.scss */
+.f3-widget-paginator li > a:hover {
+    background-color: #dedede;
+    text-decoration: none;
+}
+
+/* line 59, Backend.scss */
+.f3-widget-paginator li.current {
+    background: #f7f7f7;
+}
+
+/* line 63, Backend.scss */
+.f3-widget-paginator li.previous, .f3-widget-paginator li.next {
+    margin: 0 20px;
+}
+
+/*# sourceMappingURL=Backend.css.map */

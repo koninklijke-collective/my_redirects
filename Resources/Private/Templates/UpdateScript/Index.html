@@ -1,0 +1,16 @@
+<f:layout name="Default"/>
+
+<f:section name="Content">
+    <f:flashMessages renderMode="div" class="my-redirects-messages"/>
+
+    <form action="{formAction}" method="POST">
+        <f:form.hidden name="convert-realurl" value="1"/>
+
+        <p>
+            Used RealURL before? You can migrate all previous redirect RealURL data to this extension:
+        </p>
+        <f:form.button>
+            Convert RealURL redirects
+        </f:form.button>
+    </form>
+</f:section>

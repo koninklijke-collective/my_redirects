@@ -1,0 +1,39 @@
+{namespace s = Serfhos\MyRedirects\ViewHelper}
+
+<f:layout name="Backend"/>
+
+<f:section name="Actions">
+    <div class="buttongroup">
+        <f:if condition="{returnUrl}">
+            <f:then>
+                <f:be.buttons.icon uri="{returnUrl}" icon="actions-view-go-back"
+                    title="{f:translate(key:'LLL:EXT:lang/locallang_common.xlf:back')}"/>
+            </f:then>
+            <f:else>
+                <f:be.buttons.icon uri="{f:uri.action(action:'list', controller:'Redirect')}"
+                    icon="actions-view-go-back" title="{f:translate(key:'LLL:EXT:lang/locallang_common.xlf:back')}"/>
+            </f:else>
+        </f:if>
+    </div>
+    <f:if condition="{redirect}">
+        <div class="buttongroup">
+            <f:be.buttons.icon uri="javascript:document.redirect.submit();" icon="actions-document-save-close"
+                title="{f:translate(key:'LLL:EXT:lang/locallang_common.xlf:saveAndClose')}"/>
+        </div>
+
+        <div class="buttongroup">
+            <s:linkConfirm
+                link="{f:uri.action(action:'delete', controller:'Redirect', arguments: '{redirect: record}')}"
+                message="{f:translate(key: 'confirm_delete', arguments: '{0: record.url, 1: record.destination}')}"
+                title="Delete redirect"/>
+        </div>
+    </f:if>
+
+</f:section>
+
+<f:section name="Content">
+    <f:form action="update" name="redirect" class="validate" object="{redirect}">
+        <f:form.hidden name="returnUrl" value="{returnUrl}"/>
+        <f:render partial="Redirect/Form" arguments="{redirect: redirect}"/>
+    </f:form>
+</f:section>

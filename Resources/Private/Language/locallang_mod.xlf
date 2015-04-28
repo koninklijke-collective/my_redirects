@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.0">
+    <file source-language="en" datatype="plaintext" original="messages" date="2013-10-21T09:49:32Z" product-name="my_redirects">
+        <header/>
+        <body>
+            <trans-unit id="mlang_tabs_tab">
+                <source>Redirects</source>
+            </trans-unit>
+            <trans-unit id="mlang_labels_tabdescr">
+                <source>List of all registered redirects in database. Possibility to filter by found page id.</source>
+            </trans-unit>
+            <trans-unit id="mlang_labels_tablabel">
+                <source>My Redirects</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

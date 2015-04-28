@@ -1,0 +1,68 @@
+// Add sass mixins/functions
+@import "mixins";
+
+// default colors
+$background-color: #ffffff;
+$table-row-even: #f7f7f7;
+$table-row-hover: #dedede;
+$table-border: #d7d7d7;
+
+// Only display content to screen readers
+//
+// See: http://a11yproject.com/posts/how-to-hide-content/
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+.t3-icon-custom {
+    vertical-align: middle;
+}
+
+.t3-select {
+    display: inline-block;
+    margin: 0 0.5em 0.5em 0;
+    padding: 3px 6px;
+    vertical-align: middle;
+}
+
+.f3-widget-paginator {
+    @include clearfix;
+
+    li {
+        float: left;
+        display: block;
+        margin: 0 2px;
+
+        &.current,
+        > a {
+            display: block;
+            padding: 5px 10px;
+            background: $background-color;
+            border: 1px solid $table-border;
+        }
+
+        > a {
+            &:hover {
+                background-color: $table-row-hover;
+                text-decoration: none;
+            }
+        }
+
+        &.current {
+            background: $table-row-even;
+        }
+
+        &.previous,
+        &.next {
+            margin: 0 20px;
+        }
+    }
+}

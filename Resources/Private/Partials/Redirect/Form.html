@@ -1,0 +1,95 @@
+{namespace s = Serfhos\MyRedirects\ViewHelper}
+
+<div class="typo3-TCEforms redirect-form">
+	<div class="typo3-dyntabmenu-divs">
+		<table width="100%" cellspacing="0" cellpadding="0" border="0" class="wrapperTable">
+			<tr class="class-main class-main-header">
+				<td class="formField-header" colspan="2">
+					<label class="t3-form-palette-field-label class-main">
+						<strong>
+							<abbr><f:translate key="redirect.form.source"/></abbr>
+						</strong>
+					</label>
+				</td>
+			</tr>
+			<tr class="class-main">
+				<td valign="top" nowrap="nowrap" colspan="2">
+					<div>
+						<fieldset class="t3-form-palette-fieldset">
+							<div class="t3-form-palette-field-container">
+								<label class="t3-form-palette-field-label class-main">
+									<abbr><f:translate key="redirect.form.source_url"/></abbr>
+								</label>
+								<div class="t3-form-palette-field class-main">
+									<div class="t3-form-field-item">
+										/ <f:form.textField property="url" size="50"
+											class="formField tceforms-textfield hasDefaultValue"/>
+									</div>
+								</div>
+							</div>
+							<div class="t3-form-palette-field-container">
+								<label class="t3-form-palette-field-label class-main">
+									<abbr><f:translate key="redirect.form.domain"/></abbr>
+								</label>
+								<div class="t3-form-palette-field class-main">
+									<div class="t3-form-field-item">
+										<f:form.select class="t3-select" id="domain" property="domain" options="{s:domains()}" prependOptionLabel="{f:translate(key: 'redirect.form.domain.I.0')}"/>
+									</div>
+								</div>
+							</div>
+						</fieldset>
+					</div>
+				</td>
+			</tr>
+		</table>
+
+		<table width="100%" cellspacing="0" cellpadding="0" border="0" class="wrapperTable">
+			<tr class="class-main class-main-header">
+				<td class="formField-header" colspan="2">
+					<label class="t3-form-palette-field-label class-main">
+						<strong>
+							<abbr><f:translate key="redirect.form.destination"/></abbr>
+						</strong>
+					</label>
+				</td>
+			</tr>
+			<tr class="class-main">
+				<td valign="top" nowrap="nowrap" colspan="2">
+					<div>
+						<fieldset class="t3-form-palette-fieldset">
+							<div class="t3-form-palette-field-container">
+								<label class="t3-form-palette-field-label class-main">
+									<abbr><f:translate key="redirect.form.destination_url"/></abbr>
+								</label>
+								<div class="t3-form-palette-field class-main">
+									<div class="t3-form-field-item">
+										<f:form.textField property="destination" size="50"
+											class="formField tceforms-textfield hasDefaultValue"/>
+									</div>
+								</div>
+							</div>
+							<div class="t3-form-palette-field-container">
+								<label class="t3-form-palette-field-label class-main">
+									<abbr><f:translate key="redirect.form.has_moved"/></abbr>
+								</label>
+								<div class="t3-form-palette-field class-main">
+									<div class="t3-form-field-item">
+										<f:form.select class="t3-select" id="permanent" property="hasMoved" options="{0: '{f:translate(key: \'redirect.form.has_moved.I.0\')}', 1: '{f:translate(key: \'redirect.form.has_moved.I.1\')}'}"/>
+									</div>
+								</div>
+							</div>
+						</fieldset>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div class="typo3-TCEforms-recHeaderRow">
+		<f:image class="t3-icon-custom" src="EXT:my_redirects/Resources/Public/Icons/my_redirects_module.png" />
+		<span class="typo3-TCEforms-recHeader"><f:translate key="redirect.singular"/></span>
+		<f:if condition="{redirect.uid}">
+			<f:then><span class="typo3-TCEforms-recUid">[{redirect.uid}]</span></f:then>
+			<f:else><span class="typo3-TCEforms-newToken"><f:translate key="LLL:EXT:lang/locallang_core.xlf:labels.new" /></span></f:else>
+		</f:if>
+	</div>
+</div>

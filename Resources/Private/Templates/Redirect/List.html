@@ -1,0 +1,161 @@
+{namespace s = Serfhos\MyRedirects\ViewHelper}
+
+<f:layout name="Backend"/>
+
+<f:section name="Actions">
+    <f:be.buttons.icon uri="{f:uri.action(action:'new', arguments: '{returnUrl: currentUrl}')}" icon="actions-document-new" title="Create new Redirect"/>
+</f:section>
+
+<f:section name="Content">
+    <h1><f:translate key="redirect.plural"/></h1>
+
+    <h2><f:translate key="redirect.filter" /></h2>
+    <div class="filter">
+        <f:form name="filter" object="{filter}">
+            <f:form.hidden name="forceRedirect" value="1" />
+            <div class="filter-form-row">
+                <span class="filter-form-term">
+                    <label for="sword" class="sr-only"><f:translate key="redirect.filter.sword" /></label>
+                    <f:form.textField id="sword" property="sword" placeholder="{f:translate(key: 'redirect.filter.sword.placeholder')}"/>
+                </span>
+                <span class="filter-form-status">
+                    <label for="status" class="sr-only"><f:translate key="redirect.filter.status" /></label>
+                    <f:form.select class="t3-select" id="status" property="status" options="{active: 'Active', inactive: 'Inactive'}" prependOptionLabel="{f:translate(key: 'redirect.filter.status.I.0')}"/>
+                </span>
+                <span class="filter-form-status">
+                    <label for="domain" class="sr-only"><f:translate key="redirect.filter.domain" /></label>
+                    <f:form.select class="t3-select" id="domain" property="domain" options="{s:domains()}" prependOptionLabel="{f:translate(key: 'redirect.filter.domain.I.0')}"/>
+                </span>
+                <span class="filter-form-submit">
+                    <f:form.button><f:translate key="redirect.filter.button" /></f:form.button>
+                </span>
+            </div>
+        </f:form>
+    </div>
+
+    <h2><f:translate key="redirect.results" /></h2>
+    <f:widget.paginate objects="{redirects}" as="records" configuration="{itemsPerPage: 50, maximumNumberOfLinks: 4}">
+        <table width="100%" cellspacing="0" cellpadding="0" border="0" class="typo3-dblist">
+            <thead>
+            <tr class="c-table-row-spacer">
+                <td nowrap="nowrap" class="col-icon"><img width="1" height="8" alt="" src="clear.gif"></td>
+                <td nowrap="nowrap" class="col-redirect-from"><img width="200" height="1" alt="" src="clear.gif"></td>
+                <td nowrap="nowrap" class="col-redirect-to"><img width="50" height="1" alt="" src="clear.gif"></td>
+                <td nowrap="nowrap" class="col-control"></td>
+                <td nowrap="nowrap" class="col-redirect-hits"><img width="10" height="1" alt="" src="clear.gif"></td>
+            </tr>
+
+            <tr class="t3-row-header">
+                <td nowrap="nowrap" class="col-icon"></td>
+                <td nowrap="nowrap" class="col-redirect-from" colspan="5">
+                    <span class="c-table"><f:translate key="redirect.plural"/></span>
+                    ({redirects -> f:count()})
+                </td>
+            </tr>
+
+            <tr class="c-headLine">
+                <td nowrap="nowrap" class="col-icon"></td>
+                <td nowrap="nowrap" class="col-title col-redirect-from">
+                    <f:render section="ListHeaderSorting"
+                        arguments="{type: 'url', order: order, direction: direction}"/>
+                </td>
+                <td nowrap="nowrap" class="col-title col-redirect-to">
+                    <f:render section="ListHeaderSorting"
+                        arguments="{type: 'destination', order: order, direction: direction}"/>
+                </td>
+                <td nowrap="nowrap" class="col-control"></td>
+                <td nowrap="nowrap" class="col-redirect-hits">
+                    <f:render section="ListHeaderSorting"
+                        arguments="{type: 'counter', order: order, direction: direction}"/>
+                </td>
+            </tr>
+            </thead>
+            <tbody>
+
+            <f:if condition="{records}">
+                <f:then>
+                    <f:for each="{records}" as="record">
+                        <tr class="db_list_normal">
+                            <td class="col-icon" nowrap="nowrap"></td>
+                            <td class="col-redirect-from" nowrap="nowrap">
+                                <span title="{record.urlDomain}{record.url}">{record.urlDomain}{record.url -> f:format.crop(maxCharacters: '50|...')}</span>
+                            </td>
+                            <td class="col-redirect-to" nowrap="nowrap"><span title="{record.destination}">{record.destination -> f:format.crop(maxCharacters: '50|...')}</span>
+                            </td>
+                            <td class="col-control" nowrap="nowrap">
+                                <f:be.buttons.icon
+                                    uri="{f:uri.action(action:'edit', controller:'Redirect', arguments: '{redirect: record, returnUrl: currentUrl}')}" title="{f:translate(key: 'redirect.action.edit')}"
+                                    icon="actions-document-open"/>
+
+                                <f:be.buttons.icon icon="empty-empty"/>
+
+                                <f:if condition="{record.lastChecked}">
+                                    <span class="t3-icon t3-icon-actions t3-icon-actions-document t3-icon-document-history-open"
+                                        title="{f:translate(key: 'redirect.action.last_lookup', arguments: '{0: record.ageLastChecked}')}">
+                                        <f:if condition="{record.active} == 0">
+                                            <f:then>
+                                                <span class="t3-icon t3-icon-status t3-icon-status-overlay t3-icon-overlay-hidden t3-icon-overlay"
+                                                    title="{f:translate(key: 'redirect.action.error', arguments: '{0: record.inactiveReason, 1: record.ageLastChecked}')}">&nbsp;</span>
+                                            </f:then>
+                                            <f:else>&nbsp;</f:else>
+                                        </f:if>
+                                    </span>
+                                </f:if>
+
+                                <f:be.buttons.icon
+                                    uri="{f:uri.action(action:'lookup', controller:'Redirect', arguments: '{redirect: record, returnUrl: currentUrl}')}" title="{f:translate(key: 'redirect.action.lookup')}"
+                                    icon="status-version-no-version"/>
+
+                                <f:be.buttons.icon icon="empty-empty"/>
+                                <s:linkConfirm
+                                    link="{f:uri.action(action:'delete', controller:'Redirect', arguments: '{redirect: record, returnUrl: currentUrl}')}"
+                                    message="{f:translate(key: 'confirm_delete', arguments: '{0: record.url, 1: record.destination}')}"
+                                    title="{f:translate(key: 'redirect.action.delete')}"/>
+                            </td>
+                            <td class="col-redirect-hits" nowrap="nowrap">{record.counter}</td>
+                        </tr>
+                    </f:for>
+                </f:then>
+                <f:else>
+                    <tr class="db_list_normal">
+                        <td nowrap="nowrap" class="col-icon"></td>
+                        <td nowrap="nowrap" class="col-redirect-from" colspan="5">
+                            <f:translate key="no-records-found" />
+                        </td>
+                    </tr>
+                </f:else>
+            </f:if>
+
+            </tbody>
+        </table>
+    </f:widget.paginate>
+</f:section>
+
+<f:section name="ListHeaderSorting">
+    <f:if condition="{0: order} == {0: type}">
+        <f:then>
+            <f:if condition="{0: direction} == {0: 'ASC'}">
+                <f:then>
+                    <f:link.action arguments="{order: type, direction: 'DESC'}">{f:translate(key: 'table.header.{type}')}</f:link.action>
+                </f:then>
+                <f:else>
+                    <f:link.action arguments="{order: type, direction: 'ASC'}">{f:translate(key: 'table.header.{type}')}</f:link.action>
+                </f:else>
+            </f:if>
+        </f:then>
+        <f:else>
+            <f:link.action arguments="{order: type, direction: 'ASC'}">{f:translate(key: 'table.header.{type}')}</f:link.action>
+        </f:else>
+    </f:if>
+
+    <f:if condition="{0: order} == {0: type}">
+        <f:if condition="{0: direction} == {0: 'ASC'}">
+            <f:then>
+                <f:be.buttons.icon icon="status-status-sorting-desc"/>
+            </f:then>
+            <f:else>
+                <f:be.buttons.icon icon="status-status-sorting-asc"/>
+            </f:else>
+        </f:if>
+    </f:if>
+</f:section>

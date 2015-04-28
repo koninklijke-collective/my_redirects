@@ -1,0 +1,32 @@
+{
+    "name": "typo3cms/my_redirects",
+    "description": "TYPO3 Extension: Redirects management",
+    "type": "typo3-cms-extension",
+
+    "keywords": [
+        "TYPO3",
+        "CMS",
+        "Serfhos",
+        "Benjamin Serfhos",
+        "Extbase",
+        "Redirects"
+    ],
+    "homepage": "https://github.com/bmoex/my_redirects",
+    "license": "LGPL-3.0+",
+
+    "version": "1.0.0",
+
+    "authors": [
+        {
+            "name": "Benjamin Serfhos",
+            "email": "benjamin@serfhos.com",
+            "homepage": "http://serfhos.com"
+        }
+    ],
+
+    "require": {
+        "composer/installers": "~1.0"
+    },
+
+    "minimum-stability": "dev"
+}

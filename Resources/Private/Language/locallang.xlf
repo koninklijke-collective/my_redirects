@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.0">
+    <file source-language="en" datatype="plaintext" original="messages" date="2013-10-21T09:49:32Z" product-name="my_redirects">
+        <header/>
+        <body>
+            <trans-unit id="redirect.singular">
+                <source>Redirect</source>
+            </trans-unit>
+            <trans-unit id="redirect.plural">
+                <source>Redirects</source>
+            </trans-unit>
+
+            <trans-unit id="redirect.filter">
+                <source>Filter</source>
+            </trans-unit>
+            <trans-unit id="redirect.filter.sword">
+                <source>Term</source>
+            </trans-unit>
+            <trans-unit id="redirect.filter.sword.placeholder">
+                <source>Search term</source>
+            </trans-unit>
+            <trans-unit id="redirect.filter.status">
+                <source>Status</source>
+            </trans-unit>
+            <trans-unit id="redirect.filter.status.I.0">
+                <source>All statuses</source>
+            </trans-unit>
+            <trans-unit id="redirect.filter.domain">
+                <source>Domain</source>
+            </trans-unit>
+            <trans-unit id="redirect.filter.domain.I.0">
+                <source>All domains</source>
+            </trans-unit>
+            <trans-unit id="redirect.filter.button">
+                <source>Search</source>
+            </trans-unit>
+
+            <trans-unit id="redirect.results">
+                <source>Results</source>
+            </trans-unit>
+
+            <trans-unit id="table.header.url">
+                <source>From</source>
+            </trans-unit>
+            <trans-unit id="table.header.destination">
+                <source>To</source>
+            </trans-unit>
+            <trans-unit id="table.header.counter">
+                <source>Hits</source>
+            </trans-unit>
+            <trans-unit id="table.header.counter">
+                <source>Hits</source>
+            </trans-unit>
+
+            <trans-unit id="redirect.action.edit">
+                <source>Edit redirect</source>
+            </trans-unit>
+            <trans-unit id="redirect.action.lookup">
+                <source>Check active redirect</source>
+            </trans-unit>
+            <trans-unit id="redirect.action.last_lookup">
+                <source>Last checked: %s</source>
+            </trans-unit>
+            <trans-unit id="redirect.action.error">
+                <source>Reason: '%s' at %s</source>
+            </trans-unit>
+            <trans-unit id="redirect.action.delete">
+                <source>Delete redirect</source>
+            </trans-unit>
+
+            <trans-unit id="redirect.form.source">
+                <source>Source</source>
+            </trans-unit>
+            <trans-unit id="redirect.form.source_url">
+                <source>URL</source>
+            </trans-unit>
+            <trans-unit id="redirect.form.domain">
+                <source>Domain</source>
+            </trans-unit>
+            <trans-unit id="redirect.form.domain.I.0">
+                <source>All domains</source>
+            </trans-unit>
+            <trans-unit id="redirect.form.destination">
+                <source>Destination</source>
+            </trans-unit>
+            <trans-unit id="redirect.form.destination_url">
+                <source>URL</source>
+            </trans-unit>
+            <trans-unit id="redirect.form.has_moved">
+                <source>HTTP Response</source>
+            </trans-unit>
+            <trans-unit id="redirect.form.has_moved.I.0">
+                <source>302 Found</source>
+            </trans-unit>
+            <trans-unit id="redirect.form.has_moved.I.1">
+                <source>301 Moved Permanently</source>
+            </trans-unit>
+
+            <trans-unit id="confirm_delete">
+                <source><![CDATA[Are you sure you want to delete this redirect:
+(%s => %s)]]></source>
+            </trans-unit>
+
+            <trans-unit id="no-records-found">
+                <source>No redirects found.</source>
+            </trans-unit>
+
+            <trans-unit id="controller.action.success.create.title">
+                <source>Redirect added</source>
+            </trans-unit>
+            <trans-unit id="controller.action.success.create.description">
+                <source>Redirect is successfully added</source>
+            </trans-unit>
+            <trans-unit id="controller.action.success.update.title">
+                <source>Redirect updated</source>
+            </trans-unit>
+            <trans-unit id="controller.action.success.update.description">
+                <source>Redirect is successfully updated</source>
+            </trans-unit>
+            <trans-unit id="controller.action.success.delete.title">
+                <source>Redirect deleted</source>
+            </trans-unit>
+            <trans-unit id="controller.action.success.delete.description">
+                <source>Redirect is successfully removed</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
