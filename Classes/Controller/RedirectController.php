@@ -1,6 +1,7 @@
 <?php
 namespace Serfhos\MyRedirects\Controller;
 
+use Serfhos\MyRedirects\Domain\Model\Redirect;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
@@ -51,12 +52,16 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
     ) {
         parent::processRequest($request, $response);
 
-        if ($request instanceof \TYPO3\CMS\Extbase\Mvc\Web\Request && $request->getMethod() == 'POST') {
+        if ($request instanceof \TYPO3\CMS\Extbase\Mvc\Web\Request) {
             $arguments = $request->getArguments();
             if (isset($arguments['forceRedirect']) && (bool) $arguments['forceRedirect'] === true) {
                 unset ($arguments['forceRedirect'], $arguments['controller'], $arguments['action']);
+                // Force array input
+                if (isset($arguments['filter']) && !is_array($arguments['filter'])) {
+                    $arguments['filter'] = array();
+                }
 
-                // remove empty arguments
+                // Remove empty arguments
                 $arguments = array_filter($arguments);
                 $this->redirect($request->getControllerActionName(), null, null, $arguments);
             }
@@ -85,30 +90,40 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
      */
     protected function initializeAction()
     {
-        $this->backendSession
-            ->setBackendUserAuthentication($GLOBALS['BE_USER'])
-            ->createSession($this->sessionKey);
+        parent::initializeAction();
 
-        $filters = $this->backendSession->getSessionContents($this->sessionKey);
-        if ($filters === null) {
-            $filters = array(
-                'filter' => array(),
-                'order' => 'url',
-                'direction' => QueryInterface::ORDER_ASCENDING
+        if (!isset($this->settings['staticTemplate'])) {
+            $this->controllerContext = $this->buildControllerContext();
+            $this->addFlashMessage(
+                LocalizationUtility::translate('controller.initialize.error.no_typoscript.description', 'my_redirects'),
+                LocalizationUtility::translate('controller.initialize.error.no_typoscript.title', 'my_redirects')
             );
-        }
+        } else {
+            $this->backendSession
+                ->setBackendUserAuthentication($GLOBALS['BE_USER'])
+                ->createSession($this->sessionKey);
 
-        if ($this->request->hasArgument('filter')) {
-            $filters['filter'] = $this->request->getArgument('filter');
-        }
-        if ($this->request->hasArgument('order')) {
-            $filters['order'] = $this->request->getArgument('order');
-        }
-        if ($this->request->hasArgument('direction')) {
-            $filters['direction'] = $this->request->getArgument('direction');
-        }
+            $filters = $this->backendSession->getSessionContents($this->sessionKey);
+            if ($filters === null) {
+                $filters = array(
+                    'filter' => array(),
+                    'order' => 'url',
+                    'direction' => QueryInterface::ORDER_ASCENDING
+                );
+            }
 
-        $this->backendSession->saveSessionContents($filters);
+            if ($this->request->hasArgument('filter')) {
+                $filters['filter'] = $this->request->getArgument('filter');
+            }
+            if ($this->request->hasArgument('order')) {
+                $filters['order'] = $this->request->getArgument('order');
+            }
+            if ($this->request->hasArgument('direction')) {
+                $filters['direction'] = $this->request->getArgument('direction');
+            }
+
+            $this->backendSession->saveSessionContents($filters);
+        }
     }
 
     /**
@@ -123,7 +138,11 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
             'filter' => $arguments['filter'],
             'order' => $arguments['order'],
             'direction' => $arguments['direction'],
-            'redirects' => $this->redirectRepository->findByOrder($arguments['filter'], $arguments['order'], $arguments['direction']),
+            'redirects' => $this->getRedirectRepository()->findByOrder(
+                $arguments['filter'],
+                $arguments['order'],
+                $arguments['direction']
+            ),
         ));
     }
 
@@ -152,9 +171,9 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
      */
     public function lookupAction($redirect = null, $returnUrl = '')
     {
-        if ($redirect instanceof \Serfhos\MyRedirects\Domain\Model\Redirect) {
-            $this->redirectService->activeLookup($redirect, GeneralUtility::getHostname());
-            $this->redirectRepository->update($redirect);
+        if ($redirect instanceof Redirect) {
+            $this->getRedirectService()->activeLookup($redirect);
+            $this->getRedirectRepository()->update($redirect);
         }
 
         if (!empty($returnUrl)) {
@@ -177,7 +196,7 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
             LocalizationUtility::translate('controller.action.success.create.title', 'my_redirects')
         );
         $redirect->generateUrlHash();
-        $this->redirectRepository->add($redirect);
+        $this->getRedirectRepository()->add($redirect);
         $this->redirect('list');
     }
 
@@ -212,7 +231,7 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
         );
 
         $redirect->generateUrlHash();
-        $this->redirectRepository->update($redirect);
+        $this->getRedirectRepository()->update($redirect);
 
         if (!empty($returnUrl)) {
             $this->redirectToUri($returnUrl);
@@ -234,12 +253,53 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
             LocalizationUtility::translate('controller.action.success.delete.description', 'my_redirects'),
             LocalizationUtility::translate('controller.action.success.delete.title', 'my_redirects')
         );
-        $this->redirectRepository->remove($redirect);
+        $this->getRedirectRepository()->remove($redirect);
 
         if (!empty($returnUrl)) {
             $this->redirectToUri($returnUrl);
         } else {
             $this->redirect('list');
         }
+    }
+
+    /**
+     * @return \TYPO3\CMS\Extbase\Object\ObjectManager
+     */
+    protected function getObjectManager()
+    {
+        if (!isset($this->objectManager)) {
+            $this->objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+        }
+        return $this->objectManager;
+    }
+
+    /**
+     * @return \Serfhos\MyRedirects\Domain\Repository\RedirectRepository
+     */
+    protected function getRedirectRepository()
+    {
+        if (!isset($this->redirectRepository)) {
+            $this->redirectRepository = $this->getObjectManager()->get('Serfhos\\MyRedirects\\Domain\\Repository\\RedirectRepository');
+        }
+        return $this->redirectRepository;
+    }
+
+    /**
+     * @return \Serfhos\MyRedirects\Service\RedirectService
+     */
+    protected function getRedirectService()
+    {
+        if (!isset($this->redirectService)) {
+            $this->redirectService = $this->getObjectManager()->get('Serfhos\\MyRedirects\\Service\\RedirectService');
+        }
+        return $this->redirectService;
+    }
+
+    /**
+     * @return \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
+     */
+    protected function getBackendUserAuthentication()
+    {
+        return $GLOBALS['BE_USER'];
     }
 }

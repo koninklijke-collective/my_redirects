@@ -35,6 +35,9 @@
             <trans-unit id="redirect.filter.button">
                 <source>Search</source>
             </trans-unit>
+            <trans-unit id="redirect.filter.reset">
+                <source><![CDATA[Reset &raquo;]]></source>
+            </trans-unit>
 
             <trans-unit id="redirect.results">
                 <source>Results</source>

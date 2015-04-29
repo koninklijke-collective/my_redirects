@@ -1,6 +1,9 @@
 <?php
 namespace Serfhos\MyRedirects\Command;
 
+use Serfhos\MyRedirects\Domain\Model\Redirect;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /**
  * ExtBase Command: Refresh all redirects states
  *
@@ -32,7 +35,7 @@ class ActiveLookupCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\Co
      */
     public function __construct()
     {
-        // force a 20 seconds curl timeout
+        // Force a 20 seconds curl timeout
         $GLOBALS['TYPO3_CONF_VARS']['SYS']['curlTimeout'] = 20;
     }
 
@@ -61,17 +64,8 @@ class ActiveLookupCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\Co
     {
         if (empty($defaultDomain)) {
             throw new \TYPO3\CMS\Core\Exception('No default domain configured');
-        } elseif (\TYPO3\CMS\Core\Utility\GeneralUtility::isValidUrl($defaultDomain) === false) {
+        } elseif (GeneralUtility::isValidUrl($defaultDomain) === false) {
             throw new \TYPO3\CMS\Core\Exception('Default domain invalid');
-        }
-        if (!($this->persistenceManager instanceof \TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface)) {
-            throw new \TYPO3\CMS\Core\Exception('No persistance manager loaded');
-        }
-        if (!($this->redirectRepository instanceof \Serfhos\MyRedirects\Domain\Repository\RedirectRepository)) {
-            throw new \TYPO3\CMS\Core\Exception('No repository loaded');
-        }
-        if (!($this->redirectService instanceof \Serfhos\MyRedirects\Service\RedirectService)) {
-            throw new \TYPO3\CMS\Core\Exception('No redirect service loaded');
         }
 
         return true;
@@ -86,13 +80,13 @@ class ActiveLookupCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\Co
     protected function updateRedirects($defaultDomain)
     {
         $i = 0;
-        $redirects = $this->redirectRepository->findAll();
+        $redirects = $this->getRedirectRepository()->findAll();
         foreach ($redirects as $redirect) {
             $i++;
-            if ($redirect instanceof \Serfhos\MyRedirects\Domain\Model\Redirect) {
+            if ($redirect instanceof Redirect) {
                 $check = true;
 
-                // only check redirects that are not already checked today
+                // Only check redirects that are not already checked today
                 $lastChecked = $redirect->getLastChecked();
                 if ($lastChecked instanceof \DateTime) {
                     $yesterday = new \DateTime('yesterday');
@@ -102,19 +96,60 @@ class ActiveLookupCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\Co
                 if ($check) {
                     $active = $redirect->getActive();
                     if ($active === true) {
-                        $this->redirectService->activeLookup($redirect, $defaultDomain);
-                        $this->redirectRepository->update($redirect);
+                        $this->getRedirectService()->activeLookup($redirect, $defaultDomain);
+                        $this->getRedirectRepository()->update($redirect);
                     }
                 }
             }
 
             if ($i % 50 === 0) {
-                $this->persistenceManager->persistAll();
+                $this->getPersistenceManager()->persistAll();
             }
         }
 
-        $this->persistenceManager->persistAll();
+        $this->getPersistenceManager()->persistAll();
 
         return true;
+    }
+
+    /**
+     * @return \TYPO3\CMS\Extbase\Object\ObjectManager
+     */
+    protected function getObjectManager()
+    {
+        return GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+    }
+
+    /**
+     * @return \TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface
+     */
+    protected function getPersistenceManager()
+    {
+        if (!isset($this->persistenceManager)) {
+            $this->persistenceManager = $this->getObjectManager()->get('TYPO3\\CMS\\Extbase\\Persistence\\PersistenceManagerInterface');
+        }
+        return $this->persistenceManager;
+    }
+
+    /**
+     * @return \Serfhos\MyRedirects\Domain\Repository\RedirectRepository
+     */
+    protected function getRedirectRepository()
+    {
+        if (!isset($this->redirectRepository)) {
+            $this->redirectRepository = $this->getObjectManager()->get('Serfhos\\MyRedirects\\Domain\\Repository\\RedirectRepository');
+        }
+        return $this->redirectRepository;
+    }
+
+    /**
+     * @return \Serfhos\MyRedirects\Service\RedirectService
+     */
+    protected function getRedirectService()
+    {
+        if (!isset($this->redirectService)) {
+            $this->redirectService = $this->getObjectManager()->get('Serfhos\\MyRedirects\\Service\\RedirectService');
+        }
+        return $this->redirectService;
     }
 }

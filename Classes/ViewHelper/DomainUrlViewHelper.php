@@ -1,14 +1,15 @@
 <?php
 namespace Serfhos\MyRedirects\ViewHelper;
 
+use Serfhos\MyRedirects\Domain\Model\Redirect;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
- * Get all (active) domains in TYPO3
+ * Get domain url for output
  *
  * @package Serfhos\MyRedirects\ViewHelpers
  */
-class DomainsViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
+class DomainUrlViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
 {
 
     /**
@@ -18,21 +19,23 @@ class DomainsViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHel
     protected $domainService;
 
     /**
-     * Get all configured domains
+     * Get domain url based on given redirect
      *
+     * @param \Serfhos\MyRedirects\Domain\Model\Redirect $redirect
      * @return array
      */
-    public function render()
+    public function render(Redirect $redirect = null)
     {
-        $domains = array();
-        $data = $this->getDomainService()->getDomains();
-        if (!empty($data)) {
-            foreach ($data as $domain) {
-                $domains[$domain['uid']] = $domain['domainName'];
-            }
+        $output = '/';
+
+        if ($redirect === null) {
+            $redirect = $this->renderChildren();
         }
 
-        return $domains;
+        if ($redirect instanceof Redirect) {
+            $output = $this->getDomainService()->getDomainUrlFromRedirect($redirect);
+        }
+        return $output;
     }
 
     /**

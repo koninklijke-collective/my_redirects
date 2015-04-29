@@ -1,7 +1,6 @@
 <?php
 namespace Serfhos\MyRedirects\Domain\Model;
 
-use Serfhos\MyRedirects\Utility\DomainUtility;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 
@@ -226,24 +225,6 @@ class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     public function setDomain($domain)
     {
         $this->domain = $domain;
-    }
-
-    /**
-     * Get used domain if configured
-     *
-     * @return string
-     */
-    public function getUrlDomain()
-    {
-        $domain = '/';
-        if ($this->domain > 0) {
-            $domainRecord = DomainUtility::getDomain($this->domain);
-            if (!empty($domainRecord)) {
-                $domain = rtrim($domainRecord['domainName'], '/') . '/';
-            }
-        }
-
-        return $domain;
     }
 
     /**

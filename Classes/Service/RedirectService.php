@@ -15,39 +15,28 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
     protected $redirectTable = 'tx_myredirects_domain_model_redirect';
 
     /**
-     * Obtains current domain id from sys_domain.
-     *
-     * @return integer
-     */
-    public function getCurrentDomainId()
-    {
-        $row = $this->getDatabaseConnection()->exec_SELECTgetSingleRow('uid',
-            'sys_domain',
-            'domainName=' . $this->getDatabaseConnection()->fullQuoteStr(GeneralUtility::getIndpEnv('HTTP_HOST'),
-                'sys_domain') .
-            ' AND redirectTo=\'\''
-        );
-        $result = (is_array($row) ? (int) $row['uid'] : 0);
-
-        return $result;
-    }
-
-    /**
      * Do an active lookup for redirect
      *
      * @param \Serfhos\MyRedirects\Domain\Model\Redirect $redirect
      * @param string $defaultDomain
      * @return void
      */
-    public function activeLookup(Redirect &$redirect, $defaultDomain = '')
+    public function activeLookup(Redirect $redirect, $defaultDomain = null)
     {
         $active = true;
         $url = $redirect->getUrl();
+
+        if ($defaultDomain === null) {
+            $defaultDomain = GeneralUtility::getHostname();
+        }
+
         if (!empty($url)) {
-            if ($redirect->getUrlDomain() == '/') {
+            $urlDomain = $this->getDomainService()->getDomainUrlFromRedirect($redirect);
+            // this should be done in the domain service..
+            if ($urlDomain == '/') {
                 $url = rtrim($defaultDomain, '/') . '/' . $url;
             } else {
-                $url = $redirect->getUrlDomain() . $url;
+                $url = $urlDomain . $url;
             }
 
             $urlDetails = parse_url($url);
@@ -94,7 +83,7 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
      */
     protected function curlUrl($url, &$info = array())
     {
-        // use cURL for: http, https, ftp, ftps, sftp and scp
+        // Use cURL for: http, https, ftp, ftps, sftp and scp
         if (preg_match('/^(?:http|ftp)s?|s(?:ftp|cp):/', $url)) {
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
@@ -103,7 +92,7 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_TIMEOUT, 10);
 
-            // some sites need a user-agent
+            // Some sites need a user-agent
             curl_setopt($ch, CURLOPT_USERAGENT, 'Serfhos.com: Redirect Lookup/1.0');
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
@@ -144,7 +133,9 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
                 $fields,
                 $this->redirectTable,
                 'url_hash = "' . $hash . '"'
-                . ' AND domain = ' . $domain
+                . ' AND domain IN (0,' . $domain . ')',
+                null,
+                'domain DESC'
             );
         }
 
@@ -192,5 +183,24 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
     protected function getDatabaseConnection()
     {
         return $GLOBALS['TYPO3_DB'];
+    }
+
+    /**
+     * @return \TYPO3\CMS\Extbase\Object\ObjectManager
+     */
+    protected function getObjectManager()
+    {
+        return GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+    }
+
+    /**
+     * @return \Serfhos\MyRedirects\Service\DomainService
+     */
+    protected function getDomainService()
+    {
+        if (!isset($this->domainService)) {
+            $this->domainService = $this->getObjectManager()->get('Serfhos\\MyRedirects\\Service\\DomainService');
+        }
+        return $this->domainService;
     }
 }

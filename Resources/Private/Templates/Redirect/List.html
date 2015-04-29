@@ -15,6 +15,7 @@
     <h2>
         <f:translate key="redirect.filter"/>
     </h2>
+
     <div class="filter">
         <f:form name="filter" object="{filter}">
             <f:form.hidden name="forceRedirect" value="1"/>
@@ -50,6 +51,14 @@
                         <f:translate key="redirect.filter.button"/>
                     </f:form.button>
                 </span>
+
+                <f:if condition="{filter}">
+                    <span class="filter-form-reset">
+                        <f:link.action id="reset-filter" arguments="{forceRedirect: 1, filter: 0}">
+                            <f:translate key="redirect.filter.reset"/>
+                        </f:link.action>
+                    </span>
+                </f:if>
             </div>
         </f:form>
     </div>
@@ -101,7 +110,7 @@
                         <tr class="db_list_normal">
                             <td class="col-icon" nowrap="nowrap"></td>
                             <td class="col-redirect-from" nowrap="nowrap">
-                                <span title="{record.urlDomain}{record.url}">{record.urlDomain}{record.url -> f:format.crop(maxCharacters: '50|...')}</span>
+                                <span title="{s:domainUrl(redirect: redirect)}{record.url}">{s:domainUrl(redirect: redirect)}{record.url -> f:format.crop(maxCharacters: '50|...')}</span>
                             </td>
                             <td class="col-redirect-to" nowrap="nowrap"><span title="{record.absoluteDestination}">{record.absoluteDestination -> f:format.crop(maxCharacters: '50|...')}</span>
                             </td>

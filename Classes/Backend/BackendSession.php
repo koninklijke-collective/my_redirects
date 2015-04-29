@@ -1,6 +1,8 @@
 <?php
 namespace Serfhos\MyRedirects\Backend;
 
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
+
 /**
  * Backend session wrapper
  *
@@ -26,10 +28,11 @@ class BackendSession
 
     /**
      * @param \TYPO3\CMS\Core\Authentication\BackendUserAuthentication $backendUserAuthentication
-     * @return BackendSession
+     * @return BackendSession chaining possibility
      */
-    public function setBackendUserAuthentication(\TYPO3\CMS\Core\Authentication\BackendUserAuthentication $backendUserAuthentication)
-    {
+    public function setBackendUserAuthentication(
+        BackendUserAuthentication $backendUserAuthentication
+    ) {
         $this->backendUserAuthentication = $backendUserAuthentication;
         return $this;
     }
@@ -46,8 +49,7 @@ class BackendSession
         $this->key = $key;
         $this->contents = $contents;
 
-        if ($this->backendUserAuthentication->getSessionData($key) === null)
-        {
+        if ($this->backendUserAuthentication->getSessionData($key) === null) {
             $this->saveSessionData(array('contents' => $contents));
         }
     }
@@ -61,11 +63,10 @@ class BackendSession
     public function getSessionContents($key)
     {
         $sessionData = $this->backendUserAuthentication->getSessionData($key);
-        if ($sessionData !== null)
-        {
-            $unserializeData = unserialize($sessionData);
-            if (isset($unserializeData['contents'])) {
-                return $unserializeData['contents'];
+        if ($sessionData !== null) {
+            $content = unserialize($sessionData);
+            if (isset($content['contents'])) {
+                return $content['contents'];
             }
         }
         return false;
