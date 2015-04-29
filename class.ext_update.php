@@ -4,6 +4,11 @@ use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+/**
+ * Update script
+ *
+ * @package Serfhos\MyRedirects
+ */
 class ext_update
 {
 
@@ -76,7 +81,6 @@ class ext_update
                     'url_hash = ' . (int) $row['url_hash'] . ' AND domain = ' . (int) $row['domain_limit']) == 0
             ) {
                 if ((int) $row['url_hash'] > 0) {
-
                     $insertFields = array(
                         'pid' => 0,
                         'tstamp' => $row['tstamp'],
@@ -125,9 +129,9 @@ class ext_update
      */
     protected function correctUrl($url)
     {
+        $urlParameters = parse_url($url);
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('realurl')) {
             if (isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['realurl']) && (int) $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['realurl']['_DEFAULT']['fileName']['defaultToHTMLsuffixOnPrev'] === 0) {
-                $urlParameters = parse_url($url);
                 if (substr($url, -1) !== '/') {
                     if (isset($urlParameters['path'])) {
                         $pathInfo = pathinfo($urlParameters['path']);
@@ -136,6 +140,17 @@ class ext_update
                             $url = \TYPO3\CMS\Core\Utility\HttpUtility::buildUrl($urlParameters);
                         }
                     }
+                }
+            }
+        }
+
+        // Only look if query is configured and link is relative to the root
+        if (isset($urlParameters['query']) && !isset($urlParameters['host'])) {
+            $idOnlyRegEx = '/^id=[1-9][0-9]{0,15}$/i';
+            if (preg_match($idOnlyRegEx, $urlParameters['query'])) {
+                $pageId = (int) str_replace('id=', '', $urlParameters['query']);
+                if ($pageId > 0) {
+                    $url = $pageId;
                 }
             }
         }

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.0">
+    <file source-language="en" datatype="plaintext" original="messages" date="2015-10-21T09:49:32Z" product-name="my_redirects">
+        <header/>
+        <body>
+            <trans-unit id="tx_myredirects_domain_model_redirect.singular">
+                <source>Redirect</source>
+            </trans-unit>
+            <trans-unit id="tx_myredirects_domain_model_redirect.plural">
+                <source>Redirects</source>
+            </trans-unit>
+            <trans-unit id="tx_myredirects_domain_model_redirect.url_hash">
+                <source>URL Hash (generated from URL)</source>
+            </trans-unit>
+            <trans-unit id="tx_myredirects_domain_model_redirect.url">
+                <source>From</source>
+            </trans-unit>
+            <trans-unit id="tx_myredirects_domain_model_redirect.destination">
+                <source>To</source>
+            </trans-unit>
+            <trans-unit id="tx_myredirects_domain_model_redirect.last_referrer">
+                <source>Last Referrer</source>
+            </trans-unit>
+            <trans-unit id="tx_myredirects_domain_model_redirect.counter">
+                <source>Total Hits</source>
+            </trans-unit>
+            <trans-unit id="tx_myredirects_domain_model_redirect.http_response">
+                <source>Response code of redirect</source>
+            </trans-unit>
+            <trans-unit id="tx_myredirects_domain_model_redirect.http_response.I.0">
+                <source>Default HTTP Response</source>
+            </trans-unit>
+            <trans-unit id="tx_myredirects_domain_model_redirect.http_response.I.301">
+                <source>Moved Permanently (301)</source>
+            </trans-unit>
+            <trans-unit id="tx_myredirects_domain_model_redirect.http_response.I.302">
+                <source>Found (302)</source>
+            </trans-unit>
+            <trans-unit id="tx_myredirects_domain_model_redirect.http_response.I.303">
+                <source>See Other (303)</source>
+            </trans-unit>
+            <trans-unit id="tx_myredirects_domain_model_redirect.http_response.I.307">
+                <source>Temporary Redirect (307)</source>
+            </trans-unit>
+            <trans-unit id="tx_myredirects_domain_model_redirect.domain">
+                <source>Domain</source>
+            </trans-unit>
+            <trans-unit id="tx_myredirects_domain_model_redirect.domain.I.0">
+                <source>All domains</source>
+            </trans-unit>
+
+            <trans-unit id="tx_myredirects_domain_model_redirect.div.health">
+                <source>Health</source>
+            </trans-unit>
+
+            <trans-unit id="tx_myredirects_domain_model_redirect.active">
+                <source>Active</source>
+            </trans-unit>
+            <trans-unit id="tx_myredirects_domain_model_redirect.active.I.0">
+                <source>Still working correctly (based on lookup)</source>
+            </trans-unit>
+            <trans-unit id="tx_myredirects_domain_model_redirect.last_checked">
+                <source>Last checked</source>
+            </trans-unit>
+            <trans-unit id="tx_myredirects_domain_model_redirect.inactive_reason">
+                <source>Inactive reason</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

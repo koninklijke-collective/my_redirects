@@ -3,6 +3,7 @@ namespace Serfhos\MyRedirects\Domain\Model;
 
 use Serfhos\MyRedirects\Utility\DomainUtility;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Utility\MathUtility;
 
 /**
  * Model: Redirect
@@ -41,6 +42,11 @@ class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * @var string
      */
     protected $lastReferrer;
+
+    /**
+     * @var integer
+     */
+    protected $httpResponse;
 
     /**
      * @var integer
@@ -125,6 +131,27 @@ class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     }
 
     /**
+     * Returns the HTTP Response
+     *
+     * @return integer
+     */
+    public function getHttpResponse()
+    {
+        return $this->httpResponse;
+    }
+
+    /**
+     * Sets the HTTP Response
+     *
+     * @param integer $httpResponse
+     * @return void
+     */
+    public function setHttpResponse($httpResponse)
+    {
+        $this->httpResponse = $httpResponse;
+    }
+
+    /**
      * Returns the Counter
      *
      * @return integer
@@ -153,6 +180,20 @@ class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     public function getDestination()
     {
         return $this->destination;
+    }
+
+    /**
+     * Get absolute destination based on configured destination
+     *
+     * @return string
+     */
+    public function getAbsoluteDestination()
+    {
+        $destination = $this->destination;
+        if (MathUtility::canBeInterpretedAsInteger($destination)) {
+            $destination = 'Page: ' . $destination;
+        }
+        return $destination;
     }
 
     /**

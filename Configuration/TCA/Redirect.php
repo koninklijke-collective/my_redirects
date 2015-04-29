@@ -10,12 +10,12 @@ $TCA['tx_myredirects_domain_model_redirect'] = array(
     ),
     'types' => array(
         0 => array(
-            'showitem' => 'url_hash, url, destination, last_referrer, counter, http_response, domain,'
+            'showitem' => 'url_hash, url, destination, http_response, domain, last_referrer, counter,'
+                . '--div--;LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:tx_myredirects_domain_model_redirect.div.health,'
                 . 'active, last_checked, inactive_reason'
         )
     ),
-    'palettes' => array(
-    ),
+    'palettes' => array(),
     'columns' => array(
         'pid' => array(
             'config' => array(
@@ -37,6 +37,7 @@ $TCA['tx_myredirects_domain_model_redirect'] = array(
             'l10n_mode' => 'mergeIfNotBlank',
             'label' => 'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:tx_myredirects_domain_model_redirect.url_hash',
             'config' => array(
+                'readOnly' => true,
                 'type' => 'input',
                 'size' => 30,
             )
@@ -48,6 +49,7 @@ $TCA['tx_myredirects_domain_model_redirect'] = array(
             'config' => array(
                 'type' => 'input',
                 'size' => 30,
+                'eval' => 'trim',
             )
         ),
         'destination' => array(
@@ -57,6 +59,7 @@ $TCA['tx_myredirects_domain_model_redirect'] = array(
             'config' => array(
                 'type' => 'input',
                 'size' => 30,
+                'eval' => 'trim',
             )
         ),
         'last_referrer' => array(
@@ -64,6 +67,7 @@ $TCA['tx_myredirects_domain_model_redirect'] = array(
             'l10n_mode' => 'mergeIfNotBlank',
             'label' => 'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:tx_myredirects_domain_model_redirect.last_referrer',
             'config' => array(
+                'readOnly' => true,
                 'type' => 'input',
                 'size' => 30,
             )
@@ -73,6 +77,7 @@ $TCA['tx_myredirects_domain_model_redirect'] = array(
             'l10n_mode' => 'mergeIfNotBlank',
             'label' => 'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:tx_myredirects_domain_model_redirect.counter',
             'config' => array(
+                'readOnly' => true,
                 'type' => 'input',
                 'size' => 30,
             )
@@ -82,8 +87,30 @@ $TCA['tx_myredirects_domain_model_redirect'] = array(
             'l10n_mode' => 'mergeIfNotBlank',
             'label' => 'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:tx_myredirects_domain_model_redirect.http_response',
             'config' => array(
-                'type' => 'input',
-                'size' => 30,
+                'type' => 'select',
+                'size' => 1,
+                'items' => array(
+                    array(
+                        'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:tx_myredirects_domain_model_redirect.http_response.I.0',
+                        0
+                    ),
+                    array(
+                        'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:tx_myredirects_domain_model_redirect.http_response.I.301',
+                        301
+                    ),
+                    array(
+                        'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:tx_myredirects_domain_model_redirect.http_response.I.302',
+                        302
+                    ),
+                    array(
+                        'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:tx_myredirects_domain_model_redirect.http_response.I.303',
+                        303
+                    ),
+                    array(
+                        'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:tx_myredirects_domain_model_redirect.http_response.I.307',
+                        307
+                    ),
+                ),
             )
         ),
         'domain' => array(
@@ -91,8 +118,16 @@ $TCA['tx_myredirects_domain_model_redirect'] = array(
             'l10n_mode' => 'mergeIfNotBlank',
             'label' => 'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:tx_myredirects_domain_model_redirect.domain',
             'config' => array(
-                'type' => 'input',
-                'size' => 30,
+                'type' => 'select',
+                'size' => 1,
+                'items' => array(
+                    array(
+                        'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:tx_myredirects_domain_model_redirect.domain.I.0',
+                        0
+                    ),
+                ),
+                'foreign_table' => 'sys_domain',
+                'foreign_table_where' => ' AND sys_domain.redirectTo = ""',
             )
         ),
         'active' => array(
@@ -100,8 +135,14 @@ $TCA['tx_myredirects_domain_model_redirect'] = array(
             'l10n_mode' => 'mergeIfNotBlank',
             'label' => 'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:tx_myredirects_domain_model_redirect.active',
             'config' => array(
-                'type' => 'input',
-                'size' => 30,
+                'readOnly' => true,
+                'type' => 'check',
+                'items' => array(
+                    array(
+                        'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:tx_myredirects_domain_model_redirect.active.I.0',
+                        ''
+                    ),
+                )
             )
         ),
         'last_checked' => array(
@@ -109,6 +150,7 @@ $TCA['tx_myredirects_domain_model_redirect'] = array(
             'l10n_mode' => 'mergeIfNotBlank',
             'label' => 'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:tx_myredirects_domain_model_redirect.last_checked',
             'config' => array(
+                'readOnly' => true,
                 'type' => 'input',
                 'size' => 30,
             )
@@ -118,8 +160,10 @@ $TCA['tx_myredirects_domain_model_redirect'] = array(
             'l10n_mode' => 'mergeIfNotBlank',
             'label' => 'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:tx_myredirects_domain_model_redirect.inactive_reason',
             'config' => array(
-                'type' => 'input',
-                'size' => 30,
+                'type' => 'none',
+                'fixedRows' => true,
+                'cols' => 48,
+                'rows' => 10,
             )
         ),
     ),

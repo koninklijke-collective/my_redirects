@@ -4,6 +4,7 @@ namespace Serfhos\MyRedirects\Service;
 use Serfhos\MyRedirects\Domain\Model\Redirect;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\HttpUtility;
+use TYPO3\CMS\Core\Utility\MathUtility;
 
 class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
 {
@@ -159,20 +160,30 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
     public function handleRedirect($redirect)
     {
         // Update statistics
+        $updateFields = array(
+            'counter' => 'counter+1',
+            'last_hit' => time(),
+            'last_referrer' => GeneralUtility::getIndpEnv('HTTP_REFERER')
+        );
+        // Remove empty values
+        $updateFields = array_filter($updateFields);
+
         $this->getDatabaseConnection()->exec_UPDATEquery(
             $this->redirectTable,
-            'uid = ' . $redirect['uid'],
-            array(
-                'counter' => 'counter+1',
-                'last_hit' => time(),
-                'last_referrer' => GeneralUtility::getIndpEnv('HTTP_REFERER')
-            )
+            'uid = ' . (int) $redirect['uid'],
+            $updateFields,
+            array('counter')
         );
+
+        $destination = $redirect['destination'];
+        if (MathUtility::canBeInterpretedAsInteger($destination)) {
+            $destination = '/index.php?id=' . $destination;
+        }
 
         // Get response code constant from core
         $constantLookUp = '\TYPO3\CMS\Core\Utility\HttpUtility::HTTP_STATUS_' . $redirect['http_response'];
         $httpStatus = (defined($constantLookUp) ? constant($constantLookUp) : HttpUtility::HTTP_STATUS_302);
-        HttpUtility::redirect($redirect['destination'], $httpStatus);
+        HttpUtility::redirect($destination, $httpStatus);
     }
 
     /**

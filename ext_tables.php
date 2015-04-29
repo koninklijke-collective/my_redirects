@@ -5,16 +5,23 @@ if (!defined('TYPO3_MODE')) {
 
 $GLOBALS['TCA']['tx_myredirects_domain_model_redirect'] = array(
     'ctrl' => array(
-        'title' => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/locallang_be.xlf:tx_myredirects_domain_model_redirect',
+        'title' => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/locallang_be.xlf:tx_myredirects_domain_model_redirect.singular',
+        'groupName' => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/locallang_be.xlf:tx_myredirects_domain_model_redirect.plural',
         'label' => 'url',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
         'cruser_id' => 'cruser_id',
+        'editlock' => 'editlock',
         'dividers2tabs' => true,
-        'dynamicConfigFile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath(
-                $_EXTKEY
-            ) . 'Configuration/TCA/Redirect.php',
+        'dynamicConfigFile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY) . 'Configuration/TCA/Redirect.php',
+        'canNotCollapse' => true,
+        'is_static' => true,
+        'readOnly' => true,
         'hideTable' => true, // don't show in listing..
+        'security' => array(
+            'ignoreWebMountRestriction' => true,
+            'ignoreRootLevelRestriction' => true,
+        ),
     ),
 );
 
