@@ -2,10 +2,10 @@
 
 $EM_CONF[$_EXTKEY] = array(
     'title' => 'My Redirects',
-    'description' => 'Maintain your own redirects in the backend.',
+    'description' => 'Maintain your own redirects in the backend',
     'category' => 'module',
     'author' => 'Benjamin Serfhos',
-    'author_email' => 'serfhos@gmail.com',
+    'author_email' => 'benjamin@serfhos.com',
     'dependencies' => '',
     'priority' => '',
     'module' => '',
@@ -20,10 +20,12 @@ $EM_CONF[$_EXTKEY] = array(
     'version' => '1.0.0',
     'constraints' => array(
         'depends' => array(
+            array(
+                'typo3' => '6.0.0-6.2.99',
+                'beuser' => '6.0.0-6.2.99',
+            ),
         ),
-        'conflicts' => array(
-        ),
-        'suggests' => array(
-        ),
+        'conflicts' => array(),
+        'suggests' => array(),
     ),
 );
