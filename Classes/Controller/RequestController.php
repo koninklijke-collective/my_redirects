@@ -41,7 +41,7 @@ class RequestController
         if (!empty($path)) {
             $redirect = $this->getRedirectService()->queryByPathAndDomain(
                 $path,
-                $this->domainService->getCurrentDomainId()
+                $this->getDomainService()->getCurrentDomainId()
             );
             if (is_array($redirect) && (int) $redirect['uid'] > 0) {
                 $this->getRedirectService()->handleRedirect($redirect);
