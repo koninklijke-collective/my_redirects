@@ -33,7 +33,16 @@
                                 </label>
                                 <div class="t3-form-palette-field class-main">
                                     <div class="t3-form-field-item">
-                                        <f:form.select class="t3-select" id="domain" property="domain" options="{s:domains()}" prependOptionLabel="{f:translate(key: 'redirect.form.domain.I.0')}"/>
+                                        <f:alias map="{domains: '{s:domains()}'}">
+                                            <f:if condition="{domains}">
+                                                <f:then>
+                                                    <f:form.select class="t3-select" id="domain" property="domain" options="{domains}" prependOptionLabel="{f:translate(key: 'redirect.form.domain.I.0')}"/>
+                                                </f:then>
+                                                <f:else>
+                                                    <f:form.select class="t3-select" id="domain" property="domain" options="{0: '{f:translate(key: \'redirect.form.domain.I.0\')}'}"/>
+                                                </f:else>
+                                            </f:if>
+                                        </f:alias>
                                     </div>
                                 </div>
                             </div>

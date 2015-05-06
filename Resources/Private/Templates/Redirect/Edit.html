@@ -23,12 +23,11 @@
 
         <div class="buttongroup">
             <s:linkConfirm
-                link="{f:uri.action(action:'delete', controller:'Redirect', arguments: '{redirect: record}')}"
-                message="{f:translate(key: 'confirm_delete', arguments: '{0: record.url, 1: record.destination}')}"
-                title="Delete redirect"/>
+                link="{f:uri.action(action:'delete', controller:'Redirect', arguments: '{redirect: redirect}')}"
+                message="{f:translate(key: 'confirm_delete', arguments: '{0: redirect.url, 1: redirect.absoluteDestination}')}"
+                title="{f:translate(key: 'redirect.action.delete')}"/>
         </div>
     </f:if>
-
 </f:section>
 
 <f:section name="Content">
