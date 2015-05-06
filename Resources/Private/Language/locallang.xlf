@@ -39,6 +39,10 @@
                 <source><![CDATA[Reset &raquo;]]></source>
             </trans-unit>
 
+            <trans-unit id="redirect.filter.ignore_page">
+                <source><![CDATA[[x] Disable filtering on page destination (<span title="ID: %s">%s</span>)]]></source>
+            </trans-unit>
+
             <trans-unit id="redirect.results">
                 <source>Results</source>
             </trans-unit>
@@ -126,6 +130,12 @@
             </trans-unit>
             <trans-unit id="controller.action.success.delete.description">
                 <source>Redirect is successfully removed</source>
+            </trans-unit>
+            <trans-unit id="controller.initialize.error.no_typoscript.title">
+                <source>TypoScript missing</source>
+            </trans-unit>
+            <trans-unit id="controller.initialize.error.no_typoscript.description">
+                <source>The typoscript setup is missing in your module.</source>
             </trans-unit>
         </body>
     </file>

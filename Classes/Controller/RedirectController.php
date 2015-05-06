@@ -17,6 +17,13 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
 {
 
     /**
+     * Page information from given access
+     *
+     * @var array
+     */
+    protected $page = array();
+
+    /**
      * @var \Serfhos\MyRedirects\Domain\Repository\RedirectRepository
      * @inject
      */
@@ -77,7 +84,7 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
     protected function initializeView(ViewInterface $view)
     {
         $url = $this->uriBuilder->setAddQueryString(true)->setArgumentsToBeExcludedFromQueryString(array('returnUrl'))->build()
-            . '&vC=' . urlencode($GLOBALS['BE_USER']->veriCode())
+            . '&vC=' . urlencode($this->getBackendUserAuthentication()->veriCode())
             . BackendUtility::getUrlToken('tceAction')
             . '&prErr=1&uPT=1';
         $view->assign('currentUrl', $url);
@@ -92,16 +99,28 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
     {
         parent::initializeAction();
 
+        $this->backendSession
+            ->setBackendUserAuthentication($GLOBALS['BE_USER'])
+            ->createSession($this->sessionKey);
+
+        // Configure page array when page is configured
+        $pageId = (int) GeneralUtility::_GP('id');
+        if ($pageId > 0) {
+            $pagePerms = $this->getBackendUserAuthentication()->getPagePermsClause(1);
+            $page = BackendUtility::readPageAccess($pageId, $pagePerms);
+            if (is_array($page)) {
+                $this->page = $page;
+            }
+        }
+
         if (!isset($this->settings['staticTemplate'])) {
             $this->controllerContext = $this->buildControllerContext();
             $this->addFlashMessage(
                 LocalizationUtility::translate('controller.initialize.error.no_typoscript.description', 'my_redirects'),
-                LocalizationUtility::translate('controller.initialize.error.no_typoscript.title', 'my_redirects')
+                LocalizationUtility::translate('controller.initialize.error.no_typoscript.title', 'my_redirects'),
+                \TYPO3\CMS\Core\Messaging\AbstractMessage::ERROR
             );
         } else {
-            $this->backendSession
-                ->setBackendUserAuthentication($GLOBALS['BE_USER'])
-                ->createSession($this->sessionKey);
 
             $filters = $this->backendSession->getSessionContents($this->sessionKey);
             if ($filters === null) {
@@ -134,12 +153,20 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
     public function listAction()
     {
         $arguments = $this->backendSession->getSessionContents($this->sessionKey);
+        $filter = (array) $arguments['filter'];
+
+        // Temporary set page filter
+        if (!empty($this->page)) {
+            $filter['page'] = $this->page['uid'];
+        }
+
         $this->view->assignMultiple(array(
-            'filter' => $arguments['filter'],
+            'page' => $this->page,
+            'filter' => $filter,
             'order' => $arguments['order'],
             'direction' => $arguments['direction'],
             'redirects' => $this->getRedirectRepository()->findByOrder(
-                $arguments['filter'],
+                $filter,
                 $arguments['order'],
                 $arguments['direction']
             ),

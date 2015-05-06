@@ -63,10 +63,16 @@
         </f:form>
     </div>
 
+    <f:if condition="{filter.page}">
+        <f:link.page addQueryString="1" argumentsToBeExcludedFromQueryString="{0: 'id'}">
+            <f:translate key="redirect.filter.ignore_page" arguments="{0: page.uid, 1: page.title}"/>
+        </f:link.page>
+    </f:if>
+
     <h2>
         <f:translate key="redirect.results"/>
     </h2>
-    <f:widget.paginate objects="{redirects}" as="records" configuration="{itemsPerPage: 50, maximumNumberOfLinks: 4}">
+    <f:be.widget.paginate objects="{redirects}" as="records" configuration="{itemsPerPage: 50, maximumNumberOfLinks: 4}">
         <table width="100%" cellspacing="0" cellpadding="0" border="0" class="typo3-dblist">
             <thead>
             <tr class="c-table-row-spacer">
@@ -164,7 +170,7 @@
 
             </tbody>
         </table>
-    </f:widget.paginate>
+    </f:be.widget.paginate>
 </f:section>
 
 <f:section name="ListHeaderSorting">

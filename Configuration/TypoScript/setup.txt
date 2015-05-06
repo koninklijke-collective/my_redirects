@@ -1,8 +1,16 @@
 module.tx_myredirects {
     view {
-        templateRootPath = EXT:my_redirects/Resources/Private/Templates
-        partialRootPath = EXT:my_redirects/Resources/Private/Partials
-        layoutRootPath = EXT:my_redirects/Resources/Private/Layouts
+        templateRootPaths {
+            10 = EXT:my_redirects/Resources/Private/Templates
+        }
+
+        partialRootPaths {
+            10 = EXT:my_redirects/Resources/Private/Partials
+        }
+
+        layoutRootPaths {
+            10 = EXT:my_redirects/Resources/Private/Layouts
+        }
     }
 
     persistence {

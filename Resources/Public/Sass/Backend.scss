@@ -32,37 +32,3 @@ $table-border: #d7d7d7;
     padding: 3px 6px;
     vertical-align: middle;
 }
-
-.f3-widget-paginator {
-    @include clearfix;
-
-    li {
-        float: left;
-        display: block;
-        margin: 0 2px;
-
-        &.current,
-        > a {
-            display: block;
-            padding: 5px 10px;
-            background: $background-color;
-            border: 1px solid $table-border;
-        }
-
-        > a {
-            &:hover {
-                background-color: $table-row-hover;
-                text-decoration: none;
-            }
-        }
-
-        &.current {
-            background: $table-row-even;
-        }
-
-        &.previous,
-        &.next {
-            margin: 0 20px;
-        }
-    }
-}

@@ -60,6 +60,10 @@ class RedirectRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
             $constraints = array();
             foreach ($filter as $key => $value) {
                 switch ($key) {
+                    case 'page':
+                        $constraints[] = $query->equals('destination', (int) $value);
+                        break;
+
                     case 'sword':
                         $constraints[] = $query->logicalOr(
                             $query->like('url', '%' . ltrim($value, '/') . '%', false),
