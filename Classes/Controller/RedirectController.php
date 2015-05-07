@@ -63,10 +63,6 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
             $arguments = $request->getArguments();
             if (isset($arguments['forceRedirect']) && (bool) $arguments['forceRedirect'] === true) {
                 unset ($arguments['forceRedirect'], $arguments['controller'], $arguments['action']);
-                // Force array input
-                if (isset($arguments['filter']) && !is_array($arguments['filter'])) {
-                    $arguments['filter'] = array();
-                }
 
                 // Remove empty arguments
                 $arguments = array_filter($arguments);
@@ -83,11 +79,16 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
      */
     protected function initializeView(ViewInterface $view)
     {
-        $url = $this->uriBuilder->setAddQueryString(true)->setArgumentsToBeExcludedFromQueryString(array('returnUrl'))->build()
+        $moduleUrl = urlencode(\TYPO3\CMS\Backend\Utility\BackendUtility::getModuleUrl('web_MyRedirectsMyRedirects'));
+        $currentUrl = $this->uriBuilder->setAddQueryString(true)->setArgumentsToBeExcludedFromQueryString(array('returnUrl'))->build()
             . '&vC=' . urlencode($this->getBackendUserAuthentication()->veriCode())
             . BackendUtility::getUrlToken('tceAction')
             . '&prErr=1&uPT=1';
-        $view->assign('currentUrl', $url);
+
+        $this->view->assignMultiple(array(
+            'moduleUrl' => $moduleUrl,
+            'currentUrl' => $currentUrl,
+        ));
     }
 
     /**
@@ -121,18 +122,21 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
                 \TYPO3\CMS\Core\Messaging\AbstractMessage::ERROR
             );
         } else {
-
             $filters = $this->backendSession->getSessionContents($this->sessionKey);
-            if ($filters === null) {
+            if ($filters === false) {
                 $filters = array(
                     'filter' => array(),
                     'order' => 'url',
                     'direction' => QueryInterface::ORDER_ASCENDING
                 );
             }
-
             if ($this->request->hasArgument('filter')) {
-                $filters['filter'] = $this->request->getArgument('filter');
+                $filter = $this->request->getArgument('filter');
+                if (is_array($filter)) {
+                    $filters['filter'] = $this->request->getArgument('filter');
+                } else {
+                    $filters['filter'] = array();
+                }
             }
             if ($this->request->hasArgument('order')) {
                 $filters['order'] = $this->request->getArgument('order');
@@ -174,22 +178,6 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
     }
 
     /**
-     * Action: Create new redirect
-     *
-     * @param \Serfhos\MyRedirects\Domain\Model\Redirect $redirect
-     * @param string $returnUrl
-     * @return void
-     */
-    public function newAction($redirect = null, $returnUrl = '')
-    {
-        $this->view->assign('redirect', $redirect);
-
-        if (!empty($returnUrl)) {
-            $this->view->assign('returnUrl', $returnUrl);
-        }
-    }
-
-    /**
      * Action: Check if redirect is still active and works as intended
      *
      * @param \Serfhos\MyRedirects\Domain\Model\Redirect $redirect
@@ -201,64 +189,14 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
         if ($redirect instanceof Redirect) {
             $this->getRedirectService()->activeLookup($redirect);
             $this->getRedirectRepository()->update($redirect);
+
+            $this->addFlashMessage(
+                LocalizationUtility::translate('controller.action.success.lookup.description', 'my_redirects',
+                    array('/' . $redirect->getUrl())),
+                LocalizationUtility::translate('controller.action.success.lookup.title', 'my_redirects'),
+                \TYPO3\CMS\Core\Messaging\AbstractMessage::INFO
+            );
         }
-
-        if (!empty($returnUrl)) {
-            $this->redirectToUri($returnUrl);
-        } else {
-            $this->redirect('list');
-        }
-    }
-
-    /**
-     * Action: Create new redirect in database and redirect to list
-     *
-     * @param \Serfhos\MyRedirects\Domain\Model\Redirect $redirect
-     * @return void
-     */
-    public function createAction($redirect)
-    {
-        $this->addFlashMessage(
-            LocalizationUtility::translate('controller.action.success.create.description', 'my_redirects'),
-            LocalizationUtility::translate('controller.action.success.create.title', 'my_redirects')
-        );
-        $redirect->generateUrlHash();
-        $this->getRedirectRepository()->add($redirect);
-        $this->redirect('list');
-    }
-
-    /**
-     * Action: Show edit form
-     *
-     * @param \Serfhos\MyRedirects\Domain\Model\Redirect $redirect
-     * @param string $returnUrl
-     * @return void
-     */
-    public function editAction($redirect = null, $returnUrl = '')
-    {
-        $this->view->assign('redirect', $redirect);
-
-        if (!empty($returnUrl)) {
-            $this->view->assign('returnUrl', $returnUrl);
-        }
-    }
-
-    /**
-     * Action: Update redirect in database and redirect to list
-     *
-     * @param \Serfhos\MyRedirects\Domain\Model\Redirect $redirect
-     * @param string $returnUrl
-     * @return void
-     */
-    public function updateAction($redirect = null, $returnUrl = '')
-    {
-        $this->addFlashMessage(
-            LocalizationUtility::translate('controller.action.success.update.description', 'my_redirects'),
-            LocalizationUtility::translate('controller.action.success.update.title', 'my_redirects')
-        );
-
-        $redirect->generateUrlHash();
-        $this->getRedirectRepository()->update($redirect);
 
         if (!empty($returnUrl)) {
             $this->redirectToUri($returnUrl);

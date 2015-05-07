@@ -18,13 +18,20 @@ class LinkConfirmViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractVie
      * @param string $link
      * @param string $message
      * @param string $title
+     * @param string $class
      * @param string $icon
      * @return string
      */
-    public function render($link, $message = '', $title = '', $icon = 'actions-edit-delete')
+    public function render($link, $message = '', $title = '', $class = '', $icon = 'actions-edit-delete')
     {
         if (!empty($link)) {
-            return '<a href="' . $link . '"  onclick="return confirm(' . GeneralUtility::quoteJSvalue($message) . ')" title="' . $title . '">'
+            $attributes = array(
+                'href' => $link,
+                'onclick' => 'return confirm(' . GeneralUtility::quoteJSvalue($message) . ')',
+                'title' => $title,
+                'class' => $class,
+            );
+            return '<a ' . GeneralUtility::implodeAttributes($attributes, false, true) . '>'
             . IconUtility::getSpriteIcon($icon)
             . '</a>';
         }

@@ -178,6 +178,17 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
     }
 
     /**
+     * Generate the Url Hash
+     *
+     * @param string $url
+     * @return integer
+     */
+    public function generateUrlHash($url)
+    {
+        return \TYPO3\CMS\Core\Utility\GeneralUtility::md5int($url);
+    }
+
+    /**
      * @return \TYPO3\CMS\Core\Database\DatabaseConnection
      */
     protected function getDatabaseConnection()

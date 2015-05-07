@@ -94,21 +94,6 @@ class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     }
 
     /**
-     * Generate the Url Hash
-     *
-     * @param string $url
-     * @return void
-     */
-    public function generateUrlHash($url = null)
-    {
-        if ($url === null) {
-            $url = $this->url;
-        }
-
-        $this->urlHash = \TYPO3\CMS\Core\Utility\GeneralUtility::md5int($url);
-    }
-
-    /**
      * Returns the Active
      *
      * @return boolean

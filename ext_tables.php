@@ -14,14 +14,15 @@ $GLOBALS['TCA']['tx_myredirects_domain_model_redirect'] = array(
         'editlock' => 'editlock',
         'dividers2tabs' => true,
         'dynamicConfigFile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($_EXTKEY) . 'Configuration/TCA/Redirect.php',
+        'iconfile' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath($_EXTKEY) . 'Resources/Public/Icons/tx_myredirects_domain_model_redirect.png',
+        'rootLevel' => true,
         'canNotCollapse' => true,
-        'is_static' => true,
-        'readOnly' => true,
         'hideTable' => true, // don't show in listing..
         'security' => array(
             'ignoreWebMountRestriction' => true,
             'ignoreRootLevelRestriction' => true,
         ),
+        'searchFields' => 'url,destination'
     ),
 );
 
@@ -33,7 +34,7 @@ if (TYPO3_MODE === 'BE') {
         '',
         array(
             // Allowed controller action combinations
-            'Redirect' => 'list, edit, new, create, delete, update, lookup',
+            'Redirect' => 'list, delete, lookup',
         ),
         array(
             // Additional configuration

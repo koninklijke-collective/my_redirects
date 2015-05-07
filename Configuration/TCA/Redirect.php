@@ -10,12 +10,25 @@ $TCA['tx_myredirects_domain_model_redirect'] = array(
     ),
     'types' => array(
         0 => array(
-            'showitem' => 'url_hash, url, destination, http_response, domain, last_referrer, counter,'
+            'showitem' => '--palette--;;from, --palette--;;to,'
                 . '--div--;LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:tx_myredirects_domain_model_redirect.div.health,'
-                . 'active, last_checked, inactive_reason'
+                . 'url_hash, --palette--;;visited, active;;response'
         )
     ),
-    'palettes' => array(),
+    'palettes' => array(
+        'from' => array(
+            'showitem' => 'url, domain'
+        ),
+        'to' => array(
+            'showitem' => 'destination, http_response'
+        ),
+        'visited' => array(
+            'showitem' => 'counter, last_referrer',
+        ),
+        'response' => array(
+            'showitem' => 'last_checked, inactive_reason',
+        ),
+    ),
     'columns' => array(
         'pid' => array(
             'config' => array(
@@ -49,7 +62,8 @@ $TCA['tx_myredirects_domain_model_redirect'] = array(
             'config' => array(
                 'type' => 'input',
                 'size' => 30,
-                'eval' => 'trim',
+                'eval' => 'trim, unique',
+                'max' => 65535,
             )
         ),
         'destination' => array(
@@ -60,6 +74,7 @@ $TCA['tx_myredirects_domain_model_redirect'] = array(
                 'type' => 'input',
                 'size' => 30,
                 'eval' => 'trim',
+                'max' => 65535,
             )
         ),
         'last_referrer' => array(
@@ -77,9 +92,12 @@ $TCA['tx_myredirects_domain_model_redirect'] = array(
             'l10n_mode' => 'mergeIfNotBlank',
             'label' => 'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:tx_myredirects_domain_model_redirect.counter',
             'config' => array(
-                'readOnly' => true,
                 'type' => 'input',
-                'size' => 30,
+                'size' => 5,
+                'eval' => 'int',
+                'range' => array(
+                    'lower' => 0,
+                ),
             )
         ),
         'http_response' => array(
@@ -152,7 +170,8 @@ $TCA['tx_myredirects_domain_model_redirect'] = array(
             'config' => array(
                 'readOnly' => true,
                 'type' => 'input',
-                'size' => 30,
+                'size' => 10,
+                'eval' => 'date'
             )
         ),
         'inactive_reason' => array(
@@ -164,7 +183,9 @@ $TCA['tx_myredirects_domain_model_redirect'] = array(
                 'fixedRows' => true,
                 'cols' => 48,
                 'rows' => 10,
-            )
+                'eval' => 'trim'
+            ),
+            'displayCond' => 'FIELD:active:REQ:false',
         ),
     ),
 );

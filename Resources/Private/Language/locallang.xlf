@@ -117,25 +117,31 @@
                 <source>Redirect added</source>
             </trans-unit>
             <trans-unit id="controller.action.success.create.description">
-                <source>Redirect is successfully added</source>
+                <source>Redirect is successfully added.</source>
             </trans-unit>
             <trans-unit id="controller.action.success.update.title">
                 <source>Redirect updated</source>
             </trans-unit>
             <trans-unit id="controller.action.success.update.description">
-                <source>Redirect is successfully updated</source>
+                <source>Redirect is successfully updated.</source>
+            </trans-unit>
+            <trans-unit id="controller.action.success.lookup.title">
+                <source>Redirect active-check invoked</source>
+            </trans-unit>
+            <trans-unit id="controller.action.success.lookup.description">
+                <source>A lookup is invoked for "%s".</source>
             </trans-unit>
             <trans-unit id="controller.action.success.delete.title">
                 <source>Redirect deleted</source>
             </trans-unit>
             <trans-unit id="controller.action.success.delete.description">
-                <source>Redirect is successfully removed</source>
+                <source>Redirect is successfully removed.</source>
             </trans-unit>
             <trans-unit id="controller.initialize.error.no_typoscript.title">
                 <source>TypoScript missing</source>
             </trans-unit>
             <trans-unit id="controller.initialize.error.no_typoscript.description">
-                <source>The typoscript setup is missing in your module.</source>
+                <source>The TypoScript setup is missing in your module.</source>
             </trans-unit>
         </body>
     </file>

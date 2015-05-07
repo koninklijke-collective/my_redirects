@@ -1,0 +1,54 @@
+{namespace s=Serfhos\MyRedirects\ViewHelper}
+
+<tr class="db_list_normal">
+    <td class="col-icon" nowrap="nowrap"></td>
+    <td class="col-redirect-from" nowrap="nowrap">
+        <span title="{s:domainUrl(redirect: redirect)}{redirect.url}">{s:domainUrl(redirect: redirect)}{redirect.url -> f:format.crop(maxCharacters: '50|...')}</span>
+    </td>
+    <td class="col-redirect-to" nowrap="nowrap"><span title="{redirect.absoluteDestination}">{redirect.absoluteDestination -> f:format.crop(maxCharacters: '50|...')}</span>
+    </td>
+    <td class="col-control" nowrap="nowrap">
+        <div class="btn-group" role="group">
+            <f:be.buttons.icon
+                additionalAttributes="{class: 'btn btn-default'}"
+                uri="{s:editRecord(parameters: 'edit[tx_myredirects_domain_model_redirect][{redirect.uid}]=edit&returnUrl={moduleUrl}')}"
+                title="{f:translate(key: 'redirect.action.edit')}"
+                icon="actions-document-open"/>
+
+            <span class="btn btn-default disabled"><f:be.buttons.icon icon="empty-empty"/></span>
+
+            <f:if condition="{redirect.lastChecked}">
+                <span class="btn btn-default active">
+                    <span
+                        class="t3-icon t3-icon-actions t3-icon-actions-document t3-icon-document-history-open"
+                        title="{f:translate(key: 'redirect.action.last_lookup', arguments: '{0: redirect.ageLastChecked}')}">
+                        <f:if condition="{redirect.active} == 0">
+                            <f:then>
+                                <span
+                                    class="t3-icon t3-icon-status t3-icon-status-overlay t3-icon-overlay-hidden t3-icon-overlay"
+                                    title="{f:translate(key: 'redirect.action.error', arguments: '{0: redirect.inactiveReason, 1: redirect.ageLastChecked}')}">&nbsp;</span>
+                            </f:then>
+                            <f:else>&nbsp;</f:else>
+                        </f:if>
+                    </span>
+                </span>
+            </f:if>
+
+            <f:be.buttons.icon
+                additionalAttributes="{class: 'btn btn-default'}"
+                uri="{f:uri.action(action:'lookup', controller:'Redirect', arguments: '{redirect: redirect, returnUrl: currentUrl}')}"
+                title="{f:translate(key: 'redirect.action.lookup')}"
+                icon="status-version-no-version"/>
+
+            <span class="btn btn-default disabled"><f:be.buttons.icon icon="empty-empty"/></span>
+
+            <s:linkConfirm
+                class="btn btn-default"
+                link="{f:uri.action(action:'delete', controller:'Redirect', arguments: '{redirect: redirect, returnUrl: currentUrl}')}"
+                message="{f:translate(key: 'confirm_delete', arguments: '{0: redirect.url, 1: redirect.absoluteDestination}')}"
+                title="{f:translate(key: 'redirect.action.delete')}"/>
+        </div>
+
+    </td>
+    <td class="col-redirect-hits" nowrap="nowrap">{redirect.counter}</td>
+</tr>

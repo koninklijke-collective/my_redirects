@@ -14,8 +14,8 @@ $EM_CONF[$_EXTKEY] = array(
     'author_company' => 'Rotterdam School of Management, Erasmus University',
     'constraints' => array(
         'depends' => array(
-            'typo3' => '6.0.0-6.2.99',
-            'beuser' => '6.0.0-6.2.99',
+            'typo3' => '6.2.0-7.2.99',
+            'beuser' => '6.2.0-7.2.99',
         ),
         'conflicts' => array(),
         'suggests' => array(),

@@ -19,7 +19,6 @@
                     <f:be.pagePath/>
                 </div>
             </div>
-
             <div class="typo3-docheader-buttons">
                 <div class="left">
                     <f:render section="Actions"/>
@@ -29,11 +28,12 @@
                 </div>
             </div>
         </div>
-        <div id="typo3-docbody">
-            <div id="typo3-inner-docbody" class="my-redirects-backend">
-                <f:flashMessages renderMode="div"/>
-                <f:render section="Content"/>
-            </div>
+    </div>
+
+    <div id="typo3-docbody">
+        <div id="typo3-inner-docbody" class="my-redirects-backend">
+            <f:flashMessages renderMode="div"/>
+            <f:render section="Content"/>
         </div>
     </div>
 </f:be.container>
