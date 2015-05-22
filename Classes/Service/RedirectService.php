@@ -171,6 +171,8 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
             $destination = '/index.php?id=' . $destination;
         }
 
+        header('X-Redirect-Handler: my_redirects');
+
         // Get response code constant from core
         $constantLookUp = '\TYPO3\CMS\Core\Utility\HttpUtility::HTTP_STATUS_' . $redirect['http_response'];
         $httpStatus = (defined($constantLookUp) ? constant($constantLookUp) : HttpUtility::HTTP_STATUS_302);
