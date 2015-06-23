@@ -1,7 +1,20 @@
+{namespace s=Serfhos\MyRedirects\ViewHelper}
+
 <f:layout name="Default"/>
 
 <f:section name="Content">
-    <f:flashMessages renderMode="div" class="my-redirects-messages"/>
+    <s:flashMessages renderMode="div" class="my-redirects-messages"/>
+
+    <form action="{formAction}" method="POST">
+        <f:form.hidden name="calculate-hash" value="1"/>
+
+        <p>
+            Want to recalculate all configured hashes?
+        </p>
+        <f:form.button>
+            Recalculate hash
+        </f:form.button>
+    </form>
 
     <form action="{formAction}" method="POST">
         <f:form.hidden name="convert-realurl" value="1"/>

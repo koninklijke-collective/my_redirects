@@ -9,7 +9,7 @@ CREATE TABLE tx_myredirects_domain_model_redirect (
     cruser_id int(11) DEFAULT '0' NOT NULL,
     editlock tinyint(4) DEFAULT '0' NOT NULL,
 
-    url_hash int(11) DEFAULT '0' NOT NULL,
+    url_hash varchar(40) DEFAULT '',
     url text NOT NULL,
     destination text NOT NULL,
     last_referrer text NOT NULL,
@@ -22,5 +22,5 @@ CREATE TABLE tx_myredirects_domain_model_redirect (
     inactive_reason text,
 
     PRIMARY KEY (uid),
-    UNIQUE KEY active (url_hash,domain)
+    UNIQUE KEY active(url_hash,domain)
 );

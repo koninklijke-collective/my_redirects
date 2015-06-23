@@ -43,4 +43,9 @@ if (TYPO3_MODE === 'BE') {
             'labels' => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/locallang_mod.xlf',
         )
     );
+
+    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addLLrefForTCAdescr(
+        'tx_myredirects_domain_model_redirect',
+        'EXT:my_redirects/Resources/Private/Language/locallang_csh.xlf'
+    );
 }

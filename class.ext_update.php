@@ -53,11 +53,56 @@ class ext_update
             'formAction' => $updateScriptLink,
         ));
 
+        if ((int) $_POST['calculate-hash'] === 1) {
+            $this->calculateHashes();
+        }
+
         if ((int) $_POST['convert-realurl'] === 1) {
             $this->migrateRedirectsFromRealUrl();
         }
 
         return $view->render();
+    }
+
+    /**
+     * Calculate hashes based on given url
+     */
+    protected function calculateHashes() {
+        $hashed = 0;
+        $table = 'tx_myredirects_domain_model_redirect';
+        $res = $this->getDatabaseConnection()->exec_SELECTquery(
+            'uid, url, url_hash',
+            $table,
+            ''
+        );
+        while ($row = $this->getDatabaseConnection()->sql_fetch_assoc($res)) {
+            $updateFields = array(
+                'tstamp' => time(),
+                'url_hash' => $this->getRedirectService()->generateUrlHash($row['url']),
+            );
+
+            if ($row['url_hash'] != $updateFields['url_hash']) {
+                $this->getDatabaseConnection()->exec_UPDATEquery($table, 'uid = ' . (int) $row['uid'], $updateFields);
+                $hashed++;
+            }
+        }
+
+        if ($hashed > 0) {
+            $message = $this->getObjectManager()->get(
+                'TYPO3\\CMS\\Core\\Messaging\\FlashMessage',
+                'A total of ' . $hashed . ' hashes are re-calculated.',
+                'RealURL Redirect hashes calculated',
+                FlashMessage::OK
+            );
+        } else {
+            $message = $this->getObjectManager()->get(
+                'TYPO3\\CMS\\Core\\Messaging\\FlashMessage',
+                'No hashes are re-calculated. None found or none needed updating.',
+                'No Redirect hashes calculated',
+                FlashMessage::ERROR
+            );
+        }
+        $this->getFlashMessageQueue()->enqueue($message);
     }
 
     /**
@@ -86,7 +131,7 @@ class ext_update
                         'tstamp' => $row['tstamp'],
                         'crdate' => $row['tstamp'],
                         'cruser_id' => $this->getBackendUserAuthentication()->user['uid'],
-                        'url_hash' => (int) $row['url_hash'],
+                        'url_hash' => $this->getRedirectService()->generateUrlHash($row['url']),
                         'url' => $row['url'],
                         'destination' => $this->correctUrl($row['destination']),
                         'last_referrer' => $row['last_referer'],
@@ -179,6 +224,16 @@ class ext_update
     }
 
     /**
+     * Get the RedirectService
+     *
+     * @return \Serfhos\MyRedirects\Service\RedirectService
+     */
+    protected function getRedirectService()
+    {
+        return $this->getObjectManager()->get('Serfhos\\MyRedirects\\Service\\RedirectService');
+    }
+
+    /**
      * Get the BackendAuthentication
      *
      * @return \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
@@ -196,8 +251,8 @@ class ext_update
         /** @var \TYPO3\CMS\Fluid\View\StandaloneView $view */
         $view = $this->getObjectManager()->get('TYPO3\\CMS\\Fluid\\View\\StandaloneView');
         $view->setTemplatePathAndFilename(GeneralUtility::getFileAbsFileName('EXT:' . $this->extensionKey . '/Resources/Private/Templates/UpdateScript/Index.html'));
-        $view->setLayoutRootPath(GeneralUtility::getFileAbsFileName('EXT:' . $this->extensionKey . '/Resources/Private/Layouts'));
-        $view->setPartialRootPath(GeneralUtility::getFileAbsFileName('EXT:' . $this->extensionKey . '/Resources/Private/Partials'));
+        $view->setLayoutRootPaths(array(GeneralUtility::getFileAbsFileName('EXT:' . $this->extensionKey . '/Resources/Private/Layouts')));
+        $view->setPartialRootPaths(array(GeneralUtility::getFileAbsFileName('EXT:' . $this->extensionKey . '/Resources/Private/Partials')));
         return $view;
     }
 

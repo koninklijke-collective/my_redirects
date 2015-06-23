@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.0">
+    <file source-language="en" datatype="plaintext" original="messages" date="2013-10-21T09:49:32Z"
+          product-name="my_redirects">
+        <header/>
+        <body>
+            <trans-unit id="url.description">
+                <source>Base url, which should redirect</source>
+            </trans-unit>
+            <trans-unit id="domain.description">
+                <source>Configured domain to be active; so [domain]/[from], default for all domains</source>
+            </trans-unit>
+            <trans-unit id="destination.description">
+                <source>Page ID or static location</source>
+            </trans-unit>
+            <trans-unit id="destination.details">
+                <source>Page ID: Integer
+Url: Starting with / or full http:// link</source>
+            </trans-unit>
+            <trans-unit id="http_response.description">
+                <source>HTTP/1.1 Header response code</source>
+            </trans-unit>
+            <trans-unit id="http_response.details">
+                <source><![CDATA[<dl>
+                <dt>For more information check the Wiki</dt>
+                <dd><a href="http://en.wikipedia.org/wiki/URL_redirection#HTTP_status_codes_3xx">http://en.wikipedia.org/wiki/URL_redirection#HTTP_status_codes_3xx</a></dd>
+                </dl>]]></source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

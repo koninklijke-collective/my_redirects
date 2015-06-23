@@ -128,7 +128,7 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
     public function queryByPathAndDomain($path, $domain = 0, $fields = 'uid, destination, http_response, domain')
     {
         if (!empty($path)) {
-            $hash = GeneralUtility::md5int($path);
+            $hash = $this->generateUrlHash($path);
             return $this->getDatabaseConnection()->exec_SELECTgetSingleRow(
                 $fields,
                 $this->redirectTable,
@@ -171,7 +171,7 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
             $destination = '/index.php?id=' . $destination;
         }
 
-        header('X-Redirect-Handler: my_redirects');
+        header('X-Redirect-Handler: my_redirects:' . $redirect['uid']);
 
         // Get response code constant from core
         $constantLookUp = '\TYPO3\CMS\Core\Utility\HttpUtility::HTTP_STATUS_' . $redirect['http_response'];
@@ -183,11 +183,11 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
      * Generate the Url Hash
      *
      * @param string $url
-     * @return integer
+     * @return string
      */
     public function generateUrlHash($url)
     {
-        return \TYPO3\CMS\Core\Utility\GeneralUtility::md5int($url);
+        return sha1($url);
     }
 
     /**
