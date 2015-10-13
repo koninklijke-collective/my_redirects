@@ -16,7 +16,7 @@ EXT: My Redirects
     my_redirects
 
 :Version:
-    1.1.3
+    |version|
 
 :Language:
     en
