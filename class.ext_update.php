@@ -67,7 +67,8 @@ class ext_update
     /**
      * Calculate hashes based on given url
      */
-    protected function calculateHashes() {
+    protected function calculateHashes()
+    {
         $hashed = 0;
         $table = 'tx_myredirects_domain_model_redirect';
         $res = $this->getDatabaseConnection()->exec_SELECTquery(
@@ -196,6 +197,12 @@ class ext_update
                 $pageId = (int) str_replace('id=', '', $urlParameters['query']);
                 if ($pageId > 0) {
                     $url = $pageId;
+                }
+            } elseif (class_exists('TYPO3\CMS\Core\Utility\MathUtility')
+                && method_exists('TYPO3\CMS\Core\Utility\MathUtility', 'canBeInterpretedAsInteger')
+            ) {
+                if (\TYPO3\CMS\Core\Utility\MathUtility::canBeInterpretedAsInteger($urlParameters['query'])) {
+                    $url = $urlParameters['query'];
                 }
             }
         }
