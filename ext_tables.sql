@@ -22,5 +22,5 @@ CREATE TABLE tx_myredirects_domain_model_redirect (
     inactive_reason text,
 
     PRIMARY KEY (uid),
-    UNIQUE KEY active(url_hash,domain)
+    UNIQUE KEY active (url_hash,domain)
 );
