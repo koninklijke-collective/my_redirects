@@ -98,7 +98,6 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
 
             curl_exec($ch);
             $curlInfo = curl_getinfo($ch);
-            curl_close($ch);
 
             if ($curlInfo['http_code'] > 0) {
                 $info['forwards'][] = $url;
@@ -107,6 +106,7 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
                 if (curl_errno($ch)) {
                     $info['error']['id'] = curl_errno($ch);
                     $info['error']['message'] = curl_error($ch);
+                    curl_close($ch);
                 } else {
                     $info['total_time'] += $curlInfo['total_time'];
                     if ($curlInfo['http_code'] >= 300 && $curlInfo['http_code'] < 400 && isset($curlInfo['redirect_url'])) {
