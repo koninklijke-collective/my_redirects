@@ -98,7 +98,6 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
 
             curl_exec($ch);
             $curlInfo = curl_getinfo($ch);
-            curl_close($ch);
 
             if ($curlInfo['http_code'] > 0) {
                 $info['forwards'][] = $url;
@@ -114,6 +113,7 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
                     }
                 }
             }
+            curl_close($ch);
         }
     }
 

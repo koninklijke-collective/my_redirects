@@ -106,6 +106,7 @@ $TCA['tx_myredirects_domain_model_redirect'] = array(
             'label' => 'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:tx_myredirects_domain_model_redirect.http_response',
             'config' => array(
                 'type' => 'select',
+                'renderType' => 'selectSingle',
                 'size' => 1,
                 'items' => array(
                     array(
@@ -137,6 +138,7 @@ $TCA['tx_myredirects_domain_model_redirect'] = array(
             'label' => 'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:tx_myredirects_domain_model_redirect.domain',
             'config' => array(
                 'type' => 'select',
+                'renderType' => 'selectSingle',
                 'size' => 1,
                 'items' => array(
                     array(
