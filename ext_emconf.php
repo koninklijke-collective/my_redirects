@@ -4,7 +4,7 @@ $EM_CONF[$_EXTKEY] = array(
     'title' => 'My Redirects',
     'description' => 'Maintain your own redirects in the backend',
     'category' => 'module',
-    'version' => '1.2.0',
+    'version' => '1.3.0',
     'state' => 'stable',
     'uploadFolder' => false,
     'clearCacheOnLoad' => true,
@@ -18,5 +18,10 @@ $EM_CONF[$_EXTKEY] = array(
         ),
         'conflicts' => array(),
         'suggests' => array(),
+    ),
+    'autoload' => array(
+        'psr-4' => array(
+            'Serfhos\\MyRedirects\\' => 'Classes'
+        )
     ),
 );
