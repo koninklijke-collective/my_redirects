@@ -57,13 +57,10 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
                 } else {
                     $redirect->setInactiveReason('Unknown: ' . var_export($details, true));
                 }
-            }
-
-            if ($details['response']['url'] == $url) {
+            } elseif ($details['response']['url'] == $url) {
                 $active = false;
                 $redirect->setInactiveReason('Redirect got stuck, could be timeout');
             }
-
             $redirect->setActive($active);
             $redirect->setLastChecked(new \DateTime());
 
@@ -95,6 +92,9 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
             // Some sites need a user-agent
             curl_setopt($ch, CURLOPT_USERAGENT, 'Serfhos.com: Redirect Lookup/1.0');
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                'X-REDIRECT-SERVICE: 1'
+            ));
 
             curl_exec($ch);
             $curlInfo = curl_getinfo($ch);
@@ -150,21 +150,23 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
      */
     public function handleRedirect($redirect)
     {
-        // Update statistics
-        $updateFields = array(
-            'counter' => 'counter+1',
-            'last_hit' => time(),
-            'last_referrer' => GeneralUtility::getIndpEnv('HTTP_REFERER')
-        );
-        // Remove empty values
-        $updateFields = array_filter($updateFields);
+        if ((bool) $_SERVER['HTTP_X_REDIRECT_SERVICE'] === false) {
+            // Update statistics
+            $updateFields = array(
+                'counter' => 'counter+1',
+                'last_hit' => time(),
+                'last_referrer' => GeneralUtility::getIndpEnv('HTTP_REFERER')
+            );
+            // Remove empty values
+            $updateFields = array_filter($updateFields);
 
-        $this->getDatabaseConnection()->exec_UPDATEquery(
-            $this->redirectTable,
-            'uid = ' . (int) $redirect['uid'],
-            $updateFields,
-            array('counter')
-        );
+            $this->getDatabaseConnection()->exec_UPDATEquery(
+                $this->redirectTable,
+                'uid = ' . (int) $redirect['uid'],
+                $updateFields,
+                array('counter')
+            );
+        }
 
         $destination = $redirect['destination'];
         if (MathUtility::canBeInterpretedAsInteger($destination)) {
