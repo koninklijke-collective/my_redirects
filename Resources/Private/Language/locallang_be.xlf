@@ -19,10 +19,13 @@
                 <source>To</source>
             </trans-unit>
             <trans-unit id="tx_myredirects_domain_model_redirect.last_referrer">
-                <source>Last Referrer</source>
+                <source>Last Known Referrer</source>
             </trans-unit>
             <trans-unit id="tx_myredirects_domain_model_redirect.counter">
                 <source>Total Hits</source>
+            </trans-unit>
+            <trans-unit id="tx_myredirects_domain_model_redirect.last_hit">
+                <source>Last Hit</source>
             </trans-unit>
             <trans-unit id="tx_myredirects_domain_model_redirect.http_response">
                 <source>Response code of redirect</source>

@@ -36,17 +36,6 @@ class DomainsViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHel
     }
 
     /**
-     * @return \TYPO3\CMS\Extbase\Object\ObjectManager
-     */
-    protected function getObjectManager()
-    {
-        if (!isset($this->objectManager)) {
-            $this->objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
-        }
-        return $this->objectManager;
-    }
-
-    /**
      * @return \Serfhos\MyRedirects\Service\DomainService
      */
     protected function getDomainService()
@@ -55,5 +44,16 @@ class DomainsViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHel
             $this->domainService = $this->getObjectManager()->get('Serfhos\\MyRedirects\\Service\\DomainService');
         }
         return $this->domainService;
+    }
+
+    /**
+     * @return \TYPO3\CMS\Extbase\Object\ObjectManager
+     */
+    protected function getObjectManager()
+    {
+        if (!isset($this->objectManager)) {
+            $this->objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+        }
+        return $this->objectManager;
     }
 }

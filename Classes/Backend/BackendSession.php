@@ -55,6 +55,17 @@ class BackendSession
     }
 
     /**
+     * Save the provided array into the session
+     *
+     * @param array $sessionArray
+     * @return void
+     */
+    protected function saveSessionData(array $sessionArray)
+    {
+        $this->backendUserAuthentication->setAndSaveSessionData($this->key, serialize($sessionArray));
+    }
+
+    /**
      * Returns the session contents
      *
      * @param string $key
@@ -81,16 +92,5 @@ class BackendSession
     public function saveSessionContents($contents)
     {
         $this->saveSessiondata(array('contents' => $contents));
-    }
-
-    /**
-     * Save the provided array into the session
-     *
-     * @param array $sessionArray
-     * @return void
-     */
-    protected function saveSessionData(array $sessionArray)
-    {
-        $this->backendUserAuthentication->setAndSaveSessionData($this->key, serialize($sessionArray));
     }
 }

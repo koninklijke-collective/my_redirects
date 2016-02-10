@@ -1,7 +1,6 @@
 <?php
 namespace Serfhos\MyRedirects\Domain\Repository;
 
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
 /**

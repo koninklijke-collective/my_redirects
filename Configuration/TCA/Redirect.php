@@ -6,7 +6,7 @@ if (!defined('TYPO3_MODE')) {
 $TCA['tx_myredirects_domain_model_redirect'] = array(
     'ctrl' => $TCA['tx_myredirects_domain_model_redirect']['ctrl'],
     'interface' => array(
-        'showRecordFieldList' => 'url_hash, url, destination, last_referrer, counter, http_response, domain_limit, active, last_checked, inactive_reason'
+        'showRecordFieldList' => 'url_hash, url, destination, last_referrer, counter, http_response, domain_limit, active, last_hit, last_checked, inactive_reason'
     ),
     'types' => array(
         0 => array(
@@ -23,7 +23,7 @@ $TCA['tx_myredirects_domain_model_redirect'] = array(
             'showitem' => 'destination, http_response'
         ),
         'visited' => array(
-            'showitem' => 'counter, last_referrer',
+            'showitem' => 'counter, last_hit, last_referrer',
         ),
         'response' => array(
             'showitem' => 'last_checked, inactive_reason',
@@ -75,6 +75,17 @@ $TCA['tx_myredirects_domain_model_redirect'] = array(
                 'size' => 30,
                 'eval' => 'trim',
                 'max' => 65535,
+            )
+        ),
+        'last_hit' => array(
+            'exclude' => 0,
+            'l10n_mode' => 'mergeIfNotBlank',
+            'label' => 'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:tx_myredirects_domain_model_redirect.last_hit',
+            'config' => array(
+                'readOnly' => true,
+                'type' => 'input',
+                'size' => 10,
+                'eval' => 'datetime'
             )
         ),
         'last_referrer' => array(

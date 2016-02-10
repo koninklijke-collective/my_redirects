@@ -72,6 +72,9 @@
             <trans-unit id="redirect.action.error">
                 <source>Reason: '%s' at %s</source>
             </trans-unit>
+            <trans-unit id="redirect.action.last_hit">
+                <source>Last Hit: %s</source>
+            </trans-unit>
             <trans-unit id="redirect.action.delete">
                 <source>Delete redirect</source>
             </trans-unit>

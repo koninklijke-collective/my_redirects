@@ -50,17 +50,6 @@ class RequestController
     }
 
     /**
-     * @return \TYPO3\CMS\Extbase\Object\ObjectManager
-     */
-    protected function getObjectManager()
-    {
-        if (!isset($this->objectManager)) {
-            $this->objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
-        }
-        return $this->objectManager;
-    }
-
-    /**
      * @return \Serfhos\MyRedirects\Service\RedirectService
      */
     protected function getRedirectService()
@@ -69,6 +58,17 @@ class RequestController
             $this->redirectService = $this->getObjectManager()->get('Serfhos\\MyRedirects\\Service\\RedirectService');
         }
         return $this->redirectService;
+    }
+
+    /**
+     * @return \TYPO3\CMS\Extbase\Object\ObjectManager
+     */
+    protected function getObjectManager()
+    {
+        if (!isset($this->objectManager)) {
+            $this->objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+        }
+        return $this->objectManager;
     }
 
     /**
