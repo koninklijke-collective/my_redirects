@@ -358,20 +358,6 @@ class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     }
 
     /**
-     * Return ISO 8601 date
-     *
-     * @return string
-     */
-    public function getLastHitFormatted()
-    {
-        $lastHit = $this->getLastHit();
-        if ($lastHit instanceof \DateTime) {
-            return $lastHit->format('c');
-        }
-        return null;
-    }
-
-    /**
      * Returns the Tstamp
      *
      * @return \DateTime

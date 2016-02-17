@@ -56,8 +56,8 @@
             <trans-unit id="table.header.counter">
                 <source>Hits</source>
             </trans-unit>
-            <trans-unit id="table.header.counter">
-                <source>Hits</source>
+            <trans-unit id="table.header.last_hit">
+                <source>Last Hit</source>
             </trans-unit>
 
             <trans-unit id="redirect.action.edit">

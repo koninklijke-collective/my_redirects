@@ -51,6 +51,9 @@
 
     </td>
     <td class="col-redirect-hits" nowrap="nowrap">
-        <span title="{f:translate(key: 'redirect.action.last_hit', arguments: '{0: redirect.lastHitFormatted}')}">{redirect.counter}</span>
+        {redirect.counter}
+    </td>
+    <td class="col-redirect-last-hit-date" nowrap="nowrap">
+        <f:format.date format="{settings.dateFormat}">{redirect.lastHit}</f:format.date>
     </td>
 </tr>

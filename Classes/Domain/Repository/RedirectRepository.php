@@ -41,6 +41,7 @@ class RedirectRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
                 $newOrderings['url'] = $direction;
                 break;
             case 'destination':
+            case 'last_hit':
             case 'counter':
             case 'has_moved':
                 $newOrderings[$order] = $direction;
