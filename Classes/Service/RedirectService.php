@@ -6,6 +6,11 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\HttpUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 
+/**
+ * Service: Handle Redirects
+ *
+ * @package Serfhos\MyRedirects\Service
+ */
 class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
 {
 
@@ -13,6 +18,11 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
      * @var string
      */
     protected $redirectTable = 'tx_myredirects_domain_model_redirect';
+
+    /**
+     * @var array
+     */
+    protected $keptQueryParameters = [];
 
     /**
      * Do an active lookup for redirect
@@ -171,6 +181,14 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
         $destination = $redirect['destination'];
         if (MathUtility::canBeInterpretedAsInteger($destination)) {
             $destination = '/index.php?id=' . $destination;
+            if (!empty($this->keptQueryParameters)) {
+                $destination .= '&' . http_build_query($this->keptQueryParameters);
+            }
+        } elseif (!empty($this->keptQueryParameters)) {
+            $urlParts = parse_url($destination);
+            $urlParts['query'] .= '&' . http_build_query($this->keptQueryParameters);
+            $urlParts['query'] = trim($urlParts['query'], '&');
+            $destination = HttpUtility::buildUrl($urlParts);
         }
 
         header('X-Redirect-Handler: my_redirects:' . $redirect['uid']);
@@ -194,10 +212,36 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
             // Remove trailing slash from url generation
             $urlParts['path'] = rtrim($urlParts['path'], '/');
         }
+        if (!empty($urlParts['query'])) {
+            $excludedQueryParameters = $this->getCHashExcludedParameters();
+            if (!empty($excludedQueryParameters)) {
+                parse_str($urlParts['query'], $queryParameters);
+                if (!empty($queryParameters)) {
+                    foreach ($queryParameters as $key => $value) {
+                        if (in_array($key, $excludedQueryParameters)) {
+                            unset($queryParameters[$key]);
+                            $this->keptQueryParameters[$key] = $value;
+                        }
+                    }
+
+                    $urlParts['query'] = (!empty($queryParameters) ? http_build_query($queryParameters) : null);
+                }
+            }
+        }
         $url = HttpUtility::buildUrl($urlParts);
         // Make sure the hash is case-insensitive
         $url = strtolower($url);
         return sha1($url);
+    }
+
+    /**
+     * Get configured excluded parameters to keep in redirect
+     *
+     * @return array
+     */
+    protected function getCHashExcludedParameters()
+    {
+        return GeneralUtility::trimExplode(',', $GLOBALS['TYPO3_CONF_VARS']['FE']['cHashExcludedParameters'], true);
     }
 
     /**
