@@ -22,7 +22,7 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
     /**
      * @var array
      */
-    protected $keptQueryParameters = [];
+    protected $keptQueryParameters = array();
 
     /**
      * Do an active lookup for redirect
