@@ -3,6 +3,11 @@ namespace Serfhos\MyRedirects\Hook;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+/**
+ * DataHandler: Hook to update needed lookup variables
+ *
+ * @package Serfhos\MyRedirects\Hook
+ */
 class DataHandlerHook
 {
 
