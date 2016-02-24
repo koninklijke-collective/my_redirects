@@ -181,8 +181,6 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
 
         $destination = $redirect['destination'];
         if (MathUtility::canBeInterpretedAsInteger($destination)) {
-            // Invoke TSFE with correct page
-            $this->getTypoScriptFrontendController((int) $destination);
             $destination = $this->generateLink((int) $destination);
         }
 
@@ -246,7 +244,7 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
     {
         $link = null;
         $page = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecord('pages', $pageId);
-        $linkData = $this->getTypoScriptFrontendController()->tmpl->linkData(
+        $linkData = $this->getTypoScriptFrontendController($pageId)->tmpl->linkData(
             $page,
             '',
             false,
@@ -283,9 +281,8 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
      */
     protected function getTypoScriptFrontendController($pageId = 0)
     {
-        if ($GLOBALS['TSFE'] === null) {
-            EidUtility::initializeTypoScriptFrontendController($pageId);
-        }
+        // Check if GLOBALS['TSFE'] is initiated correctly
+        EidUtility::initializeTypoScriptFrontendController($pageId);
         return $GLOBALS['TSFE'];
     }
 
