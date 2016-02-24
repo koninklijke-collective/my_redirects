@@ -2,6 +2,7 @@
 namespace Serfhos\MyRedirects\Service;
 
 use Serfhos\MyRedirects\Domain\Model\Redirect;
+use Serfhos\MyRedirects\Utility\EidUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\HttpUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
@@ -180,11 +181,12 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
 
         $destination = $redirect['destination'];
         if (MathUtility::canBeInterpretedAsInteger($destination)) {
-            $destination = '/index.php?id=' . $destination;
-            if (!empty($this->keptQueryParameters)) {
-                $destination .= '&' . http_build_query($this->keptQueryParameters);
-            }
-        } elseif (!empty($this->keptQueryParameters)) {
+            // Invoke TSFE with correct page
+            $this->getTypoScriptFrontendController((int) $destination);
+            $destination = $this->generateLink((int) $destination);
+        }
+
+        if (!empty($this->keptQueryParameters)) {
             $urlParts = parse_url($destination);
             $urlParts['query'] .= '&' . http_build_query($this->keptQueryParameters);
             $urlParts['query'] = trim($urlParts['query'], '&');
@@ -235,6 +237,29 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
     }
 
     /**
+     * Generate link based on current page information
+     *
+     * @param integer $pageId
+     * @return string
+     */
+    protected function generateLink($pageId)
+    {
+        $link = null;
+        $page = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecord('pages', $pageId);
+        $linkData = $this->getTypoScriptFrontendController()->tmpl->linkData(
+            $page,
+            '',
+            false,
+            ''
+        );
+        if (!empty($linkData) && isset($linkData['totalURL'])) {
+            $link = $linkData['totalURL'];
+        }
+
+        return $link;
+    }
+
+    /**
      * Get configured excluded parameters to keep in redirect
      *
      * @return array
@@ -250,6 +275,18 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
     protected function getDatabaseConnection()
     {
         return $GLOBALS['TYPO3_DB'];
+    }
+
+    /**
+     * @param integer $pageId
+     * @return \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController
+     */
+    protected function getTypoScriptFrontendController($pageId = 0)
+    {
+        if ($GLOBALS['TSFE'] === null) {
+            EidUtility::initializeTypoScriptFrontendController($pageId);
+        }
+        return $GLOBALS['TSFE'];
     }
 
     /**
