@@ -3,8 +3,26 @@ if (!defined('TYPO3_MODE')) {
     die ('Access denied.');
 }
 
-$TCA['tx_myredirects_domain_model_redirect'] = array(
-    'ctrl' => $TCA['tx_myredirects_domain_model_redirect']['ctrl'],
+return array(
+    'ctrl' => array(
+        'title' => 'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:tx_myredirects_domain_model_redirect.singular',
+        'groupName' => 'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:tx_myredirects_domain_model_redirect.plural',
+        'label' => 'url',
+        'tstamp' => 'tstamp',
+        'crdate' => 'crdate',
+        'cruser_id' => 'cruser_id',
+        'editlock' => 'editlock',
+        'dividers2tabs' => true,
+        'iconfile' => 'EXT:my_redirects/Resources/Public/Icons/tx_myredirects_domain_model_redirect.png',
+        'rootLevel' => true,
+        'canNotCollapse' => true,
+        'hideTable' => true, // don't show in listing..
+        'security' => array(
+            'ignoreWebMountRestriction' => true,
+            'ignoreRootLevelRestriction' => true,
+        ),
+        'searchFields' => 'url,destination'
+    ),
     'interface' => array(
         'showRecordFieldList' => 'url_hash, url, destination, last_referrer, counter, http_response, domain_limit, active, last_hit, last_checked, inactive_reason'
     ),
