@@ -99,7 +99,6 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
     protected function initializeAction()
     {
         parent::initializeAction();
-
         $this->backendSession
             ->setBackendUserAuthentication($GLOBALS['BE_USER'])
             ->createSession($this->sessionKey);
@@ -116,7 +115,7 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
 
         if (!isset($this->settings['staticTemplate'])) {
             $this->controllerContext = $this->buildControllerContext();
-            $this->addFlashMessage(
+            $this->enqueueFlashMessage(
                 LocalizationUtility::translate('controller.initialize.error.no_typoscript.description', 'my_redirects'),
                 LocalizationUtility::translate('controller.initialize.error.no_typoscript.title', 'my_redirects'),
                 \TYPO3\CMS\Core\Messaging\AbstractMessage::ERROR
@@ -190,7 +189,7 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
             $this->getRedirectService()->activeLookup($redirect);
             $this->getRedirectRepository()->update($redirect);
 
-            $this->addFlashMessage(
+            $this->enqueueFlashMessage(
                 LocalizationUtility::translate('controller.action.success.lookup.description', 'my_redirects',
                     array('/' . $redirect->getUrl())),
                 LocalizationUtility::translate('controller.action.success.lookup.title', 'my_redirects'),
@@ -214,7 +213,7 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
      */
     public function deleteAction($redirect = null, $returnUrl = '')
     {
-        $this->addFlashMessage(
+        $this->enqueueFlashMessage(
             LocalizationUtility::translate('controller.action.success.delete.description', 'my_redirects'),
             LocalizationUtility::translate('controller.action.success.delete.title', 'my_redirects')
         );
@@ -225,6 +224,40 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
         } else {
             $this->redirect('list');
         }
+    }
+
+    /**
+     * Handle own enqueue for flash messages
+     *
+     * @param string $messageBody
+     * @param string $messageTitle
+     * @param int $severity
+     * @param bool $storeInSession
+     * @throws \TYPO3\CMS\Core\Exception
+     */
+    public function enqueueFlashMessage($messageBody, $messageTitle = '', $severity = \TYPO3\CMS\Core\Messaging\AbstractMessage::OK, $storeInSession = true)
+    {
+        if (!is_string($messageBody)) {
+            throw new \InvalidArgumentException('The message body must be of type string, "' . gettype($messageBody) . '" given.', 1243258395);
+        }
+        /* @var \TYPO3\CMS\Core\Messaging\FlashMessage $flashMessage */
+        $flashMessage = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+            'TYPO3\\CMS\\Core\\Messaging\\FlashMessage', $messageBody, $messageTitle, $severity, $storeInSession
+        );
+        $this->getFlashMessageQueue()->enqueue($flashMessage);
+    }
+
+    /**
+     * @return \TYPO3\CMS\Core\Messaging\FlashMessageQueue
+     */
+    protected function getFlashMessageQueue()
+    {
+        if (!isset($this->flashMessageQueue)) {
+            /** @var \TYPO3\CMS\Core\Messaging\FlashMessageService $flashMessageService */
+            $flashMessageService = $this->getObjectManager()->get('TYPO3\\CMS\\Core\\Messaging\\FlashMessageService');
+            $this->flashMessageQueue = $flashMessageService->getMessageQueueByIdentifier('myredirects.errors');
+        }
+        return $this->flashMessageQueue;
     }
 
     /**

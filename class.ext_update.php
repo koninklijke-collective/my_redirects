@@ -30,7 +30,7 @@ class ext_update
      */
     public function access()
     {
-        return true;
+        return $this->getBackendUserAuthentication()->isAdmin();
     }
 
     /**
@@ -66,6 +66,8 @@ class ext_update
 
     /**
      * Calculate hashes based on given url
+     *
+     * @return void
      */
     protected function calculateHashes()
     {
@@ -109,7 +111,6 @@ class ext_update
     /**
      * Migrate data from realurl to this extension
      *
-     * @throws \TYPO3\CMS\Core\Exception
      * @return void
      */
     protected function migrateRedirectsFromRealUrl()
@@ -211,8 +212,6 @@ class ext_update
     }
 
     /**
-     * Get the ObjectManager
-     *
      * @return \TYPO3\CMS\Extbase\Object\ObjectManager
      */
     protected function getObjectManager()
@@ -221,8 +220,6 @@ class ext_update
     }
 
     /**
-     * Get the DatabaseConnection
-     *
      * @return \TYPO3\CMS\Core\Database\DatabaseConnection
      */
     protected function getDatabaseConnection()
@@ -231,8 +228,6 @@ class ext_update
     }
 
     /**
-     * Get the RedirectService
-     *
      * @return \Serfhos\MyRedirects\Service\RedirectService
      */
     protected function getRedirectService()
@@ -241,8 +236,6 @@ class ext_update
     }
 
     /**
-     * Get the BackendAuthentication
-     *
      * @return \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
      */
     protected function getBackendUserAuthentication()
@@ -271,7 +264,7 @@ class ext_update
         if (!isset($this->flashMessageQueue)) {
             /** @var \TYPO3\CMS\Core\Messaging\FlashMessageService $flashMessageService */
             $flashMessageService = $this->getObjectManager()->get('TYPO3\\CMS\\Core\\Messaging\\FlashMessageService');
-            $this->flashMessageQueue = $flashMessageService->getMessageQueueByIdentifier();
+            $this->flashMessageQueue = $flashMessageService->getMessageQueueByIdentifier('myredirects.errors');
         }
         return $this->flashMessageQueue;
     }

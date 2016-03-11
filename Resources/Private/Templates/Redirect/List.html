@@ -10,11 +10,21 @@
 </f:section>
 
 <f:section name="Content">
-    <s:flashMessages renderMode="div" class="my-redirects-messages"/>
 
     <h1>
         <f:translate key="redirect.plural"/>
     </h1>
+
+    <s:flashMessages>
+        <div class="typo3-messages my-redirects-messages">
+            <f:for each="{flashMessages}" as="message">
+                <div class="typo3-message {message.class}">
+                    <div class="message-title">{message.render}</div>
+                    <div class="message-body">{message.message}</div>
+                </div>
+            </f:for>
+        </div>
+    </s:flashMessages>
 
     <h2>
         <f:translate key="redirect.filter"/>
@@ -80,44 +90,44 @@
         <div class="table-fit">
             <table width="100%" cellspacing="0" cellpadding="0" border="0" class="typo3-dblist table table-striped table-hover">
                 <thead>
-                    <tr class="c-table-row-spacer">
-                        <td nowrap="nowrap" class="col-icon"><img width="1" height="8" alt="" src="/clear.gif"></td>
-                        <td nowrap="nowrap" class="col-redirect-from"><img width="200" height="1" alt="" src="/clear.gif"></td>
-                        <td nowrap="nowrap" class="col-redirect-to"><img width="50" height="1" alt="" src="/clear.gif"></td>
-                        <td nowrap="nowrap" class="col-control"></td>
-                        <td nowrap="nowrap" class="col-redirect-hits"><img width="10" height="1" alt="" src="/clear.gif"></td>
-                    </tr>
+                <tr class="c-table-row-spacer">
+                    <td nowrap="nowrap" class="col-icon"><img width="1" height="8" alt="" src="/clear.gif"></td>
+                    <td nowrap="nowrap" class="col-redirect-from"><img width="200" height="1" alt="" src="/clear.gif"></td>
+                    <td nowrap="nowrap" class="col-redirect-to"><img width="50" height="1" alt="" src="/clear.gif"></td>
+                    <td nowrap="nowrap" class="col-control"></td>
+                    <td nowrap="nowrap" class="col-redirect-hits"><img width="10" height="1" alt="" src="/clear.gif"></td>
+                </tr>
 
-                    <tr class="t3-row-header">
-                        <td nowrap="nowrap" class="col-icon"></td>
-                        <td nowrap="nowrap" class="col-redirect-from" colspan="5">
-                            <strong>
-                                <span class="c-table"><f:translate key="redirect.plural"/></span>
-                                ({redirects -> f:count()})
-                            </strong>
-                        </td>
-                    </tr>
+                <tr class="t3-row-header">
+                    <td nowrap="nowrap" class="col-icon"></td>
+                    <td nowrap="nowrap" class="col-redirect-from" colspan="5">
+                        <strong>
+                            <span class="c-table"><f:translate key="redirect.plural"/></span>
+                            ({redirects -> f:count()})
+                        </strong>
+                    </td>
+                </tr>
 
-                    <tr class="c-headLine">
-                        <td nowrap="nowrap" class="col-icon"></td>
-                        <td nowrap="nowrap" class="col-title col-redirect-from">
-                            <f:render section="ListHeaderSorting"
-                                arguments="{type: 'url', order: order, direction: direction}"/>
-                        </td>
-                        <td nowrap="nowrap" class="col-title col-redirect-to">
-                            <f:render section="ListHeaderSorting"
-                                arguments="{type: 'destination', order: order, direction: direction}"/>
-                        </td>
-                        <td nowrap="nowrap" class="col-control"></td>
-                        <td nowrap="nowrap" class="col-redirect-hits">
-                            <f:render section="ListHeaderSorting"
-                                arguments="{type: 'counter', order: order, direction: direction}"/>
-                        </td>
-                        <td nowrap="nowrap" class="col-redirect-last-hit-date">
-                            <f:render section="ListHeaderSorting"
-                                arguments="{type: 'last_hit', order: order, direction: direction}"/>
-                        </td>
-                    </tr>
+                <tr class="c-headLine">
+                    <td nowrap="nowrap" class="col-icon"></td>
+                    <td nowrap="nowrap" class="col-title col-redirect-from">
+                        <f:render section="ListHeaderSorting"
+                            arguments="{type: 'url', order: order, direction: direction}"/>
+                    </td>
+                    <td nowrap="nowrap" class="col-title col-redirect-to">
+                        <f:render section="ListHeaderSorting"
+                            arguments="{type: 'destination', order: order, direction: direction}"/>
+                    </td>
+                    <td nowrap="nowrap" class="col-control"></td>
+                    <td nowrap="nowrap" class="col-redirect-hits">
+                        <f:render section="ListHeaderSorting"
+                            arguments="{type: 'counter', order: order, direction: direction}"/>
+                    </td>
+                    <td nowrap="nowrap" class="col-redirect-last-hit-date">
+                        <f:render section="ListHeaderSorting"
+                            arguments="{type: 'last_hit', order: order, direction: direction}"/>
+                    </td>
+                </tr>
                 </thead>
                 <tbody>
 

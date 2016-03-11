@@ -1,47 +1,60 @@
 <?php
 namespace Serfhos\MyRedirects\ViewHelper;
 
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /**
  * Display core flash messages
  *
  * @package Serfhos\MyRedirects\ViewHelpers
  */
-class FlashMessagesViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\FlashMessagesViewHelper
+class FlashMessagesViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
 {
-
-    /**
-     * @var \TYPO3\CMS\Core\Messaging\FlashMessageService
-     * @inject
-     */
-    protected $flashMessageService;
 
     /**
      * Renders FlashMessages and flushes the FlashMessage queue
      * Note: This disables the current page cache in order to prevent FlashMessage output
      * from being cached.
      *
-     * @see \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController::no_cache
-     * @param string $renderMode one of the RENDER_MODE_* constants
+     * @param string $as
      * @return string rendered Flash Messages, if there are any.
      */
-    public function render($renderMode = self::RENDER_MODE_UL)
+    public function render($as = 'flashMessages')
     {
-        $content = parent::render($renderMode);
+        $content = null;
 
-        // get core messages and do the same rendering
-
-        $flashMessages = $this->flashMessageService->getMessageQueueByIdentifier()->getAllMessagesAndFlush();
+        $flashMessages = $this->getFlashMessageQueue()->getAllMessagesAndFlush();
         if (!empty($flashMessages)) {
-            switch ($renderMode) {
-                case self::RENDER_MODE_UL:
-                    $content .= $this->renderUl($flashMessages);
-                    break;
-                case self::RENDER_MODE_DIV:
-                    $content .= $this->renderDiv($flashMessages);
-                    break;
-            }
+            $templateVariableContainer = $this->renderingContext->getTemplateVariableContainer();
+            $templateVariableContainer->add($as, $flashMessages);
+            $content = $this->renderChildren();
+            $templateVariableContainer->remove($as);
         }
 
         return $content;
+    }
+
+    /**
+     * @return \TYPO3\CMS\Core\Messaging\FlashMessageQueue
+     */
+    protected function getFlashMessageQueue()
+    {
+        if (!isset($this->flashMessageQueue)) {
+            /** @var \TYPO3\CMS\Core\Messaging\FlashMessageService $flashMessageService */
+            $flashMessageService = $this->getObjectManager()->get('TYPO3\\CMS\\Core\\Messaging\\FlashMessageService');
+            $this->flashMessageQueue = $flashMessageService->getMessageQueueByIdentifier('myredirects.errors');
+        }
+        return $this->flashMessageQueue;
+    }
+
+    /**
+     * @return \TYPO3\CMS\Extbase\Object\ObjectManager
+     */
+    protected function getObjectManager()
+    {
+        if (!isset($this->objectManager)) {
+            $this->objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+        }
+        return $this->objectManager;
     }
 }
