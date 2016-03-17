@@ -243,8 +243,9 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
     protected function generateLink($pageId)
     {
         $link = null;
+        $controller = $this->getTypoScriptFrontendController($pageId);
         $page = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecord('pages', $pageId);
-        $linkData = $this->getTypoScriptFrontendController($pageId)->tmpl->linkData(
+        $linkData = $controller->tmpl->linkData(
             $page,
             '',
             false,
