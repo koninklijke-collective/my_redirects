@@ -1,7 +1,7 @@
 <?php
-namespace Serfhos\MyRedirects\Controller;
+namespace KoninklijkeCollective\MyRedirects\Controller;
 
-use Serfhos\MyRedirects\Domain\Model\Redirect;
+use KoninklijkeCollective\MyRedirects\Domain\Model\Redirect;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
@@ -11,7 +11,7 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 /**
  * Backend Module Controller: Redirects
  *
- * @package Serfhos\MyRedirects\Controller
+ * @package KoninklijkeCollective\MyRedirects\Controller
  */
 class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
 {
@@ -24,19 +24,19 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
     protected $page = array();
 
     /**
-     * @var \Serfhos\MyRedirects\Domain\Repository\RedirectRepository
+     * @var \KoninklijkeCollective\MyRedirects\Domain\Repository\RedirectRepository
      * @inject
      */
     protected $redirectRepository;
 
     /**
-     * @var \Serfhos\MyRedirects\Service\RedirectService
+     * @var \KoninklijkeCollective\MyRedirects\Service\RedirectService
      * @inject
      */
     protected $redirectService;
 
     /**
-     * @var \Serfhos\MyRedirects\Backend\BackendSession
+     * @var \KoninklijkeCollective\MyRedirects\Backend\BackendSession
      * @inject
      */
     protected $backendSession;
@@ -179,7 +179,7 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
     /**
      * Action: Check if redirect is still active and works as intended
      *
-     * @param \Serfhos\MyRedirects\Domain\Model\Redirect $redirect
+     * @param \KoninklijkeCollective\MyRedirects\Domain\Model\Redirect $redirect
      * @param string $returnUrl
      * @return void
      */
@@ -207,7 +207,7 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
     /**
      * Action: Delete
      *
-     * @param \Serfhos\MyRedirects\Domain\Model\Redirect $redirect
+     * @param \KoninklijkeCollective\MyRedirects\Domain\Model\Redirect $redirect
      * @param string $returnUrl
      * @return void
      */
@@ -272,23 +272,23 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
     }
 
     /**
-     * @return \Serfhos\MyRedirects\Domain\Repository\RedirectRepository
+     * @return \KoninklijkeCollective\MyRedirects\Domain\Repository\RedirectRepository
      */
     protected function getRedirectRepository()
     {
         if (!isset($this->redirectRepository)) {
-            $this->redirectRepository = $this->getObjectManager()->get('Serfhos\\MyRedirects\\Domain\\Repository\\RedirectRepository');
+            $this->redirectRepository = $this->getObjectManager()->get('KoninklijkeCollective\\MyRedirects\\Domain\\Repository\\RedirectRepository');
         }
         return $this->redirectRepository;
     }
 
     /**
-     * @return \Serfhos\MyRedirects\Service\RedirectService
+     * @return \KoninklijkeCollective\MyRedirects\Service\RedirectService
      */
     protected function getRedirectService()
     {
         if (!isset($this->redirectService)) {
-            $this->redirectService = $this->getObjectManager()->get('Serfhos\\MyRedirects\\Service\\RedirectService');
+            $this->redirectService = $this->getObjectManager()->get('KoninklijkeCollective\\MyRedirects\\Service\\RedirectService');
         }
         return $this->redirectService;
     }

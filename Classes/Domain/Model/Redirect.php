@@ -1,5 +1,5 @@
 <?php
-namespace Serfhos\MyRedirects\Domain\Model;
+namespace KoninklijkeCollective\MyRedirects\Domain\Model;
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
@@ -7,10 +7,12 @@ use TYPO3\CMS\Core\Utility\MathUtility;
 /**
  * Model: Redirect
  *
- * @package Serfhos\MyRedirects\Domain\Model
+ * @package KoninklijkeCollective\MyRedirects\Domain\Model
  */
 class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
 {
+
+    const TABLE = 'tx_myredirects_domain_model_redirect';
 
     /**
      * @var \DateTime

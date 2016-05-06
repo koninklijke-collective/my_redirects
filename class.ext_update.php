@@ -7,7 +7,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 /**
  * Update script
  *
- * @package Serfhos\MyRedirects
+ * @package KoninklijkeCollective\MyRedirects
  */
 class ext_update
 {
@@ -228,11 +228,11 @@ class ext_update
     }
 
     /**
-     * @return \Serfhos\MyRedirects\Service\RedirectService
+     * @return \KoninklijkeCollective\MyRedirects\Service\RedirectService
      */
     protected function getRedirectService()
     {
-        return $this->getObjectManager()->get('Serfhos\\MyRedirects\\Service\\RedirectService');
+        return $this->getObjectManager()->get('KoninklijkeCollective\\MyRedirects\\Service\\RedirectService');
     }
 
     /**

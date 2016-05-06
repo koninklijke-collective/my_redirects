@@ -1,5 +1,5 @@
 <?php
-namespace Serfhos\MyRedirects\Utility;
+namespace KoninklijkeCollective\MyRedirects\Utility;
 
 use TYPO3\CMS\Core\TypoScript\TemplateService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -12,7 +12,7 @@ use TYPO3\CMS\Frontend\Page\PageRepository;
 /**
  * Utility: Initialize objects inside EID usage
  *
- * @package Serfhos\MyRedirects\Utility
+ * @package KoninklijkeCollective\MyRedirects\Utility
  */
 class EidUtility
 {

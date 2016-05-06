@@ -1,12 +1,12 @@
 <?php
-namespace Serfhos\MyRedirects\Backend;
+namespace KoninklijkeCollective\MyRedirects\Backend;
 
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 
 /**
  * Backend session wrapper
  *
- * @package Serfhos\MyRedirects\Backend
+ * @package KoninklijkeCollective\MyRedirects\Backend
  */
 class BackendSession
 {

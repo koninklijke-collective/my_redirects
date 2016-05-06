@@ -1,19 +1,19 @@
 <?php
-namespace Serfhos\MyRedirects\ViewHelper;
+namespace KoninklijkeCollective\MyRedirects\ViewHelper;
 
-use Serfhos\MyRedirects\Domain\Model\Redirect;
+use KoninklijkeCollective\MyRedirects\Domain\Model\Redirect;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Get domain url for output
  *
- * @package Serfhos\MyRedirects\ViewHelpers
+ * @package KoninklijkeCollective\MyRedirects\ViewHelpers
  */
 class DomainUrlViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
 {
 
     /**
-     * @var \Serfhos\MyRedirects\Service\DomainService
+     * @var \KoninklijkeCollective\MyRedirects\Service\DomainService
      * @inject
      */
     protected $domainService;
@@ -21,7 +21,7 @@ class DomainUrlViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewH
     /**
      * Get domain url based on given redirect
      *
-     * @param \Serfhos\MyRedirects\Domain\Model\Redirect $redirect
+     * @param \KoninklijkeCollective\MyRedirects\Domain\Model\Redirect $redirect
      * @return array
      */
     public function render(Redirect $redirect = null)
@@ -50,12 +50,12 @@ class DomainUrlViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewH
     }
 
     /**
-     * @return \Serfhos\MyRedirects\Service\DomainService
+     * @return \KoninklijkeCollective\MyRedirects\Service\DomainService
      */
     protected function getDomainService()
     {
         if (!isset($this->domainService)) {
-            $this->domainService = $this->getObjectManager()->get('Serfhos\\MyRedirects\\Service\\DomainService');
+            $this->domainService = $this->getObjectManager()->get('KoninklijkeCollective\\MyRedirects\\Service\\DomainService');
         }
         return $this->domainService;
     }

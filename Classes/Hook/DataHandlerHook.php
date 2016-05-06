@@ -1,12 +1,12 @@
 <?php
-namespace Serfhos\MyRedirects\Hook;
+namespace KoninklijkeCollective\MyRedirects\Hook;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * DataHandler: Hook to update needed lookup variables
  *
- * @package Serfhos\MyRedirects\Hook
+ * @package KoninklijkeCollective\MyRedirects\Hook
  */
 class DataHandlerHook
 {
@@ -31,11 +31,11 @@ class DataHandlerHook
     }
 
     /**
-     * @return \Serfhos\MyRedirects\Service\RedirectService
+     * @return \KoninklijkeCollective\MyRedirects\Service\RedirectService
      */
     protected function getRedirectService()
     {
-        return $this->getObjectManager()->get('Serfhos\\MyRedirects\\Service\\RedirectService');
+        return $this->getObjectManager()->get('KoninklijkeCollective\\MyRedirects\\Service\\RedirectService');
     }
 
     /**

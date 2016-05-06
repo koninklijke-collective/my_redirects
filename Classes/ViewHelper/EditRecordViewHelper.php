@@ -1,5 +1,5 @@
 <?php
-namespace Serfhos\MyRedirects\ViewHelper;
+namespace KoninklijkeCollective\MyRedirects\ViewHelper;
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;

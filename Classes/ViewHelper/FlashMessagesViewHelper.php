@@ -1,12 +1,12 @@
 <?php
-namespace Serfhos\MyRedirects\ViewHelper;
+namespace KoninklijkeCollective\MyRedirects\ViewHelper;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Display core flash messages
  *
- * @package Serfhos\MyRedirects\ViewHelpers
+ * @package KoninklijkeCollective\MyRedirects\ViewHelpers
  */
 class FlashMessagesViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
 {

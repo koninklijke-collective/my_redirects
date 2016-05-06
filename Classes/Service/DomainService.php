@@ -1,7 +1,7 @@
 <?php
-namespace Serfhos\MyRedirects\Service;
+namespace KoninklijkeCollective\MyRedirects\Service;
 
-use Serfhos\MyRedirects\Domain\Model\Redirect;
+use KoninklijkeCollective\MyRedirects\Domain\Model\Redirect;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -9,7 +9,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 /**
  * Service: Web Domains
  *
- * @package Serfhos\MyRedirects\Utility
+ * @package KoninklijkeCollective\MyRedirects\Utility
  */
 class DomainService implements \TYPO3\CMS\Core\SingletonInterface
 {
@@ -78,7 +78,7 @@ class DomainService implements \TYPO3\CMS\Core\SingletonInterface
     /**
      * Get used domain if configured
      *
-     * @param \Serfhos\MyRedirects\Domain\Model\Redirect $redirect
+     * @param \KoninklijkeCollective\MyRedirects\Domain\Model\Redirect $redirect
      * @return string
      */
     public function getDomainUrlFromRedirect(Redirect $redirect)

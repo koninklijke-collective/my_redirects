@@ -1,12 +1,12 @@
 <?php
-namespace Serfhos\MyRedirects\Domain\Repository;
+namespace KoninklijkeCollective\MyRedirects\Domain\Repository;
 
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
 /**
  * Repository: Redirects
  *
- * @package Serfhos\MyRedirects\Domain\Repository
+ * @package KoninklijkeCollective\MyRedirects\Domain\Repository
  */
 class RedirectRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
 {

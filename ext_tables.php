@@ -5,7 +5,7 @@ if (!defined('TYPO3_MODE')) {
 
 if (TYPO3_MODE === 'BE') {
     \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
-        'Serfhos.' . $_EXTKEY,
+        'KoninklijkeCollective.' . $_EXTKEY,
         'web',
         'my_redirects',
         '',

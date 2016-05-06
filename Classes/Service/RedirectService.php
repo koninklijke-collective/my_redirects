@@ -1,8 +1,8 @@
 <?php
-namespace Serfhos\MyRedirects\Service;
+namespace KoninklijkeCollective\MyRedirects\Service;
 
-use Serfhos\MyRedirects\Domain\Model\Redirect;
-use Serfhos\MyRedirects\Utility\EidUtility;
+use KoninklijkeCollective\MyRedirects\Domain\Model\Redirect;
+use KoninklijkeCollective\MyRedirects\Utility\EidUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\HttpUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
@@ -10,15 +10,10 @@ use TYPO3\CMS\Core\Utility\MathUtility;
 /**
  * Service: Handle Redirects
  *
- * @package Serfhos\MyRedirects\Service
+ * @package KoninklijkeCollective\MyRedirects\Service
  */
 class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
 {
-
-    /**
-     * @var string
-     */
-    protected $redirectTable = 'tx_myredirects_domain_model_redirect';
 
     /**
      * @var array
@@ -28,7 +23,7 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
     /**
      * Do an active lookup for redirect
      *
-     * @param \Serfhos\MyRedirects\Domain\Model\Redirect $redirect
+     * @param \KoninklijkeCollective\MyRedirects\Domain\Model\Redirect $redirect
      * @param string $defaultDomain
      * @return void
      */
@@ -101,7 +96,7 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
             curl_setopt($ch, CURLOPT_TIMEOUT, 10);
 
             // Some sites need a user-agent
-            curl_setopt($ch, CURLOPT_USERAGENT, 'Serfhos.com: Redirect Lookup/1.0');
+            curl_setopt($ch, CURLOPT_USERAGENT, 'my_redirects: Redirect Lookup/1.0');
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($ch, CURLOPT_HTTPHEADER, array(
                 'X-REDIRECT-SERVICE: 1'
@@ -142,7 +137,7 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
             $hash = $this->generateUrlHash($path);
             return $this->getDatabaseConnection()->exec_SELECTgetSingleRow(
                 $fields,
-                $this->redirectTable,
+                Redirect::TABLE,
                 'url_hash = "' . $hash . '"'
                 . ' AND domain IN (0,' . $domain . ')',
                 null,
@@ -172,7 +167,7 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
             $updateFields = array_filter($updateFields);
 
             $this->getDatabaseConnection()->exec_UPDATEquery(
-                $this->redirectTable,
+                Redirect::TABLE,
                 'uid = ' . (int) $redirect['uid'],
                 $updateFields,
                 array('counter')
@@ -296,12 +291,12 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
     }
 
     /**
-     * @return \Serfhos\MyRedirects\Service\DomainService
+     * @return \KoninklijkeCollective\MyRedirects\Service\DomainService
      */
     protected function getDomainService()
     {
         if (!isset($this->domainService)) {
-            $this->domainService = $this->getObjectManager()->get('Serfhos\\MyRedirects\\Service\\DomainService');
+            $this->domainService = $this->getObjectManager()->get('KoninklijkeCollective\\MyRedirects\\Service\\DomainService');
         }
         return $this->domainService;
     }
