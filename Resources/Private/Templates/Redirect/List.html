@@ -1,4 +1,4 @@
-{namespace s=Serfhos\MyRedirects\ViewHelper}
+{namespace s=KoninklijkeCollective\MyRedirects\ViewHelper}
 
 <f:layout name="Backend"/>
 
@@ -29,6 +29,25 @@
     <h2>
         <f:translate key="redirect.filter"/>
     </h2>
+
+    <f:if condition="{filter.page}">
+        <div class="typo3-messages my-redirects-messages">
+            <div class="typo3-message message-warning">
+                <div class="message-title">
+                    <strong>
+                        <f:translate key="redirect.filter.ignore_page.title"/>
+                    </strong>
+                    <f:link.page addQueryString="1" argumentsToBeExcludedFromQueryString="{0: 'id'}">
+                        <small><f:translate key="deactivate"/></small>
+                    </f:link.page>
+                </div>
+                <div class="message-body">
+                    <f:translate key="redirect.filter.ignore_page.description" arguments="{0: page.uid, 1: page.title, 2: '<a href=\'{noPageUri}\'>here</a>'}"/>
+                </div>
+            </div>
+        </div>
+        <br/>
+    </f:if>
 
     <div class="filter">
         <f:form name="filter" object="{filter}">
@@ -76,12 +95,6 @@
             </div>
         </f:form>
     </div>
-
-    <f:if condition="{filter.page}">
-        <f:link.page addQueryString="1" argumentsToBeExcludedFromQueryString="{0: 'id'}">
-            <f:translate key="redirect.filter.ignore_page" arguments="{0: page.uid, 1: page.title}"/>
-        </f:link.page>
-    </f:if>
 
     <h2>
         <f:translate key="redirect.results"/>

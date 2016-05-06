@@ -1,12 +1,13 @@
 <?php
-namespace Serfhos\MyRedirects\Hook;
+namespace KoninklijkeCollective\MyRedirects\Hook;
 
+use KoninklijkeCollective\MyRedirects\Domain\Model\Redirect;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * DataHandler: Hook to update needed lookup variables
  *
- * @package Serfhos\MyRedirects\Hook
+ * @package KoninklijkeCollective\MyRedirects\Hook
  */
 class DataHandlerHook
 {
@@ -22,7 +23,7 @@ class DataHandlerHook
      */
     public function processDatamap_postProcessFieldArray($type, $table, $id, &$row, $reference)
     {
-        if (!empty($type) && $table === 'tx_myredirects_domain_model_redirect') {
+        if (!empty($type) && $table === Redirect::TABLE) {
             if (isset($row['url'])) {
                 $row['url'] = ltrim($row['url'], '/');
                 $row['url_hash'] = $this->getRedirectService()->generateUrlHash($row['url']);
@@ -31,11 +32,11 @@ class DataHandlerHook
     }
 
     /**
-     * @return \Serfhos\MyRedirects\Service\RedirectService
+     * @return \KoninklijkeCollective\MyRedirects\Service\RedirectService
      */
     protected function getRedirectService()
     {
-        return $this->getObjectManager()->get('Serfhos\\MyRedirects\\Service\\RedirectService');
+        return $this->getObjectManager()->get('KoninklijkeCollective\\MyRedirects\\Service\\RedirectService');
     }
 
     /**
@@ -45,4 +46,5 @@ class DataHandlerHook
     {
         return GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
     }
+
 }

@@ -1,5 +1,5 @@
 <?php
-namespace Serfhos\MyRedirects\ViewHelper;
+namespace KoninklijkeCollective\MyRedirects\ViewHelper;
 
 use TYPO3\CMS\Backend\Utility\IconUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -7,7 +7,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 /**
  * Displays link with sprite icon with confirm message
  *
- * @package Serfhos\MyRedirects\ViewHelpers
+ * @package KoninklijkeCollective\MyRedirects\ViewHelpers
  */
 class LinkConfirmViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
 {
@@ -37,4 +37,6 @@ class LinkConfirmViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractVie
         }
         return '';
     }
+
 }
+

@@ -1,5 +1,5 @@
 <?php
-namespace Serfhos\MyRedirects\Domain\Model;
+namespace KoninklijkeCollective\MyRedirects\Domain\Model;
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
@@ -7,10 +7,12 @@ use TYPO3\CMS\Core\Utility\MathUtility;
 /**
  * Model: Redirect
  *
- * @package Serfhos\MyRedirects\Domain\Model
+ * @package KoninklijkeCollective\MyRedirects\Domain\Model
  */
 class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
 {
+
+    const TABLE = 'tx_myredirects_domain_model_redirect';
 
     /**
      * @var \DateTime
@@ -36,6 +38,11 @@ class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * @var string
      */
     protected $destination;
+
+    /**
+     * @var string
+     */
+    protected $backendNote;
 
     /**
      * @var string
@@ -159,6 +166,27 @@ class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     public function setCounter($counter)
     {
         $this->counter = $counter;
+    }
+
+    /**
+     * Returns the Backend Note
+     *
+     * @return string
+     */
+    public function getBackendNote()
+    {
+        return $this->backendNote;
+    }
+
+    /**
+     * Sets the Backend Note
+     *
+     * @param string $backendNote
+     * @return void
+     */
+    public function setBackendNote($backendNote)
+    {
+        $this->backendNote = $backendNote;
     }
 
     /**

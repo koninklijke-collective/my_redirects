@@ -1,5 +1,6 @@
 <?php
 
+use KoninklijkeCollective\MyRedirects\Domain\Model\Redirect;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -7,7 +8,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 /**
  * Update script
  *
- * @package Serfhos\MyRedirects
+ * @package KoninklijkeCollective\MyRedirects
  */
 class ext_update
 {
@@ -72,10 +73,9 @@ class ext_update
     protected function calculateHashes()
     {
         $hashed = 0;
-        $table = 'tx_myredirects_domain_model_redirect';
         $res = $this->getDatabaseConnection()->exec_SELECTquery(
             'uid, url, url_hash',
-            $table,
+            Redirect::TABLE,
             ''
         );
         while ($row = $this->getDatabaseConnection()->sql_fetch_assoc($res)) {
@@ -85,7 +85,7 @@ class ext_update
             );
 
             if ($row['url_hash'] != $updateFields['url_hash']) {
-                $this->getDatabaseConnection()->exec_UPDATEquery($table, 'uid = ' . (int) $row['uid'], $updateFields);
+                $this->getDatabaseConnection()->exec_UPDATEquery(Redirect::TABLE, 'uid = ' . (int) $row['uid'], $updateFields);
                 $hashed++;
             }
         }
@@ -116,7 +116,6 @@ class ext_update
     protected function migrateRedirectsFromRealUrl()
     {
         $migrated = 0;
-        $targetTable = 'tx_myredirects_domain_model_redirect';
 
         $res = $this->getDatabaseConnection()->exec_SELECTquery(
             '*',
@@ -124,7 +123,7 @@ class ext_update
             ''
         );
         while ($row = $this->getDatabaseConnection()->sql_fetch_assoc($res)) {
-            if ($this->getDatabaseConnection()->exec_SELECTcountRows('uid', $targetTable,
+            if ($this->getDatabaseConnection()->exec_SELECTcountRows('uid', Redirect::TABLE,
                     'url_hash = ' . (int) $row['url_hash'] . ' AND domain = ' . (int) $row['domain_limit']) == 0
             ) {
                 if ((int) $row['url_hash'] > 0) {
@@ -142,7 +141,7 @@ class ext_update
                         'domain' => (int) $row['domain_limit'],
                     );
 
-                    if ($this->getDatabaseConnection()->exec_INSERTquery($targetTable, $insertFields)) {
+                    if ($this->getDatabaseConnection()->exec_INSERTquery(Redirect::TABLE, $insertFields)) {
                         $migrated++;
                     }
                 }
@@ -228,11 +227,11 @@ class ext_update
     }
 
     /**
-     * @return \Serfhos\MyRedirects\Service\RedirectService
+     * @return \KoninklijkeCollective\MyRedirects\Service\RedirectService
      */
     protected function getRedirectService()
     {
-        return $this->getObjectManager()->get('Serfhos\\MyRedirects\\Service\\RedirectService');
+        return $this->getObjectManager()->get('KoninklijkeCollective\\MyRedirects\\Service\\RedirectService');
     }
 
     /**
@@ -268,4 +267,5 @@ class ext_update
         }
         return $this->flashMessageQueue;
     }
+
 }

@@ -1,13 +1,13 @@
 <?php
-namespace Serfhos\MyRedirects\Command;
+namespace KoninklijkeCollective\MyRedirects\Command;
 
-use Serfhos\MyRedirects\Domain\Model\Redirect;
+use KoninklijkeCollective\MyRedirects\Domain\Model\Redirect;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * ExtBase Command: Refresh all redirects states
  *
- * @package Serfhos\MyRedirects\Command
+ * @package KoninklijkeCollective\MyRedirects\Command
  */
 class ActiveLookupCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandController
 {
@@ -19,13 +19,13 @@ class ActiveLookupCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\Co
     protected $persistenceManager;
 
     /**
-     * @var \Serfhos\MyRedirects\Domain\Repository\RedirectRepository
+     * @var \KoninklijkeCollective\MyRedirects\Domain\Repository\RedirectRepository
      * @inject
      */
     protected $redirectRepository;
 
     /**
-     * @var \Serfhos\MyRedirects\Service\RedirectService
+     * @var \KoninklijkeCollective\MyRedirects\Service\RedirectService
      * @inject
      */
     protected $redirectService;
@@ -133,24 +133,25 @@ class ActiveLookupCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\Co
     }
 
     /**
-     * @return \Serfhos\MyRedirects\Domain\Repository\RedirectRepository
+     * @return \KoninklijkeCollective\MyRedirects\Domain\Repository\RedirectRepository
      */
     protected function getRedirectRepository()
     {
         if (!isset($this->redirectRepository)) {
-            $this->redirectRepository = $this->getObjectManager()->get('Serfhos\\MyRedirects\\Domain\\Repository\\RedirectRepository');
+            $this->redirectRepository = $this->getObjectManager()->get('KoninklijkeCollective\\MyRedirects\\Domain\\Repository\\RedirectRepository');
         }
         return $this->redirectRepository;
     }
 
     /**
-     * @return \Serfhos\MyRedirects\Service\RedirectService
+     * @return \KoninklijkeCollective\MyRedirects\Service\RedirectService
      */
     protected function getRedirectService()
     {
         if (!isset($this->redirectService)) {
-            $this->redirectService = $this->getObjectManager()->get('Serfhos\\MyRedirects\\Service\\RedirectService');
+            $this->redirectService = $this->getObjectManager()->get('KoninklijkeCollective\\MyRedirects\\Service\\RedirectService');
         }
         return $this->redirectService;
     }
+
 }

@@ -1,12 +1,12 @@
 <?php
-namespace Serfhos\MyRedirects\Controller;
+namespace KoninklijkeCollective\MyRedirects\Controller;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Hook: Frontend Request: Redirect controller
  *
- * @package Serfhos\MyRedirects\Controller
+ * @package KoninklijkeCollective\MyRedirects\Controller
  */
 class RequestController
 {
@@ -18,13 +18,13 @@ class RequestController
     protected $objectManager;
 
     /**
-     * @var \Serfhos\MyRedirects\Service\RedirectService
+     * @var \KoninklijkeCollective\MyRedirects\Service\RedirectService
      * @inject
      */
     protected $redirectService;
 
     /**
-     * @var \Serfhos\MyRedirects\Service\DomainService
+     * @var \KoninklijkeCollective\MyRedirects\Service\DomainService
      * @inject
      */
     protected $domainService;
@@ -50,12 +50,12 @@ class RequestController
     }
 
     /**
-     * @return \Serfhos\MyRedirects\Service\RedirectService
+     * @return \KoninklijkeCollective\MyRedirects\Service\RedirectService
      */
     protected function getRedirectService()
     {
         if (!isset($this->redirectService)) {
-            $this->redirectService = $this->getObjectManager()->get('Serfhos\\MyRedirects\\Service\\RedirectService');
+            $this->redirectService = $this->getObjectManager()->get('KoninklijkeCollective\\MyRedirects\\Service\\RedirectService');
         }
         return $this->redirectService;
     }
@@ -72,13 +72,14 @@ class RequestController
     }
 
     /**
-     * @return \Serfhos\MyRedirects\Service\DomainService
+     * @return \KoninklijkeCollective\MyRedirects\Service\DomainService
      */
     protected function getDomainService()
     {
         if (!isset($this->domainService)) {
-            $this->domainService = $this->getObjectManager()->get('Serfhos\\MyRedirects\\Service\\DomainService');
+            $this->domainService = $this->getObjectManager()->get('KoninklijkeCollective\\MyRedirects\\Service\\DomainService');
         }
         return $this->domainService;
     }
+
 }

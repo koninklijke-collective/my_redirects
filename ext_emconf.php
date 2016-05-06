@@ -21,7 +21,7 @@ $EM_CONF[$_EXTKEY] = array(
     ),
     'autoload' => array(
         'psr-4' => array(
-            'Serfhos\\MyRedirects\\' => 'Classes'
+            'KoninklijkeCollective\\MyRedirects\\' => 'Classes'
         )
     ),
 );
