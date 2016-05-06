@@ -14,7 +14,7 @@
     "homepage": "https://github.com/koninklijke-collective/my_redirects",
     "license": "LGPL-3.0+",
 
-    "version": "2.0.3",
+    "version": "3.0.0",
     "autoload": {
         "psr-4": {
             "KoninklijkeCollective\\MyRedirects\\": "Classes/"
@@ -27,9 +27,5 @@
             "email": "benjamin@serfhos.com",
             "homepage": "http://serfhos.com"
         }
-    ],
-
-    "require": {
-        "composer/installers": "~1.0"
-    }
+    ]
 }

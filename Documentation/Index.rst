@@ -28,7 +28,7 @@ EXT: My Redirects
     TYPO3 Frontend Redirects
 
 :Copyright:
-    2014-2015
+    2014-2016
 
 :Author:
     Benjamin Serfhos
@@ -37,7 +37,7 @@ EXT: My Redirects
     2015-05-06
 
 :Changed:
-    2015-05-06
+    2016-05-06
 
 :Email:
     benjamin@serfhos.com
@@ -55,5 +55,6 @@ EXT: My Redirects
     :titlesonly:
     :glob:
 
+    Installation/Index
     Screenshots/Index
     Issues/Index
