@@ -16,6 +16,7 @@ CREATE TABLE tx_myredirects_domain_model_redirect (
     counter int(11) DEFAULT '0' NOT NULL,
     http_response int(11) DEFAULT '301' NOT NULL,
     domain int(11) DEFAULT '0' NOT NULL,
+    backend_note text,
     active tinyint(4) DEFAULT '1' NOT NULL,
     last_hit int(11) DEFAULT '0' NOT NULL,
     last_checked int(11) DEFAULT '0' NOT NULL,

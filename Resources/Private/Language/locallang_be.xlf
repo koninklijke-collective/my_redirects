@@ -9,14 +9,20 @@
             <trans-unit id="tx_myredirects_domain_model_redirect.plural">
                 <source>Redirects</source>
             </trans-unit>
+            <trans-unit id="tx_myredirects_domain_model_redirect.crdate">
+                <source>Created on</source>
+            </trans-unit>
             <trans-unit id="tx_myredirects_domain_model_redirect.url_hash">
                 <source>URL Hash (generated from URL)</source>
             </trans-unit>
             <trans-unit id="tx_myredirects_domain_model_redirect.url">
-                <source>From</source>
+                <source>Link</source>
             </trans-unit>
             <trans-unit id="tx_myredirects_domain_model_redirect.destination">
-                <source>To</source>
+                <source>Target</source>
+            </trans-unit>
+            <trans-unit id="tx_myredirects_domain_model_redirect.backend_note">
+                <source>Backend Note</source>
             </trans-unit>
             <trans-unit id="tx_myredirects_domain_model_redirect.last_referrer">
                 <source>Last Known Referrer</source>
@@ -54,6 +60,21 @@
 
             <trans-unit id="tx_myredirects_domain_model_redirect.div.health">
                 <source>Health</source>
+            </trans-unit>
+            <trans-unit id="tx_myredirects_domain_model_redirect.palette.from">
+                <source>From</source>
+            </trans-unit>
+            <trans-unit id="tx_myredirects_domain_model_redirect.palette.to">
+                <source>To</source>
+            </trans-unit>
+            <trans-unit id="tx_myredirects_domain_model_redirect.palette.information">
+                <source>Information</source>
+            </trans-unit>
+            <trans-unit id="tx_myredirects_domain_model_redirect.palette.visited">
+                <source>Visited</source>
+            </trans-unit>
+            <trans-unit id="tx_myredirects_domain_model_redirect.palette.response">
+                <source>Response</source>
             </trans-unit>
 
             <trans-unit id="tx_myredirects_domain_model_redirect.active">

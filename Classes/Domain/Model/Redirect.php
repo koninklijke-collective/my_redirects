@@ -42,6 +42,11 @@ class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * @var string
      */
+    protected $backendNote;
+
+    /**
+     * @var string
+     */
     protected $lastReferrer;
 
     /**
@@ -161,6 +166,27 @@ class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     public function setCounter($counter)
     {
         $this->counter = $counter;
+    }
+
+    /**
+     * Returns the Backend Note
+     *
+     * @return string
+     */
+    public function getBackendNote()
+    {
+        return $this->backendNote;
+    }
+
+    /**
+     * Sets the Backend Note
+     *
+     * @param string $backendNote
+     * @return void
+     */
+    public function setBackendNote($backendNote)
+    {
+        $this->backendNote = $backendNote;
     }
 
     /**

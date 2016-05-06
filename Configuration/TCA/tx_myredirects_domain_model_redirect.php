@@ -5,10 +5,12 @@ if (!defined('TYPO3_MODE')) {
     die ('Access denied.');
 }
 
+$translation = 'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:' . Redirect::TABLE;
+
 return array(
     'ctrl' => array(
-        'title' => 'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:' . Redirect::TABLE . '.singular',
-        'groupName' => 'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:' . Redirect::TABLE . '.plural',
+        'title' => $translation . '.singular',
+        'groupName' => $translation . '.plural',
         'label' => 'url',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
@@ -23,30 +25,39 @@ return array(
             'ignoreWebMountRestriction' => true,
             'ignoreRootLevelRestriction' => true,
         ),
-        'searchFields' => 'url,destination'
+        'searchFields' => 'url, destination, backend_note'
     ),
     'interface' => array(
         'showRecordFieldList' => 'url_hash, url, destination, last_referrer, counter, http_response, domain_limit, active, last_hit, last_checked, inactive_reason'
     ),
     'types' => array(
         0 => array(
-            'showitem' => '--palette--;;from, --palette--;;to,'
-                . '--div--;LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:' . Redirect::TABLE . '.div.health,'
-                . 'url_hash, --palette--;;visited, active;;response'
+            'showitem' => '--palette--;' . $translation . '.palette.from;from, --palette--;' . $translation . '.palette.to;to, --palette--;' . $translation . '.palette.information;information,'
+                . '--div--;' . $translation . '.div.health,'
+                . 'url_hash, --palette--;' . $translation . '.palette.visited;visited, --palette--;' . $translation . '.palette.response;response'
         )
     ),
     'palettes' => array(
+
         'from' => array(
-            'showitem' => 'url, domain'
+            'showitem' => 'url, domain',
+            'canNotCollapse' => true
         ),
         'to' => array(
-            'showitem' => 'destination, http_response'
+            'showitem' => 'destination, http_response',
+            'canNotCollapse' => true
+        ),
+        'information' => array(
+            'showitem' => 'crdate, --linebreak--, backend_note',
+            'canNotCollapse' => true
         ),
         'visited' => array(
             'showitem' => 'counter, last_hit, last_referrer',
+            'canNotCollapse' => true
         ),
         'response' => array(
-            'showitem' => 'last_checked, inactive_reason',
+            'showitem' => 'last_checked, active, --linebreak--, inactive_reason',
+            'canNotCollapse' => true
         ),
     ),
     'columns' => array(
@@ -55,20 +66,24 @@ return array(
                 'type' => 'passthrough'
             )
         ),
-        'crdate' => array(
-            'config' => array(
-                'type' => 'passthrough',
-            )
-        ),
         'tstamp' => array(
             'config' => array(
                 'type' => 'passthrough',
             )
         ),
+        'crdate' => array(
+            'exclude' => 0,
+            'label' => $translation . '.crdate',
+            'config' => array(
+                'readOnly' => true,
+                'type' => 'input',
+                'size' => 10,
+                'eval' => 'datetime'
+            )
+        ),
         'url_hash' => array(
             'exclude' => 0,
-            'l10n_mode' => 'mergeIfNotBlank',
-            'label' => 'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:' . Redirect::TABLE . '.url_hash',
+            'label' => $translation . '.url_hash',
             'config' => array(
                 'readOnly' => true,
                 'type' => 'input',
@@ -77,8 +92,7 @@ return array(
         ),
         'url' => array(
             'exclude' => 0,
-            'l10n_mode' => 'mergeIfNotBlank',
-            'label' => 'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:' . Redirect::TABLE . '.url',
+            'label' => $translation . '.url',
             'config' => array(
                 'type' => 'input',
                 'size' => 30,
@@ -88,8 +102,7 @@ return array(
         ),
         'destination' => array(
             'exclude' => 0,
-            'l10n_mode' => 'mergeIfNotBlank',
-            'label' => 'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:' . Redirect::TABLE . '.destination',
+            'label' => $translation . '.destination',
             'config' => array(
                 'type' => 'input',
                 'size' => 30,
@@ -99,8 +112,7 @@ return array(
         ),
         'last_hit' => array(
             'exclude' => 0,
-            'l10n_mode' => 'mergeIfNotBlank',
-            'label' => 'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:' . Redirect::TABLE . '.last_hit',
+            'label' => $translation . '.last_hit',
             'config' => array(
                 'readOnly' => true,
                 'type' => 'input',
@@ -110,8 +122,7 @@ return array(
         ),
         'last_referrer' => array(
             'exclude' => 0,
-            'l10n_mode' => 'mergeIfNotBlank',
-            'label' => 'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:' . Redirect::TABLE . '.last_referrer',
+            'label' => $translation . '.last_referrer',
             'config' => array(
                 'readOnly' => true,
                 'type' => 'input',
@@ -120,8 +131,7 @@ return array(
         ),
         'counter' => array(
             'exclude' => 0,
-            'l10n_mode' => 'mergeIfNotBlank',
-            'label' => 'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:' . Redirect::TABLE . '.counter',
+            'label' => $translation . '.counter',
             'config' => array(
                 'type' => 'input',
                 'size' => 5,
@@ -133,31 +143,30 @@ return array(
         ),
         'http_response' => array(
             'exclude' => 0,
-            'l10n_mode' => 'mergeIfNotBlank',
-            'label' => 'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:' . Redirect::TABLE . '.http_response',
+            'label' => $translation . '.http_response',
             'config' => array(
                 'type' => 'select',
                 'renderType' => 'selectSingle',
                 'size' => 1,
                 'items' => array(
                     array(
-                        'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:' . Redirect::TABLE . '.http_response.I.0',
+                        $translation . '.http_response.I.0',
                         0
                     ),
                     array(
-                        'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:' . Redirect::TABLE . '.http_response.I.301',
+                        $translation . '.http_response.I.301',
                         301
                     ),
                     array(
-                        'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:' . Redirect::TABLE . '.http_response.I.302',
+                        $translation . '.http_response.I.302',
                         302
                     ),
                     array(
-                        'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:' . Redirect::TABLE . '.http_response.I.303',
+                        $translation . '.http_response.I.303',
                         303
                     ),
                     array(
-                        'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:' . Redirect::TABLE . '.http_response.I.307',
+                        $translation . '.http_response.I.307',
                         307
                     ),
                 ),
@@ -165,15 +174,14 @@ return array(
         ),
         'domain' => array(
             'exclude' => 0,
-            'l10n_mode' => 'mergeIfNotBlank',
-            'label' => 'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:' . Redirect::TABLE . '.domain',
+            'label' => $translation . '.domain',
             'config' => array(
                 'type' => 'select',
                 'renderType' => 'selectSingle',
                 'size' => 1,
                 'items' => array(
                     array(
-                        'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:' . Redirect::TABLE . '.domain.I.0',
+                        $translation . '.domain.I.0',
                         0
                     ),
                 ),
@@ -183,14 +191,13 @@ return array(
         ),
         'active' => array(
             'exclude' => 0,
-            'l10n_mode' => 'mergeIfNotBlank',
-            'label' => 'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:' . Redirect::TABLE . '.active',
+            'label' => $translation . '.active',
             'config' => array(
                 'readOnly' => true,
                 'type' => 'check',
                 'items' => array(
                     array(
-                        'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:' . Redirect::TABLE . '.active.I.0',
+                        $translation . '.active.I.0',
                         ''
                     ),
                 )
@@ -198,8 +205,7 @@ return array(
         ),
         'last_checked' => array(
             'exclude' => 0,
-            'l10n_mode' => 'mergeIfNotBlank',
-            'label' => 'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:' . Redirect::TABLE . '.last_checked',
+            'label' => $translation . '.last_checked',
             'config' => array(
                 'readOnly' => true,
                 'type' => 'input',
@@ -209,16 +215,24 @@ return array(
         ),
         'inactive_reason' => array(
             'exclude' => 0,
-            'l10n_mode' => 'mergeIfNotBlank',
-            'label' => 'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:' . Redirect::TABLE . '.inactive_reason',
+            'label' => $translation . '.inactive_reason',
             'config' => array(
                 'type' => 'none',
-                'fixedRows' => true,
                 'cols' => 48,
                 'rows' => 10,
                 'eval' => 'trim'
             ),
             'displayCond' => 'FIELD:active:REQ:false',
+        ),
+        'backend_note' => array(
+            'exclude' => 0,
+            'label' => $translation . '.backend_note',
+            'config' => array(
+                'type' => 'text',
+                'cols' => 48,
+                'rows' => 10,
+                'eval' => 'trim'
+            ),
         ),
     ),
 );
