@@ -39,8 +39,11 @@
                 <source><![CDATA[Reset &raquo;]]></source>
             </trans-unit>
 
-            <trans-unit id="redirect.filter.ignore_page">
-                <source><![CDATA[[x] Disable filtering on page destination (<span title="ID: %s">%s</span>)]]></source>
+            <trans-unit id="redirect.filter.ignore_page.title">
+                <source>Filter active</source>
+            </trans-unit>
+            <trans-unit id="redirect.filter.ignore_page.description">
+                <source><![CDATA[Filtering on page destination (<span title="ID: %s">%s</span>) is active, please click %s to disable this filtering.]]></source>
             </trans-unit>
 
             <trans-unit id="redirect.results">
@@ -107,6 +110,9 @@
                 <source>302 Found</source>
             </trans-unit>
 
+            <trans-unit id="deactivate">
+                <source>Deactivate</source>
+            </trans-unit>
             <trans-unit id="confirm_delete">
                 <source><![CDATA[Are you sure you want to delete this redirect:
 (%s => %s)]]></source>

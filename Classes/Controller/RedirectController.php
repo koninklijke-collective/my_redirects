@@ -159,11 +159,15 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
         $filter = (array) $arguments['filter'];
 
         // Temporary set page filter
+        $noPageUri = null;
         if (!empty($this->page)) {
             $filter['page'] = $this->page['uid'];
+            $noPageUri = $this->uriBuilder->reset()
+                ->setAddQueryString(true)->setArgumentsToBeExcludedFromQueryString(array('id'))->build();
         }
 
         $this->view->assignMultiple(array(
+            'noPageUri' => $noPageUri,
             'page' => $this->page,
             'filter' => $filter,
             'order' => $arguments['order'],
