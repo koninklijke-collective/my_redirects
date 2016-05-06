@@ -108,6 +108,24 @@ return array(
                 'size' => 30,
                 'eval' => 'trim',
                 'max' => 65535,
+                'wizards' => array(
+                    'link' => array(
+                        'type' => 'popup',
+                        'title' => 'LLL:EXT:cms/locallang_ttc.xlf:header_link_formlabel',
+                        'icon' => 'link_popup.gif',
+                        'module' => array(
+                            'name' => 'wizard_element_browser',
+                            'urlParameters' => array(
+                                'mode' => 'wizard'
+                            )
+                        ),
+                        'params' => array(
+                            'blindLinkOptions' => 'mail, folder, spec',
+                            'blindLinkFields' => 'target, title, class, params',
+                        ),
+                        'JSopenParams' => 'height=300,width=500,status=0,menubar=0,scrollbars=1'
+                    )
+                ),
             )
         ),
         'last_hit' => array(
