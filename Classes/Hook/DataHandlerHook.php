@@ -1,6 +1,7 @@
 <?php
 namespace KoninklijkeCollective\MyRedirects\Hook;
 
+use KoninklijkeCollective\MyRedirects\Domain\Model\Redirect;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -22,7 +23,7 @@ class DataHandlerHook
      */
     public function processDatamap_postProcessFieldArray($type, $table, $id, &$row, $reference)
     {
-        if (!empty($type) && $table === 'tx_myredirects_domain_model_redirect') {
+        if (!empty($type) && $table === Redirect::TABLE) {
             if (isset($row['url'])) {
                 $row['url'] = ltrim($row['url'], '/');
                 $row['url_hash'] = $this->getRedirectService()->generateUrlHash($row['url']);

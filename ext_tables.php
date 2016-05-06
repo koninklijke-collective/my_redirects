@@ -22,7 +22,7 @@ if (TYPO3_MODE === 'BE') {
     );
 
     \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addLLrefForTCAdescr(
-        'tx_myredirects_domain_model_redirect',
+        \KoninklijkeCollective\MyRedirects\Domain\Model\Redirect::TABLE,
         'EXT:my_redirects/Resources/Private/Language/locallang_csh.xlf'
     );
 }
