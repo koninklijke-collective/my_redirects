@@ -300,4 +300,5 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
         }
         return $this->domainService;
     }
+
 }

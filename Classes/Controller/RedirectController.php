@@ -304,4 +304,5 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
     {
         return $GLOBALS['BE_USER'];
     }
+
 }

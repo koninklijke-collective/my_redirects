@@ -95,4 +95,5 @@ class DomainService implements \TYPO3\CMS\Core\SingletonInterface
 
         return $return;
     }
+
 }

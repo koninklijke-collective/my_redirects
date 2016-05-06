@@ -59,4 +59,5 @@ class DomainUrlViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewH
         }
         return $this->domainService;
     }
+
 }

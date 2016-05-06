@@ -104,4 +104,5 @@ class RedirectRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
         $query->getQuerySettings()->setRespectStoragePage(false);
         return $query;
     }
+
 }

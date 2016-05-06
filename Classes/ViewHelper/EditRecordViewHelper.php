@@ -29,4 +29,5 @@ class EditRecordViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractView
             return 'alt_doc.php?' . $parameters;
         }
     }
+
 }

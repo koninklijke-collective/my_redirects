@@ -93,4 +93,5 @@ class BackendSession
     {
         $this->saveSessiondata(array('contents' => $contents));
     }
+
 }

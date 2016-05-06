@@ -267,4 +267,5 @@ class ext_update
         }
         return $this->flashMessageQueue;
     }
+
 }

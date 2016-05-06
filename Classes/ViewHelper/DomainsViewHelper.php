@@ -56,4 +56,5 @@ class DomainsViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHel
         }
         return $this->objectManager;
     }
+
 }

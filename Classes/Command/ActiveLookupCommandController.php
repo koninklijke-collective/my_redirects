@@ -153,4 +153,5 @@ class ActiveLookupCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\Co
         }
         return $this->redirectService;
     }
+
 }

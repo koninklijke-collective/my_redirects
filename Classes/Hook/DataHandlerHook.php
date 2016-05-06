@@ -46,4 +46,5 @@ class DataHandlerHook
     {
         return GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
     }
+
 }
