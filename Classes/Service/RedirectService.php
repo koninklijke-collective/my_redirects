@@ -203,6 +203,9 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
     public function generateUrlHash($url)
     {
         $urlParts = parse_url($url);
+        if (!is_array($urlParts)) {
+            return '';
+        }
         if (!empty($urlParts['path'])) {
             // Remove trailing slash from url generation
             $urlParts['path'] = rtrim($urlParts['path'], '/');
