@@ -79,14 +79,17 @@ class ext_update
             ''
         );
         while ($row = $this->getDatabaseConnection()->sql_fetch_assoc($res)) {
-            $updateFields = array(
-                'tstamp' => time(),
-                'url_hash' => $this->getRedirectService()->generateUrlHash($row['url']),
-            );
+            $newHash = $this->generateNewHash($row['url']);
+            if ($newHash !== null) {
+                if ($row['url_hash'] != $newHash) {
+                    $updateFields = array(
+                        'tstamp' => time(),
+                        'url_hash' => $newHash,
+                    );
 
-            if ($row['url_hash'] != $updateFields['url_hash']) {
-                $this->getDatabaseConnection()->exec_UPDATEquery(Redirect::TABLE, 'uid = ' . (int) $row['uid'], $updateFields);
-                $hashed++;
+                    $this->getDatabaseConnection()->exec_UPDATEquery(Redirect::TABLE, 'uid = ' . (int) $row['uid'], $updateFields);
+                    $hashed++;
+                }
             }
         }
 
@@ -126,13 +129,14 @@ class ext_update
             if ($this->getDatabaseConnection()->exec_SELECTcountRows('uid', Redirect::TABLE,
                     'url_hash = ' . (int) $row['url_hash'] . ' AND domain = ' . (int) $row['domain_limit']) == 0
             ) {
-                if ((int) $row['url_hash'] > 0) {
+                $newHash = $this->generateNewHash($row['url']);
+                if ((int) $row['url_hash'] > 0 && $newHash !== null) {
                     $insertFields = array(
                         'pid' => 0,
                         'tstamp' => (int) $row['tstamp'],
                         'crdate' => (int) $row['tstamp'],
                         'cruser_id' => (string) $this->getBackendUserAuthentication()->user['uid'],
-                        'url_hash' => (string) $this->getRedirectService()->generateUrlHash($row['url']),
+                        'url_hash' => $newHash,
                         'url' => (string) $row['url'],
                         'destination' => (string) $this->correctUrl($row['destination']),
                         'last_referrer' => (string) $row['last_referer'],
@@ -208,6 +212,21 @@ class ext_update
         }
 
         return $url;
+    }
+
+    /**
+     * Generate hash with exception catch
+     *
+     * @param string $url
+     * @return string
+     */
+    protected function generateNewHash($url)
+    {
+        try {
+            return (string) $this->getRedirectService()->generateUrlHash($url);
+        } catch (Exception $e) {
+            return null;
+        }
     }
 
     /**
