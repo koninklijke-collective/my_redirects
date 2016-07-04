@@ -199,37 +199,38 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
      *
      * @param string $url
      * @return string
+     * @throws \Exception
      */
     public function generateUrlHash($url)
     {
-        $urlParts = parse_url($url);
-        if (!is_array($urlParts)) {
-            return '';
-        }
-        if (!empty($urlParts['path'])) {
-            // Remove trailing slash from url generation
-            $urlParts['path'] = rtrim($urlParts['path'], '/');
-        }
-        if (!empty($urlParts['query'])) {
-            $excludedQueryParameters = $this->getCHashExcludedParameters();
-            if (!empty($excludedQueryParameters)) {
-                parse_str($urlParts['query'], $queryParameters);
-                if (!empty($queryParameters)) {
-                    foreach ($queryParameters as $key => $value) {
-                        if (in_array($key, $excludedQueryParameters)) {
-                            unset($queryParameters[$key]);
-                            $this->keptQueryParameters[$key] = $value;
+        if ($urlParts = parse_url($url)) {
+            if (!empty($urlParts['path'])) {
+                // Remove trailing slash from url generation
+                $urlParts['path'] = rtrim($urlParts['path'], '/');
+            }
+            if (!empty($urlParts['query'])) {
+                $excludedQueryParameters = $this->getCHashExcludedParameters();
+                if (!empty($excludedQueryParameters)) {
+                    parse_str($urlParts['query'], $queryParameters);
+                    if (!empty($queryParameters)) {
+                        foreach ($queryParameters as $key => $value) {
+                            if (in_array($key, $excludedQueryParameters)) {
+                                unset($queryParameters[$key]);
+                                $this->keptQueryParameters[$key] = $value;
+                            }
                         }
-                    }
 
-                    $urlParts['query'] = (!empty($queryParameters) ? http_build_query($queryParameters) : null);
+                        $urlParts['query'] = (!empty($queryParameters) ? http_build_query($queryParameters) : null);
+                    }
                 }
             }
+            $url = HttpUtility::buildUrl($urlParts);
+            // Make sure the hash is case-insensitive
+            $url = strtolower($url);
+            return sha1($url);
         }
-        $url = HttpUtility::buildUrl($urlParts);
-        // Make sure the hash is case-insensitive
-        $url = strtolower($url);
-        return sha1($url);
+
+        throw new \TYPO3\CMS\Core\Error\Http\BadRequestException('Incorrect url given.', 1467622163);
     }
 
     /**
