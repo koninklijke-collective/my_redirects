@@ -12,6 +12,11 @@ class FlashMessagesViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractV
 {
 
     /**
+     * @var bool
+     */
+    protected $escapeOutput = false;
+
+    /**
      * Renders FlashMessages and flushes the FlashMessage queue
      * Note: This disables the current page cache in order to prevent FlashMessage output
      * from being cached.

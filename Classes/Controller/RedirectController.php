@@ -1,12 +1,11 @@
 <?php
 namespace KoninklijkeCollective\MyRedirects\Controller;
 
+use KoninklijkeCollective\MyRedirects\Backend\BackendSession;
 use KoninklijkeCollective\MyRedirects\Domain\Model\Redirect;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
-use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
  * Backend Module Controller: Redirects
@@ -17,34 +16,43 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
 {
 
     /**
+     * @var \TYPO3\CMS\Backend\View\BackendTemplateView
+     */
+    protected $view;
+
+    /**
+     * Backend Template Container
+     *
+     * @var string
+     */
+    protected $defaultViewObjectName = \TYPO3\CMS\Backend\View\BackendTemplateView::class;
+
+    /**
      * Page information from given access
      *
      * @var array
      */
-    protected $page = array();
+    protected $page = [];
 
     /**
      * @var \KoninklijkeCollective\MyRedirects\Domain\Repository\RedirectRepository
-     * @inject
      */
     protected $redirectRepository;
 
     /**
      * @var \KoninklijkeCollective\MyRedirects\Service\RedirectService
-     * @inject
      */
     protected $redirectService;
 
     /**
-     * @var \KoninklijkeCollective\MyRedirects\Backend\BackendSession
-     * @inject
+     * @var BackendSession
      */
     protected $backendSession;
 
     /**
-     * @var string
+     * @var \TYPO3\CMS\Core\Messaging\FlashMessageQueue
      */
-    protected $sessionKey = 'MyRedirects';
+    protected $flashMessageQueue;
 
     /**
      * Redirect request from post when forced
@@ -72,23 +80,57 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
     }
 
     /**
-     * Initializes the view before invoking an action method
+     * Initialize parameters for BackendTemplateView
      *
-     * @param \TYPO3\CMS\Extbase\Mvc\View\ViewInterface $view The view to be initialized
+     * @param \TYPO3\CMS\Extbase\Mvc\View\ViewInterface $view
      * @return void
      */
-    protected function initializeView(ViewInterface $view)
+    protected function initializeView(\TYPO3\CMS\Extbase\Mvc\View\ViewInterface $view)
     {
-        $moduleUrl = urlencode(\TYPO3\CMS\Backend\Utility\BackendUtility::getModuleUrl('web_MyRedirectsMyRedirects'));
-        $currentUrl = $this->uriBuilder->setAddQueryString(true)->setArgumentsToBeExcludedFromQueryString(array('returnUrl'))->build()
-            . '&vC=' . urlencode($this->getBackendUserAuthentication()->veriCode())
-            . BackendUtility::getUrlToken('tceAction')
-            . '&prErr=1&uPT=1';
+        parent::initializeView($view);
+        if ($view instanceof \TYPO3\CMS\Backend\View\BackendTemplateView) {
+            $this->registerDocheaderButtons();
+            $view->getModuleTemplate()->setFlashMessageQueue($this->controllerContext->getFlashMessageQueue());
+            $view->getModuleTemplate()->getPageRenderer()->loadRequireJsModule('TYPO3/CMS/Backend/Modal');
+        }
+    }
 
-        $this->view->assignMultiple(array(
-            'moduleUrl' => $moduleUrl,
-            'currentUrl' => $currentUrl,
-        ));
+    /**
+     * Stupid docheader buttons without fluid rendering -_-
+     *
+     * @return void
+     */
+    protected function registerDocheaderButtons()
+    {
+        $buttonBar = $this->view->getModuleTemplate()->getDocHeaderComponent()->getButtonBar();
+        $currentRequest = $this->request;
+        $moduleName = $currentRequest->getPluginName();
+        $getVars = $this->request->getArguments();
+
+        $extensionName = $currentRequest->getControllerExtensionName();
+        if (count($getVars) === 0) {
+            $modulePrefix = strtolower('tx_' . $extensionName . '_' . $moduleName);
+            $getVars = array('id', 'M', $modulePrefix);
+        }
+
+        $returnUrl = rawurlencode(BackendUtility::getModuleUrl('web_MyRedirectsMyRedirects'));
+        $parameters = GeneralUtility::explodeUrl2Array('edit[tx_myredirects_domain_model_redirect][0]=new&returnUrl=' . $returnUrl);
+        $addUserLink = BackendUtility::getModuleUrl('record_edit', $parameters);
+
+        $title = $this->translate('newRecordGeneral');
+        $icon = $this->view->getModuleTemplate()->getIconFactory()->getIcon('actions-document-new', \TYPO3\CMS\Core\Imaging\Icon::SIZE_SMALL);
+        $addUserButton = $buttonBar->makeLinkButton()
+            ->setHref($addUserLink)
+            ->setTitle($title)
+            ->setIcon($icon);
+        $buttonBar->addButton($addUserButton, \TYPO3\CMS\Backend\Template\Components\ButtonBar::BUTTON_POSITION_LEFT);
+
+        $shortcutName = $this->translate('redirect.plural');
+        $shortcutButton = $buttonBar->makeShortcutButton()
+            ->setModuleName($moduleName)
+            ->setDisplayName($shortcutName)
+            ->setGetVariables($getVars);
+        $buttonBar->addButton($shortcutButton);
     }
 
     /**
@@ -99,9 +141,8 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
     protected function initializeAction()
     {
         parent::initializeAction();
-        $this->backendSession
-            ->setBackendUserAuthentication($GLOBALS['BE_USER'])
-            ->createSession($this->sessionKey);
+
+        $this->getBackendSession()->createSession(BackendSession::SESSION_KEY);
 
         // Configure page array when page is configured
         $pageId = (int) GeneralUtility::_GP('id');
@@ -116,12 +157,12 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
         if (!isset($this->settings['staticTemplate'])) {
             $this->controllerContext = $this->buildControllerContext();
             $this->enqueueFlashMessage(
-                LocalizationUtility::translate('controller.initialize.error.no_typoscript.description', 'my_redirects'),
-                LocalizationUtility::translate('controller.initialize.error.no_typoscript.title', 'my_redirects'),
+                $this->translate('controller.initialize.error.no_typoscript.description'),
+                $this->translate('controller.initialize.error.no_typoscript.title'),
                 \TYPO3\CMS\Core\Messaging\AbstractMessage::ERROR
             );
         } else {
-            $filters = $this->backendSession->getSessionContents($this->sessionKey);
+            $filters = $this->getBackendSession()->getSessionContents(BackendSession::SESSION_KEY);
             if ($filters === false) {
                 $filters = array(
                     'filter' => array(),
@@ -144,7 +185,7 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
                 $filters['direction'] = $this->request->getArgument('direction');
             }
 
-            $this->backendSession->saveSessionContents($filters);
+            $this->getBackendSession()->saveSessionContents($filters);
         }
     }
 
@@ -155,7 +196,7 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
      */
     public function listAction()
     {
-        $arguments = $this->backendSession->getSessionContents($this->sessionKey);
+        $arguments = $this->getBackendSession()->getSessionContents(BackendSession::SESSION_KEY);
         $filter = (array) $arguments['filter'];
 
         // Temporary set page filter
@@ -194,9 +235,9 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
             $this->getRedirectRepository()->update($redirect);
 
             $this->enqueueFlashMessage(
-                LocalizationUtility::translate('controller.action.success.lookup.description', 'my_redirects',
+                $this->translate('controller.action.success.lookup.description',
                     array('/' . $redirect->getUrl())),
-                LocalizationUtility::translate('controller.action.success.lookup.title', 'my_redirects'),
+                $this->translate('controller.action.success.lookup.title'),
                 \TYPO3\CMS\Core\Messaging\AbstractMessage::INFO
             );
         }
@@ -218,8 +259,8 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
     public function deleteAction($redirect = null, $returnUrl = '')
     {
         $this->enqueueFlashMessage(
-            LocalizationUtility::translate('controller.action.success.delete.description', 'my_redirects'),
-            LocalizationUtility::translate('controller.action.success.delete.title', 'my_redirects')
+            $this->translate('controller.action.success.delete.description'),
+            $this->translate('controller.action.success.delete.title')
         );
         $this->getRedirectRepository()->remove($redirect);
 
@@ -245,9 +286,7 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
             throw new \InvalidArgumentException('The message body must be of type string, "' . gettype($messageBody) . '" given.', 1243258395);
         }
         /* @var \TYPO3\CMS\Core\Messaging\FlashMessage $flashMessage */
-        $flashMessage = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-            'TYPO3\\CMS\\Core\\Messaging\\FlashMessage', $messageBody, $messageTitle, $severity, $storeInSession
-        );
+        $flashMessage = $this->getObjectManager()->get(\TYPO3\CMS\Core\Messaging\FlashMessage::class, $messageBody, $messageTitle, $severity, $storeInSession);
         $this->getFlashMessageQueue()->enqueue($flashMessage);
     }
 
@@ -256,9 +295,9 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
      */
     protected function getFlashMessageQueue()
     {
-        if (!isset($this->flashMessageQueue)) {
+        if ($this->flashMessageQueue === null) {
             /** @var \TYPO3\CMS\Core\Messaging\FlashMessageService $flashMessageService */
-            $flashMessageService = $this->getObjectManager()->get('TYPO3\\CMS\\Core\\Messaging\\FlashMessageService');
+            $flashMessageService = $this->getObjectManager()->get(\TYPO3\CMS\Core\Messaging\FlashMessageService::class);
             $this->flashMessageQueue = $flashMessageService->getMessageQueueByIdentifier('myredirects.errors');
         }
         return $this->flashMessageQueue;
@@ -269,8 +308,8 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
      */
     protected function getObjectManager()
     {
-        if (!isset($this->objectManager)) {
-            $this->objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+        if ($this->objectManager === null) {
+            $this->objectManager = GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\ObjectManager::class);
         }
         return $this->objectManager;
     }
@@ -280,8 +319,8 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
      */
     protected function getRedirectRepository()
     {
-        if (!isset($this->redirectRepository)) {
-            $this->redirectRepository = $this->getObjectManager()->get('KoninklijkeCollective\\MyRedirects\\Domain\\Repository\\RedirectRepository');
+        if ($this->redirectRepository === null) {
+            $this->redirectRepository = $this->getObjectManager()->get(\KoninklijkeCollective\MyRedirects\Domain\Repository\RedirectRepository::class);
         }
         return $this->redirectRepository;
     }
@@ -291,10 +330,35 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
      */
     protected function getRedirectService()
     {
-        if (!isset($this->redirectService)) {
-            $this->redirectService = $this->getObjectManager()->get('KoninklijkeCollective\\MyRedirects\\Service\\RedirectService');
+        if ($this->redirectService === null) {
+            $this->redirectService = $this->getObjectManager()->get(\KoninklijkeCollective\MyRedirects\Service\RedirectService::class);
         }
         return $this->redirectService;
+    }
+
+    /**
+     * @return BackendSession
+     */
+    protected function getBackendSession()
+    {
+        if ($this->backendSession === null) {
+            $this->backendSession = $this->getObjectManager()->get(BackendSession::class);
+            $this->backendSession->setBackendUserAuthentication($GLOBALS['BE_USER']);
+        }
+        return $this->backendSession;
+    }
+
+    /**
+     * Translate key for local extension
+     *
+     * @param string $key
+     * @param array $arguments
+     * @return string
+     */
+    protected function translate($key, $arguments = [])
+    {
+        $text = \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate($key, 'my_redirects', $arguments);
+        return $text ? $text : $key;
     }
 
     /**

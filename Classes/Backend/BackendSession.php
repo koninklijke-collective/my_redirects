@@ -12,6 +12,11 @@ class BackendSession
 {
 
     /**
+     * @var string
+     */
+    const SESSION_KEY = 'MyRedirects';
+
+    /**
      * @var mixed
      */
     protected $contents;
@@ -91,7 +96,7 @@ class BackendSession
      */
     public function saveSessionContents($contents)
     {
-        $this->saveSessiondata(array('contents' => $contents));
+        $this->saveSessionData(array('contents' => $contents));
     }
 
 }
