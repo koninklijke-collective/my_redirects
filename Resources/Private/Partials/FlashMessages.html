@@ -1,0 +1,12 @@
+{namespace s = KoninklijkeCollective\MyRedirects\ViewHelper}
+
+<s:flashMessages>
+    <div class="typo3-messages my-redirects-messages">
+        <f:for each="{flashMessages}" as="message">
+            <div class="typo3-message alert {message.class}">
+                <div class="message-title">{message.render}</div>
+                <div class="message-body">{message.message}</div>
+            </div>
+        </f:for>
+    </div>
+</s:flashMessages>

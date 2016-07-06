@@ -93,6 +93,13 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
             $view->getModuleTemplate()->setFlashMessageQueue($this->controllerContext->getFlashMessageQueue());
             $view->getModuleTemplate()->getPageRenderer()->loadRequireJsModule('TYPO3/CMS/Backend/Modal');
         }
+
+        $currentUrl = $this->uriBuilder->setAddQueryString(true)->setArgumentsToBeExcludedFromQueryString(array('returnUrl'))->buildBackendUri();
+
+        $this->view->assignMultiple(array(
+            'moduleUrl' => \TYPO3\CMS\Backend\Utility\BackendUtility::getModuleUrl('web_MyRedirectsMyRedirects'),
+            'currentUrl' => $currentUrl
+        ));
     }
 
     /**
@@ -117,7 +124,7 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
         $parameters = GeneralUtility::explodeUrl2Array('edit[tx_myredirects_domain_model_redirect][0]=new&returnUrl=' . $returnUrl);
         $addUserLink = BackendUtility::getModuleUrl('record_edit', $parameters);
 
-        $title = $this->translate('newRecordGeneral');
+        $title = $this->translate('controller.action.add.record');
         $icon = $this->view->getModuleTemplate()->getIconFactory()->getIcon('actions-document-new', \TYPO3\CMS\Core\Imaging\Icon::SIZE_SMALL);
         $addUserButton = $buttonBar->makeLinkButton()
             ->setHref($addUserLink)
@@ -125,7 +132,11 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
             ->setIcon($icon);
         $buttonBar->addButton($addUserButton, \TYPO3\CMS\Backend\Template\Components\ButtonBar::BUTTON_POSITION_LEFT);
 
-        $shortcutName = $this->translate('redirect.plural');
+        if (!empty($this->page)) {
+            $shortcutName = $this->translate('shortcut.page.active', [$this->page['title'], $this->page['uid']]);
+        } else {
+            $shortcutName = $this->translate('shortcut.default');
+        }
         $shortcutButton = $buttonBar->makeShortcutButton()
             ->setModuleName($moduleName)
             ->setDisplayName($shortcutName)
@@ -198,19 +209,16 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
     {
         $arguments = $this->getBackendSession()->getSessionContents(BackendSession::SESSION_KEY);
         $filter = (array) $arguments['filter'];
-
-        // Temporary set page filter
         $noPageUri = null;
         if (!empty($this->page)) {
             $filter['page'] = $this->page['uid'];
-            $noPageUri = $this->uriBuilder->reset()
-                ->setAddQueryString(true)->setArgumentsToBeExcludedFromQueryString(array('id'))->build();
+            $noPageUri = $this->uriBuilder->reset()->setAddQueryString(true)->setArgumentsToBeExcludedFromQueryString(array('id'))->build();
         }
 
         $this->view->assignMultiple(array(
             'noPageUri' => $noPageUri,
             'page' => $this->page,
-            'filter' => $filter,
+            'filter' => (array) $arguments['filter'],
             'order' => $arguments['order'],
             'direction' => $arguments['direction'],
             'redirects' => $this->getRedirectRepository()->findByOrder(

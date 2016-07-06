@@ -12,7 +12,7 @@ class FlashMessagesViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractV
 {
 
     /**
-     * @var bool
+     * @var boolean
      */
     protected $escapeOutput = false;
 
