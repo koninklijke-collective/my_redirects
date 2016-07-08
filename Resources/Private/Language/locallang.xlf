@@ -10,6 +10,12 @@
             <trans-unit id="redirect.plural">
                 <source>Redirects</source>
             </trans-unit>
+            <trans-unit id="shortcut.default">
+                <source>All Redirects</source>
+            </trans-unit>
+            <trans-unit id="shortcut.page.active">
+                <source>Redirects for page: %s (%s)</source>
+            </trans-unit>
 
             <trans-unit id="redirect.filter">
                 <source>Filter</source>
@@ -122,6 +128,9 @@
                 <source>No redirects found.</source>
             </trans-unit>
 
+            <trans-unit id="controller.action.add.record">
+                <source>Add Redirect</source>
+            </trans-unit>
             <trans-unit id="controller.action.success.create.title">
                 <source>Redirect added</source>
             </trans-unit>

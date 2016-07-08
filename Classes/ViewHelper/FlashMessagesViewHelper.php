@@ -12,6 +12,11 @@ class FlashMessagesViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractV
 {
 
     /**
+     * @var boolean
+     */
+    protected $escapeOutput = false;
+
+    /**
      * Renders FlashMessages and flushes the FlashMessage queue
      * Note: This disables the current page cache in order to prevent FlashMessage output
      * from being cached.
@@ -41,7 +46,7 @@ class FlashMessagesViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractV
     {
         if (!isset($this->flashMessageQueue)) {
             /** @var \TYPO3\CMS\Core\Messaging\FlashMessageService $flashMessageService */
-            $flashMessageService = $this->getObjectManager()->get('TYPO3\\CMS\\Core\\Messaging\\FlashMessageService');
+            $flashMessageService = $this->getObjectManager()->get(\TYPO3\CMS\Core\Messaging\FlashMessageService::class);
             $this->flashMessageQueue = $flashMessageService->getMessageQueueByIdentifier('myredirects.errors');
         }
         return $this->flashMessageQueue;
@@ -53,7 +58,7 @@ class FlashMessagesViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractV
     protected function getObjectManager()
     {
         if (!isset($this->objectManager)) {
-            $this->objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+            $this->objectManager = GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\ObjectManager::class);
         }
         return $this->objectManager;
     }

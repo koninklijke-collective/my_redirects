@@ -114,33 +114,22 @@ class ActiveLookupCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\Co
     }
 
     /**
-     * @return \TYPO3\CMS\Extbase\Object\ObjectManager
-     */
-    protected function getObjectManager()
-    {
-        return GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
-    }
-
-    /**
-     * @return \TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface
-     */
-    protected function getPersistenceManager()
-    {
-        if (!isset($this->persistenceManager)) {
-            $this->persistenceManager = $this->getObjectManager()->get('TYPO3\\CMS\\Extbase\\Persistence\\PersistenceManagerInterface');
-        }
-        return $this->persistenceManager;
-    }
-
-    /**
      * @return \KoninklijkeCollective\MyRedirects\Domain\Repository\RedirectRepository
      */
     protected function getRedirectRepository()
     {
         if (!isset($this->redirectRepository)) {
-            $this->redirectRepository = $this->getObjectManager()->get('KoninklijkeCollective\\MyRedirects\\Domain\\Repository\\RedirectRepository');
+            $this->redirectRepository = $this->getObjectManager()->get(\KoninklijkeCollective\MyRedirects\Domain\Repository\RedirectRepository::class);
         }
         return $this->redirectRepository;
+    }
+
+    /**
+     * @return \TYPO3\CMS\Extbase\Object\ObjectManager
+     */
+    protected function getObjectManager()
+    {
+        return GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\ObjectManager::class);
     }
 
     /**
@@ -149,9 +138,20 @@ class ActiveLookupCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\Co
     protected function getRedirectService()
     {
         if (!isset($this->redirectService)) {
-            $this->redirectService = $this->getObjectManager()->get('KoninklijkeCollective\\MyRedirects\\Service\\RedirectService');
+            $this->redirectService = $this->getObjectManager()->get(\KoninklijkeCollective\MyRedirects\Service\RedirectService::class);
         }
         return $this->redirectService;
+    }
+
+    /**
+     * @return \TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface
+     */
+    protected function getPersistenceManager()
+    {
+        if (!isset($this->persistenceManager)) {
+            $this->persistenceManager = $this->getObjectManager()->get(\TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager::class);
+        }
+        return $this->persistenceManager;
     }
 
 }

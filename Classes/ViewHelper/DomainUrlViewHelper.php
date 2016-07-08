@@ -39,25 +39,25 @@ class DomainUrlViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewH
     }
 
     /**
-     * @return \TYPO3\CMS\Extbase\Object\ObjectManager
-     */
-    protected function getObjectManager()
-    {
-        if (!isset($this->objectManager)) {
-            $this->objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
-        }
-        return $this->objectManager;
-    }
-
-    /**
      * @return \KoninklijkeCollective\MyRedirects\Service\DomainService
      */
     protected function getDomainService()
     {
         if (!isset($this->domainService)) {
-            $this->domainService = $this->getObjectManager()->get('KoninklijkeCollective\\MyRedirects\\Service\\DomainService');
+            $this->domainService = $this->getObjectManager()->get(\KoninklijkeCollective\MyRedirects\Service\DomainService::class);
         }
         return $this->domainService;
+    }
+
+    /**
+     * @return \TYPO3\CMS\Extbase\Object\ObjectManager
+     */
+    protected function getObjectManager()
+    {
+        if (!isset($this->objectManager)) {
+            $this->objectManager = GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\ObjectManager::class);
+        }
+        return $this->objectManager;
     }
 
 }

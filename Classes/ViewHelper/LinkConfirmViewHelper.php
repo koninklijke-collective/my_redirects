@@ -13,6 +13,11 @@ class LinkConfirmViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractVie
 {
 
     /**
+     * @var boolean
+     */
+    protected $escapeOutput = false;
+
+    /**
      * Render confirm link with sprite icon
      *
      * @param string $link
@@ -25,14 +30,18 @@ class LinkConfirmViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractVie
     public function render($link, $message = '', $title = '', $class = '', $icon = 'actions-edit-delete')
     {
         if (!empty($link)) {
+            /** @var \TYPO3\CMS\Core\Imaging\IconFactory $iconFactory */
+            $iconFactory = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Imaging\IconFactory::class);
             $attributes = array(
                 'href' => $link,
-                'onclick' => 'return confirm(' . GeneralUtility::quoteJSvalue($message) . ')',
-                'title' => $title,
-                'class' => $class,
+                'data-severity' => 'warning',
+                'data-title' => $title,
+                'data-content' => $message,
+                'data-button-close-text' => $GLOBALS['LANG']->sL('LLL:EXT:lang/locallang_common.xlf:cancel'),
+                'class' => 'btn btn-default t3js-modal-trigger' . ($class ? ' ' . $class : ''),
             );
             return '<a ' . GeneralUtility::implodeAttributes($attributes, false, true) . '>'
-            . IconUtility::getSpriteIcon($icon)
+            . $iconFactory->getIcon($icon, \TYPO3\CMS\Core\Imaging\Icon::SIZE_SMALL)
             . '</a>';
         }
         return '';

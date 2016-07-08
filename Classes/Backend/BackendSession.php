@@ -11,6 +11,8 @@ use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 class BackendSession
 {
 
+    const SESSION_KEY = 'MyRedirects';
+
     /**
      * @var mixed
      */
@@ -91,7 +93,7 @@ class BackendSession
      */
     public function saveSessionContents($contents)
     {
-        $this->saveSessiondata(array('contents' => $contents));
+        $this->saveSessionData(array('contents' => $contents));
     }
 
 }

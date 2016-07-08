@@ -1,4 +1,5 @@
-{namespace s=KoninklijkeCollective\MyRedirects\ViewHelper}
+{namespace s = KoninklijkeCollective\MyRedirects\ViewHelper}
+{namespace core = TYPO3\CMS\Core\ViewHelpers}
 
 <tr class="db_list_normal">
     <td class="col-icon" nowrap="nowrap"></td>
@@ -9,41 +10,41 @@
     </td>
     <td class="col-control" nowrap="nowrap">
         <div class="btn-group" role="group">
-            <f:be.buttons.icon
-                additionalAttributes="{class: 'btn btn-default'}"
-                uri="{s:editRecord(parameters: 'edit[tx_myredirects_domain_model_redirect][{redirect.uid}]=edit&returnUrl={moduleUrl}')}"
-                title="{f:translate(key: 'redirect.action.edit')}"
-                icon="actions-document-open"/>
+            <a class="btn btn-default" title="{f:translate(key: 'redirect.action.edit')}"
+                href="{s:editRecord(parameters: 'edit[tx_myredirects_domain_model_redirect][{redirect.uid}]=edit&returnUrl={moduleUrl -> f:format.urlencode()}')}">
+                <core:icon identifier="actions-document-open"/>
+            </a>
 
-            <span class="btn btn-default disabled"><f:be.buttons.icon icon="empty-empty"/></span>
+            <span class="btn btn-default disabled"><core:icon identifier="empty-empty"/></span>
 
-            <f:if condition="{redirect.lastChecked}">
-                <span class="btn btn-default active">
-                    <span
-                        class="t3-icon t3-icon-actions t3-icon-actions-document t3-icon-document-history-open"
-                        title="{f:translate(key: 'redirect.action.last_lookup', arguments: '{0: redirect.ageLastChecked}')}">
+            <span class="btn btn-default disabled">
+                <f:if condition="{redirect.lastChecked}">
+                    <f:then>
                         <f:if condition="{redirect.active} == 0">
                             <f:then>
-                                <span
-                                    class="t3-icon t3-icon-status t3-icon-status-overlay t3-icon-overlay-hidden t3-icon-overlay"
-                                    title="{f:translate(key: 'redirect.action.error', arguments: '{0: redirect.inactiveReason, 1: redirect.ageLastChecked}')}">&nbsp;</span>
+                                <span title="{f:translate(key: 'redirect.action.error', arguments: '{0: redirect.inactiveReason, 1: redirect.ageLastChecked}')}">
+                                    <core:icon identifier="actions-preview" overlay="overlay-readonly"/>
+                                </span>
                             </f:then>
-                            <f:else>&nbsp;</f:else>
+                            <f:else>
+                                <span title="{f:translate(key: 'redirect.action.last_lookup', arguments: '{0: redirect.ageLastChecked}')}">
+                                    <core:icon identifier="actions-preview" overlay="overlay-approved"/>
+                                </span>
+                            </f:else>
                         </f:if>
-                    </span>
-                </span>
-            </f:if>
+                    </f:then>
+                    <f:else><core:icon identifier="empty-empty"/></f:else>
+                </f:if>
+            </span>
 
-            <f:be.buttons.icon
-                additionalAttributes="{class: 'btn btn-default'}"
-                uri="{f:uri.action(action:'lookup', controller:'Redirect', arguments: '{redirect: redirect, returnUrl: currentUrl}')}"
-                title="{f:translate(key: 'redirect.action.lookup')}"
-                icon="status-version-no-version"/>
+            <f:link.action class="btn btn-default" action="lookup" controller="Redirect"
+                arguments="{redirect: redirect, returnUrl: currentUrl}" title="{f:translate(key: 'redirect.action.lookup')}">
+                <core:icon identifier="actions-document-history-open"/>
+            </f:link.action>
 
-            <span class="btn btn-default disabled"><f:be.buttons.icon icon="empty-empty"/></span>
+            <span class="btn btn-default disabled"><core:icon identifier="empty-empty"/></span>
 
             <s:linkConfirm
-                class="btn btn-default"
                 link="{f:uri.action(action:'delete', controller:'Redirect', arguments: '{redirect: redirect, returnUrl: currentUrl}')}"
                 message="{f:translate(key: 'confirm_delete', arguments: '{0: redirect.url, 1: redirect.absoluteDestination}')}"
                 title="{f:translate(key: 'redirect.action.delete')}"/>

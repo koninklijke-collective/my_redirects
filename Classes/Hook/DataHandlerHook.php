@@ -36,7 +36,7 @@ class DataHandlerHook
      */
     protected function getRedirectService()
     {
-        return $this->getObjectManager()->get('KoninklijkeCollective\\MyRedirects\\Service\\RedirectService');
+        return $this->getObjectManager()->get(\KoninklijkeCollective\MyRedirects\Service\RedirectService::class);
     }
 
     /**
@@ -44,7 +44,7 @@ class DataHandlerHook
      */
     protected function getObjectManager()
     {
-        return GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+        return GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\ObjectManager::class);
     }
 
 }
