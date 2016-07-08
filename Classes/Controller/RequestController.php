@@ -55,7 +55,7 @@ class RequestController
     protected function getRedirectService()
     {
         if (!isset($this->redirectService)) {
-            $this->redirectService = $this->getObjectManager()->get('KoninklijkeCollective\\MyRedirects\\Service\\RedirectService');
+            $this->redirectService = $this->getObjectManager()->get(\KoninklijkeCollective\MyRedirects\Service\RedirectService::class);
         }
         return $this->redirectService;
     }
@@ -66,7 +66,7 @@ class RequestController
     protected function getObjectManager()
     {
         if (!isset($this->objectManager)) {
-            $this->objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+            $this->objectManager = GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\ObjectManager::class);
         }
         return $this->objectManager;
     }
@@ -77,7 +77,7 @@ class RequestController
     protected function getDomainService()
     {
         if (!isset($this->domainService)) {
-            $this->domainService = $this->getObjectManager()->get('KoninklijkeCollective\\MyRedirects\\Service\\DomainService');
+            $this->domainService = $this->getObjectManager()->get(\KoninklijkeCollective\MyRedirects\Service\DomainService::class);
         }
         return $this->domainService;
     }

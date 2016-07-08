@@ -36,7 +36,7 @@ class EidUtility
 
         if (!($controller instanceof TypoScriptFrontendController)) {
             $controller = GeneralUtility::makeInstance(
-                'TYPO3\\CMS\\Frontend\\Controller\\TypoScriptFrontendController',
+                TypoScriptFrontendController::class,
                 $TYPO3_CONF_VARS,
                 $pageId,
                 0

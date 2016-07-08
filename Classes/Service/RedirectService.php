@@ -291,7 +291,7 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
      */
     protected function getObjectManager()
     {
-        return GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+        return GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\ObjectManager::class);
     }
 
     /**
@@ -300,7 +300,7 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
     protected function getDomainService()
     {
         if (!isset($this->domainService)) {
-            $this->domainService = $this->getObjectManager()->get('KoninklijkeCollective\\MyRedirects\\Service\\DomainService');
+            $this->domainService = $this->getObjectManager()->get(\KoninklijkeCollective\MyRedirects\Service\DomainService::class);
         }
         return $this->domainService;
     }
