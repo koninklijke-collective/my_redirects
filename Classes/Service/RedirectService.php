@@ -18,7 +18,7 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
     /**
      * @var array
      */
-    protected $keptQueryParameters = array();
+    protected $keptQueryParameters = [];
 
     /**
      * Do an active lookup for redirect
@@ -50,7 +50,7 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
                 $url = (GeneralUtility::getIndpEnv('TYPO3_SSL') ? 'https://' : 'http://') . $url;
             }
 
-            $details = array();
+            $details = [];
             $this->curlUrl($url, $details);
 
             if ((int) $details['response']['http_code'] !== 200) {
@@ -84,7 +84,7 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
      * @param string $url
      * @param array $info
      */
-    protected function curlUrl($url, &$info = array())
+    protected function curlUrl($url, &$info = [])
     {
         // Use cURL for: http, https, ftp, ftps, sftp and scp
         if (preg_match('/^(?:http|ftp)s?|s(?:ftp|cp):/', $url)) {
@@ -98,9 +98,9 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
             // Some sites need a user-agent
             curl_setopt($ch, CURLOPT_USERAGENT, 'my_redirects: Redirect Lookup/1.0');
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
                 'X-REDIRECT-SERVICE: 1'
-            ));
+            ]);
 
             curl_exec($ch);
             $curlInfo = curl_getinfo($ch);
@@ -158,11 +158,11 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
     {
         if ((bool) $_SERVER['HTTP_X_REDIRECT_SERVICE'] === false) {
             // Update statistics
-            $updateFields = array(
+            $updateFields = [
                 'counter' => 'counter+1',
                 'last_hit' => time(),
                 'last_referrer' => GeneralUtility::getIndpEnv('HTTP_REFERER')
-            );
+            ];
             // Remove empty values
             $updateFields = array_filter($updateFields);
 
@@ -170,7 +170,7 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
                 Redirect::TABLE,
                 'uid = ' . (int) $redirect['uid'],
                 $updateFields,
-                array('counter')
+                ['counter']
             );
         }
 

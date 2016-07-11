@@ -94,12 +94,12 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
             $view->getModuleTemplate()->getPageRenderer()->loadRequireJsModule('TYPO3/CMS/Backend/Modal');
         }
 
-        $currentUrl = $this->uriBuilder->setAddQueryString(true)->setArgumentsToBeExcludedFromQueryString(array('returnUrl'))->buildBackendUri();
+        $currentUrl = $this->uriBuilder->setAddQueryString(true)->setArgumentsToBeExcludedFromQueryString(['returnUrl'])->buildBackendUri();
 
-        $this->view->assignMultiple(array(
+        $this->view->assignMultiple([
             'moduleUrl' => \TYPO3\CMS\Backend\Utility\BackendUtility::getModuleUrl('web_MyRedirectsMyRedirects'),
             'currentUrl' => $currentUrl
-        ));
+        ]);
     }
 
     /**
@@ -117,7 +117,7 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
         $extensionName = $currentRequest->getControllerExtensionName();
         if (count($getVars) === 0) {
             $modulePrefix = strtolower('tx_' . $extensionName . '_' . $moduleName);
-            $getVars = array('id', 'M', $modulePrefix);
+            $getVars = ['id', 'M', $modulePrefix];
         }
 
         $returnUrl = rawurlencode(BackendUtility::getModuleUrl('web_MyRedirectsMyRedirects'));
@@ -175,18 +175,18 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
         } else {
             $filters = $this->getBackendSession()->getSessionContents(BackendSession::SESSION_KEY);
             if ($filters === false) {
-                $filters = array(
-                    'filter' => array(),
+                $filters = [
+                    'filter' => [],
                     'order' => 'url',
                     'direction' => QueryInterface::ORDER_ASCENDING
-                );
+                ];
             }
             if ($this->request->hasArgument('filter')) {
                 $filter = $this->request->getArgument('filter');
                 if (is_array($filter)) {
                     $filters['filter'] = $this->request->getArgument('filter');
                 } else {
-                    $filters['filter'] = array();
+                    $filters['filter'] = [];
                 }
             }
             if ($this->request->hasArgument('order')) {
@@ -212,10 +212,10 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
         $noPageUri = null;
         if (!empty($this->page)) {
             $filter['page'] = $this->page['uid'];
-            $noPageUri = $this->uriBuilder->reset()->setAddQueryString(true)->setArgumentsToBeExcludedFromQueryString(array('id'))->build();
+            $noPageUri = $this->uriBuilder->reset()->setAddQueryString(true)->setArgumentsToBeExcludedFromQueryString(['id'])->build();
         }
 
-        $this->view->assignMultiple(array(
+        $this->view->assignMultiple([
             'noPageUri' => $noPageUri,
             'page' => $this->page,
             'filter' => (array) $arguments['filter'],
@@ -226,7 +226,7 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
                 $arguments['order'],
                 $arguments['direction']
             ),
-        ));
+        ]);
     }
 
     /**
@@ -244,7 +244,7 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
 
             $this->enqueueFlashMessage(
                 $this->translate('controller.action.success.lookup.description',
-                    array('/' . $redirect->getUrl())),
+                    ['/' . $redirect->getUrl()]),
                 $this->translate('controller.action.success.lookup.title'),
                 \TYPO3\CMS\Core\Messaging\AbstractMessage::INFO
             );

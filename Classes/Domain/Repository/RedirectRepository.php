@@ -14,12 +14,12 @@ class RedirectRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
     /**
      * @var array
      */
-    protected $defaultOrderings = array(
+    protected $defaultOrderings = [
         'domain' => QueryInterface::ORDER_ASCENDING,
         'url' => QueryInterface::ORDER_ASCENDING,
         'destination' => QueryInterface::ORDER_ASCENDING,
         'counter' => QueryInterface::ORDER_ASCENDING,
-    );
+    ];
 
     /**
      * Find redirects by given order
@@ -33,7 +33,7 @@ class RedirectRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
     {
         $query = $this->createQuery();
 
-        $newOrderings = array();
+        $newOrderings = [];
         switch ($order) {
             case 'url':
                 $newOrderings = $this->defaultOrderings;
@@ -57,7 +57,7 @@ class RedirectRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
         }
 
         if (!empty($filter)) {
-            $constraints = array();
+            $constraints = [];
             foreach ($filter as $key => $value) {
                 switch ($key) {
                     case 'page':

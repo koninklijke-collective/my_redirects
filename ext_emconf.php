@@ -1,6 +1,6 @@
 <?php
 
-$EM_CONF[$_EXTKEY] = array(
+$EM_CONF[$_EXTKEY] = [
     'title' => 'My Redirects',
     'description' => 'Maintain your own redirects in the backend',
     'category' => 'module',
@@ -11,16 +11,16 @@ $EM_CONF[$_EXTKEY] = array(
     'author' => 'Benjamin Serfhos',
     'author_email' => 'benjamin@serfhos.com',
     'author_company' => 'Rotterdam School of Management, Erasmus University',
-    'constraints' => array(
-        'depends' => array(
+    'constraints' => [
+        'depends' => [
             'typo3' => '7.6.0-8.99.99',
-        ),
-        'conflicts' => array(),
-        'suggests' => array(),
-    ),
-    'autoload' => array(
-        'psr-4' => array(
+        ],
+        'conflicts' => [],
+        'suggests' => [],
+    ],
+    'autoload' => [
+        'psr-4' => [
             'KoninklijkeCollective\\MyRedirects\\' => 'Classes'
-        )
-    ),
-);
+        ]
+    ],
+];

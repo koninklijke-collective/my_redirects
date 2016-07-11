@@ -24,7 +24,7 @@ class DomainsViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHel
      */
     public function render()
     {
-        $domains = array();
+        $domains = [];
         $data = $this->getDomainService()->getDomains();
         if (!empty($data)) {
             foreach ($data as $domain) {

@@ -42,17 +42,17 @@ class ext_update
     public function main()
     {
         $updateScriptLink = BackendUtility::getModuleUrl('tools_ExtensionmanagerExtensionmanager',
-            array(
-                'tx_extensionmanager_tools_extensionmanagerextensionmanager' => array(
+            [
+                'tx_extensionmanager_tools_extensionmanagerextensionmanager' => [
                     'extensionKey' => $this->extensionKey,
                     'action' => 'show',
                     'controller' => 'UpdateScript',
-                ),
-            ));
+                ],
+            ]);
         $view = $this->getView();
-        $view->assignMultiple(array(
+        $view->assignMultiple([
             'formAction' => $updateScriptLink,
-        ));
+        ]);
 
         if ((int) $_POST['calculate-hash'] === 1) {
             $this->calculateHashes();
@@ -82,10 +82,10 @@ class ext_update
             $newHash = $this->generateNewHash($row['url']);
             if ($newHash !== null) {
                 if ($row['url_hash'] != $newHash) {
-                    $updateFields = array(
+                    $updateFields = [
                         'tstamp' => time(),
                         'url_hash' => $newHash,
-                    );
+                    ];
 
                     $this->getDatabaseConnection()->exec_UPDATEquery(Redirect::TABLE, 'uid = ' . (int) $row['uid'], $updateFields);
                     $hashed++;
@@ -131,7 +131,7 @@ class ext_update
             ) {
                 $newHash = $this->generateNewHash($row['url']);
                 if ((int) $row['url_hash'] > 0 && $newHash !== null) {
-                    $insertFields = array(
+                    $insertFields = [
                         'pid' => 0,
                         'tstamp' => (int) $row['tstamp'],
                         'crdate' => (int) $row['tstamp'],
@@ -143,7 +143,7 @@ class ext_update
                         'counter' => (int) $row['counter'],
                         'http_response' => ($row['has_moved'] ? 301 : 302),
                         'domain' => (int) $row['domain_limit'],
-                    );
+                    ];
 
                     if ($this->getDatabaseConnection()->exec_INSERTquery(Redirect::TABLE, $insertFields)) {
                         $migrated++;
@@ -269,8 +269,8 @@ class ext_update
         /** @var \TYPO3\CMS\Fluid\View\StandaloneView $view */
         $view = $this->getObjectManager()->get('TYPO3\\CMS\\Fluid\\View\\StandaloneView');
         $view->setTemplatePathAndFilename(GeneralUtility::getFileAbsFileName('EXT:' . $this->extensionKey . '/Resources/Private/Templates/UpdateScript/Index.html'));
-        $view->setLayoutRootPaths(array(GeneralUtility::getFileAbsFileName('EXT:' . $this->extensionKey . '/Resources/Private/Layouts')));
-        $view->setPartialRootPaths(array(GeneralUtility::getFileAbsFileName('EXT:' . $this->extensionKey . '/Resources/Private/Partials')));
+        $view->setLayoutRootPaths([GeneralUtility::getFileAbsFileName('EXT:' . $this->extensionKey . '/Resources/Private/Layouts')]);
+        $view->setPartialRootPaths([GeneralUtility::getFileAbsFileName('EXT:' . $this->extensionKey . '/Resources/Private/Partials')]);
         return $view;
     }
 

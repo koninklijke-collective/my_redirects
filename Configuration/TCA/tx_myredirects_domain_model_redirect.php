@@ -7,8 +7,8 @@ if (!defined('TYPO3_MODE')) {
 
 $translation = 'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:' . Redirect::TABLE;
 
-return array(
-    'ctrl' => array(
+return [
+    'ctrl' => [
         'title' => $translation . '.singular',
         'groupName' => $translation . '.plural',
         'label' => 'url',
@@ -21,236 +21,236 @@ return array(
         'rootLevel' => true,
         'canNotCollapse' => true,
         'hideTable' => true, // don't show in listing..
-        'security' => array(
+        'security' => [
             'ignoreWebMountRestriction' => true,
             'ignoreRootLevelRestriction' => true,
-        ),
+        ],
         'searchFields' => 'url, destination, backend_note'
-    ),
-    'interface' => array(
+    ],
+    'interface' => [
         'showRecordFieldList' => 'url_hash, url, destination, last_referrer, counter, http_response, domain_limit, active, last_hit, last_checked, inactive_reason'
-    ),
-    'types' => array(
-        0 => array(
+    ],
+    'types' => [
+        0 => [
             'showitem' => '--palette--;' . $translation . '.palette.from;from, --palette--;' . $translation . '.palette.to;to, --palette--;' . $translation . '.palette.information;information,'
                 . '--div--;' . $translation . '.div.health,'
                 . 'url_hash, --palette--;' . $translation . '.palette.visited;visited, --palette--;' . $translation . '.palette.response;response'
-        )
-    ),
-    'palettes' => array(
+        ]
+    ],
+    'palettes' => [
 
-        'from' => array(
+        'from' => [
             'showitem' => 'url, domain',
             'canNotCollapse' => true
-        ),
-        'to' => array(
+        ],
+        'to' => [
             'showitem' => 'destination, http_response',
             'canNotCollapse' => true
-        ),
-        'information' => array(
+        ],
+        'information' => [
             'showitem' => 'crdate, --linebreak--, backend_note',
             'canNotCollapse' => true
-        ),
-        'visited' => array(
+        ],
+        'visited' => [
             'showitem' => 'counter, last_hit, last_referrer',
             'canNotCollapse' => true
-        ),
-        'response' => array(
+        ],
+        'response' => [
             'showitem' => 'last_checked, active, --linebreak--, inactive_reason',
             'canNotCollapse' => true
-        ),
-    ),
-    'columns' => array(
-        'pid' => array(
-            'config' => array(
+        ],
+    ],
+    'columns' => [
+        'pid' => [
+            'config' => [
                 'type' => 'passthrough'
-            )
-        ),
-        'tstamp' => array(
-            'config' => array(
+            ]
+        ],
+        'tstamp' => [
+            'config' => [
                 'type' => 'passthrough',
-            )
-        ),
-        'crdate' => array(
+            ]
+        ],
+        'crdate' => [
             'exclude' => 0,
             'label' => $translation . '.crdate',
-            'config' => array(
+            'config' => [
                 'readOnly' => true,
                 'type' => 'input',
                 'size' => 10,
                 'eval' => 'datetime'
-            )
-        ),
-        'url_hash' => array(
+            ]
+        ],
+        'url_hash' => [
             'exclude' => 0,
             'label' => $translation . '.url_hash',
-            'config' => array(
+            'config' => [
                 'readOnly' => true,
                 'type' => 'input',
                 'size' => 30,
-            )
-        ),
-        'url' => array(
+            ]
+        ],
+        'url' => [
             'exclude' => 0,
             'label' => $translation . '.url',
-            'config' => array(
+            'config' => [
                 'type' => 'input',
                 'size' => 30,
                 'eval' => 'trim, unique',
                 'max' => 65535,
-            )
-        ),
-        'destination' => array(
+            ]
+        ],
+        'destination' => [
             'exclude' => 0,
             'label' => $translation . '.destination',
-            'config' => array(
+            'config' => [
                 'type' => 'input',
                 'size' => 30,
                 'eval' => 'trim',
                 'max' => 65535,
-                'wizards' => array(
-                    'link' => array(
+                'wizards' => [
+                    'link' => [
                         'type' => 'popup',
                         'title' => 'LLL:EXT:cms/locallang_ttc.xlf:header_link_formlabel',
                         'icon' => 'link_popup.gif',
-                        'module' => array(
+                        'module' => [
                             'name' => 'wizard_element_browser',
-                            'urlParameters' => array(
+                            'urlParameters' => [
                                 'mode' => 'wizard'
-                            )
-                        ),
-                        'params' => array(
+                            ]
+                        ],
+                        'params' => [
                             'blindLinkOptions' => 'mail, folder, spec',
                             'blindLinkFields' => 'target, title, class, params',
-                        ),
+                        ],
                         'JSopenParams' => 'height=300,width=500,status=0,menubar=0,scrollbars=1'
-                    )
-                ),
-            )
-        ),
-        'last_hit' => array(
+                    ]
+                ],
+            ]
+        ],
+        'last_hit' => [
             'exclude' => 0,
             'label' => $translation . '.last_hit',
-            'config' => array(
+            'config' => [
                 'readOnly' => true,
                 'type' => 'input',
                 'size' => 10,
                 'eval' => 'datetime'
-            )
-        ),
-        'last_referrer' => array(
+            ]
+        ],
+        'last_referrer' => [
             'exclude' => 0,
             'label' => $translation . '.last_referrer',
-            'config' => array(
+            'config' => [
                 'readOnly' => true,
                 'type' => 'input',
                 'size' => 30,
-            )
-        ),
-        'counter' => array(
+            ]
+        ],
+        'counter' => [
             'exclude' => 0,
             'label' => $translation . '.counter',
-            'config' => array(
+            'config' => [
                 'type' => 'input',
                 'size' => 5,
                 'eval' => 'int',
-                'range' => array(
+                'range' => [
                     'lower' => 0,
-                ),
-            )
-        ),
-        'http_response' => array(
+                ],
+            ]
+        ],
+        'http_response' => [
             'exclude' => 0,
             'label' => $translation . '.http_response',
-            'config' => array(
+            'config' => [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
                 'size' => 1,
-                'items' => array(
-                    array(
+                'items' => [
+                    [
                         $translation . '.http_response.I.0',
                         0
-                    ),
-                    array(
+                    ],
+                    [
                         $translation . '.http_response.I.301',
                         301
-                    ),
-                    array(
+                    ],
+                    [
                         $translation . '.http_response.I.302',
                         302
-                    ),
-                    array(
+                    ],
+                    [
                         $translation . '.http_response.I.303',
                         303
-                    ),
-                    array(
+                    ],
+                    [
                         $translation . '.http_response.I.307',
                         307
-                    ),
-                ),
-            )
-        ),
-        'domain' => array(
+                    ],
+                ],
+            ]
+        ],
+        'domain' => [
             'exclude' => 0,
             'label' => $translation . '.domain',
-            'config' => array(
+            'config' => [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
                 'size' => 1,
-                'items' => array(
-                    array(
+                'items' => [
+                    [
                         $translation . '.domain.I.0',
                         0
-                    ),
-                ),
+                    ],
+                ],
                 'foreign_table' => 'sys_domain',
                 'foreign_table_where' => ' AND sys_domain.redirectTo = ""',
-            )
-        ),
-        'active' => array(
+            ]
+        ],
+        'active' => [
             'exclude' => 0,
             'label' => $translation . '.active',
-            'config' => array(
+            'config' => [
                 'readOnly' => true,
                 'type' => 'check',
-                'items' => array(
-                    array(
+                'items' => [
+                    [
                         $translation . '.active.I.0',
                         ''
-                    ),
-                )
-            )
-        ),
-        'last_checked' => array(
+                    ],
+                ]
+            ]
+        ],
+        'last_checked' => [
             'exclude' => 0,
             'label' => $translation . '.last_checked',
-            'config' => array(
+            'config' => [
                 'readOnly' => true,
                 'type' => 'input',
                 'size' => 10,
                 'eval' => 'date'
-            )
-        ),
-        'inactive_reason' => array(
+            ]
+        ],
+        'inactive_reason' => [
             'exclude' => 0,
             'label' => $translation . '.inactive_reason',
-            'config' => array(
+            'config' => [
                 'type' => 'none',
                 'cols' => 48,
                 'rows' => 10,
                 'eval' => 'trim'
-            ),
+            ],
             'displayCond' => 'FIELD:active:REQ:false',
-        ),
-        'backend_note' => array(
+        ],
+        'backend_note' => [
             'exclude' => 0,
             'label' => $translation . '.backend_note',
-            'config' => array(
+            'config' => [
                 'type' => 'text',
                 'cols' => 48,
                 'rows' => 10,
                 'eval' => 'trim'
-            ),
-        ),
-    ),
-);
+            ],
+        ],
+    ],
+];
