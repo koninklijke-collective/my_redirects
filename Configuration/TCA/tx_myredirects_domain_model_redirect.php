@@ -116,7 +116,7 @@ return [
                         'module' => array(
                            'name' => 'wizard_link',
                         ),
-                        'JSopenParams' => 'height=800,width=600,status=0,menubar=0,scrollbars=1'
+                        'JSopenParams' => 'height=800,width=600,status=0,menubar=0,scrollbars=1',
                         'params' => [
                             'blindLinkOptions' => 'mail, folder, spec',
                             'blindLinkFields' => 'target, title, class, params',
