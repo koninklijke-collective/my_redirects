@@ -133,19 +133,34 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
      */
     public function queryByPathAndDomain($path, $domain = 0, $fields = 'uid, destination, http_response, domain')
     {
+        $redirect = null;
         if (!empty($path)) {
-            $hash = $this->generateUrlHash($path);
-            return $this->getDatabaseConnection()->exec_SELECTgetSingleRow(
-                $fields,
-                Redirect::TABLE,
-                'url_hash = "' . $hash . '"'
-                . ' AND domain IN (0,' . $domain . ')',
-                null,
-                'domain DESC'
+            list($redirect, $path, $domain, $fields) = $this->getSignalSlotDispatcher()->dispatch(
+                self::class,
+                'beforeQueryByPathAndDomain',
+                [$redirect, $path, $domain, $fields]
+            );
+
+            if ($redirect === null) {
+                $hash = $this->generateUrlHash($path);
+                $redirect = $this->getDatabaseConnection()->exec_SELECTgetSingleRow(
+                    $fields,
+                    Redirect::TABLE,
+                    'url_hash = "' . $hash . '"'
+                    . ' AND domain IN (0,' . $domain . ')',
+                    null,
+                    'domain DESC'
+                );
+            }
+
+            list($redirect) = $this->getSignalSlotDispatcher()->dispatch(
+                self::class,
+                'afterQueryByPathAndDomain',
+                [$redirect, $path, $domain, $fields]
             );
         }
 
-        return null;
+        return $redirect;
     }
 
     /**
@@ -303,6 +318,16 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
             $this->domainService = $this->getObjectManager()->get(\KoninklijkeCollective\MyRedirects\Service\DomainService::class);
         }
         return $this->domainService;
+    }
+
+    /**
+     * Get the SignalSlot dispatcher
+     *
+     * @return \TYPO3\CMS\Extbase\SignalSlot\Dispatcher
+     */
+    protected function getSignalSlotDispatcher()
+    {
+        return $this->getObjectManager()->get(\TYPO3\CMS\Extbase\SignalSlot\Dispatcher::class);
     }
 
 }
