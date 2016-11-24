@@ -3,6 +3,9 @@ namespace KoninklijkeCollective\MyRedirects\Hook;
 
 use KoninklijkeCollective\MyRedirects\Domain\Model\Redirect;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Messaging\FlashMessage;
+use TYPO3\CMS\Core\Messaging\FlashMessageService;
+use TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility;
 
 /**
  * DataHandler: Hook to update needed lookup variables
@@ -27,6 +30,26 @@ class DataHandlerHook
             if (isset($row['url'])) {
                 $row['url'] = ltrim($row['url'], '/');
                 $row['url_hash'] = $this->getRedirectService()->generateUrlHash($row['url']);
+
+                $configuration = $this->getObjectManager()->get(ConfigurationUtility::class)->getCurrentConfiguration('my_redirects');
+                $collisions = $this->getRedirectService()->getCollisions(array_merge($reference->checkValue_currentRecord, $row));
+
+                if ($collisions) {
+                    $message = GeneralUtility::makeInstance(
+                        FlashMessage::class,
+                        sprintf(
+                            $GLOBALS['LANG']->sL('LLL:EXT:my_redirects/Resources/Private/Language/locallang.xlf:collisions-detected'),
+                            $row['url'],
+                            implode(array_column($collisions, 'url'), '\', \'')
+                        ),
+                        '',
+                        FlashMessage::WARNING,
+                        true
+                    );
+
+                    $flashMessageService = GeneralUtility::makeInstance(FlashMessageService::class);
+                    $flashMessageService->getMessageQueueByIdentifier()->enqueue($message);
+                }
             }
         }
     }

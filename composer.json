@@ -20,6 +20,10 @@
             "KoninklijkeCollective\\MyRedirects\\": "Classes/"
         }
     },
+    
+    "require": {
+        "witrin/formal-theory": "1.1.0"
+    },
 
     "authors": [
         {
