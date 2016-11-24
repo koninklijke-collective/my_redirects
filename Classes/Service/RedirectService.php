@@ -3,9 +3,12 @@ namespace KoninklijkeCollective\MyRedirects\Service;
 
 use KoninklijkeCollective\MyRedirects\Domain\Model\Redirect;
 use KoninklijkeCollective\MyRedirects\Utility\EidUtility;
+use FormalTheory\RegularExpression\Lexer;
+use FormalTheory\FiniteAutomata;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\HttpUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
+use TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility;
 
 /**
  * Service: Handle Redirects
@@ -15,6 +18,10 @@ use TYPO3\CMS\Core\Utility\MathUtility;
 class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
 {
 
+    const MATCHING_MODE_HASH = 0;
+    const MATCHING_MODE_WILDCARD = 1;
+    const MATCHING_MODE_REGEXP = 2;
+    
     /**
      * @var array
      */
@@ -142,15 +149,47 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
             );
 
             if ($redirect === null) {
-                $hash = $this->generateUrlHash($path);
-                $redirect = $this->getDatabaseConnection()->exec_SELECTgetSingleRow(
-                    $fields,
-                    Redirect::TABLE,
-                    'url_hash = "' . $hash . '"'
-                    . ' AND domain IN (0,' . $domain . ')',
-                    null,
-                    'domain DESC'
-                );
+                $configuration = $this->getObjectManager()->get(ConfigurationUtility::class)->getCurrentConfiguration('my_redirects');
+
+                switch((int)$configuration['matching_mode']['value']) {
+                    case self::MATCHING_MODE_HASH:
+                        $hash = $this->generateUrlHash($path);
+                        $redirect = $this->getDatabaseConnection()->exec_SELECTgetSingleRow(
+                            $fields,
+                            Redirect::TABLE,
+                            'url_hash = "' . $hash . '"'
+                            . ' AND domain IN (0,' . $domain . ')',
+                            null,
+                            'domain DESC'
+                            );
+                        break;
+                    case self::MATCHING_MODE_WILDCARD:
+                        $redirect = $this->getDatabaseConnection()->exec_SELECTgetSingleRow(
+                            $fields . ', ROUND(CHAR_LENGTH(url) - CHAR_LENGTH(REPLACE(url, "*", ""))) AS wildcards, CHAR_LENGTH(url) AS length',
+                            Redirect::TABLE,
+                            '"' . $path . '" LIKE REPLACE(url, "*", "%")'
+                            . ' AND domain IN (0,' . $domain . ')',
+                            null,
+                            'wildcards, length DESC, domain DESC'
+                        );
+                        break;
+                    case self::MATCHING_MODE_REGEXP:
+                        $redirect = $this->getDatabaseConnection()->exec_SELECTgetSingleRow(
+                            $fields . ', CHAR_LENGTH(url) AS length',
+                            Redirect::TABLE,
+                            '"' . $path . '" REGEXP url'
+                            . ' AND domain IN (0,' . $domain . ')',
+                            null,
+                            'length DESC, domain DESC'
+                        );
+                        break;
+                    default:
+                        throw new TYPO3\CMS\Core\Error\Http\StatusException(
+                            TYPO3\CMS\Core\Utility\HttpUtility::HTTP_STATUS_500,
+                            'Unknown redirect matching mode.',
+                            1480136597
+                        );
+                }
             }
 
             list($redirect) = $this->getSignalSlotDispatcher()->dispatch(
@@ -328,6 +367,64 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
     protected function getSignalSlotDispatcher()
     {
         return $this->getObjectManager()->get(\TYPO3\CMS\Extbase\SignalSlot\Dispatcher::class);
+    }
+    
+    /**
+     * Get all collisions for the given redirect
+     * 
+     * @param array $redirect
+     * @return array
+     */
+    public function getCollisions($redirect)
+    {
+        $configuration = $this->getObjectManager()->get(ConfigurationUtility::class)->getCurrentConfiguration('my_redirects');
+        $matchingMode = (int)$configuration['matching_mode']['value'];
+        $collisions = [];
+        $redirects = $this->getDatabaseConnection()->exec_SELECTgetRows(
+            '*',
+            Redirect::TABLE,
+            'uid <> "' . $redirect['uid'] . '"'
+            . ($matchingMode  === self::MATCHING_MODE_HASH ? ' AND url = "' . $redirect['url'] . '"' : '')
+            . ' AND domain IN (0,' . $redirect['domain'] . ')',
+            null,
+            'domain DESC'
+        );
+        
+        if ($matchingMode === self::MATCHING_MODE_HASH) {
+            $collisions = $redirects;
+        } else {
+            $lexer = new Lexer();
+
+            $a = $lexer->lex($this->urlToRegex($redirect['url'], $matchingMode))->getNFA();
+
+            foreach ($redirects as $redirect) {
+                $b = $lexer->lex($this->urlToRegex($redirect['url'], $matchingMode))->getNFA();
+
+                if (FiniteAutomata::intersectionByDeMorgan($a, $b)->validSolutionExists()) {
+                    $collisions[] = $redirect;
+                }
+            }
+        }
+
+        return $collisions;
+    }
+    
+    /**
+     * Convert an URL to a regular expression
+     * 
+     * @param string $url
+     * @param int $matchingMode
+     * @return string
+     */
+    protected function urlToRegex($url, $matchingMode)
+    {
+        $url = '^' . rtrim(ltrim(trim($url), '^'), '$') . '$';
+
+        if ((int)$matchingMode === self::MATCHING_MODE_WILDCARD) {
+            $url = str_replace('*', '.*', $url);
+        }
+
+        return $url;
     }
 
 }

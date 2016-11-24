@@ -1,0 +1,2 @@
+# cat=basic/links; type=options[Hash=0,Wildcard=1,Regular Expression=2]; label=Matching mode: Set how the link matching is done.
+matching_mode = 0

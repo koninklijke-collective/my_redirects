@@ -127,6 +127,10 @@
             <trans-unit id="no-records-found">
                 <source>No redirects found.</source>
             </trans-unit>
+            
+            <trans-unit id="collisions-detected">
+                <source>The link '%s' conflicts with '%s'.</source>
+            </trans-unit>
 
             <trans-unit id="controller.action.add.record">
                 <source>Add Redirect</source>
