@@ -1,9 +1,7 @@
 <?php
 use KoninklijkeCollective\MyRedirects\Domain\Model\Redirect;
 
-if (!defined('TYPO3_MODE')) {
-    die ('Access denied.');
-}
+defined('TYPO3_MODE') or die ('Access denied.');
 
 $translation = 'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:' . Redirect::TABLE;
 
@@ -113,9 +111,9 @@ return [
                         'type' => 'popup',
                         'title' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:header_link_formlabel',
                         'icon' => 'EXT:backend/Resources/Public/Images/FormFieldWizard/wizard_link.gif',
-                        'module' => array(
+                        'module' => [
                             'name' => 'wizard_link',
-                        ),
+                        ],
                         'JSopenParams' => 'height=800,width=600,status=0,menubar=0,scrollbars=1',
                         'params' => [
                             'blindLinkOptions' => 'mail, folder, spec',

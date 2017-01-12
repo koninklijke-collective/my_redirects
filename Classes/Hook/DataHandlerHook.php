@@ -29,37 +29,17 @@ class DataHandlerHook
         if (!empty($type) && $table === Redirect::TABLE) {
             if (isset($row['url'])) {
                 $row['url'] = ltrim($row['url'], '/');
-                $row['url_hash'] = $this->getRedirectService()->generateUrlHash($row['url']);
-
-                $configuration = $this->getObjectManager()->get(ConfigurationUtility::class)->getCurrentConfiguration('my_redirects');
-                $collisions = $this->getRedirectService()->getCollisions(array_merge($reference->checkValue_currentRecord, $row));
-
-                if ($collisions) {
-                    $message = GeneralUtility::makeInstance(
-                        FlashMessage::class,
-                        sprintf(
-                            $GLOBALS['LANG']->sL('LLL:EXT:my_redirects/Resources/Private/Language/locallang.xlf:collisions-detected'),
-                            $row['url'],
-                            implode(array_column($collisions, 'url'), '\', \'')
-                        ),
-                        '',
-                        FlashMessage::WARNING,
-                        true
-                    );
-
-                    $flashMessageService = GeneralUtility::makeInstance(FlashMessageService::class);
-                    $flashMessageService->getMessageQueueByIdentifier()->enqueue($message);
-                }
+                $row['url_hash'] = $this->getMatchingService()->generateUrlHash($row['url']);
             }
         }
     }
 
     /**
-     * @return \KoninklijkeCollective\MyRedirects\Service\RedirectService
+     * @return \KoninklijkeCollective\MyRedirects\Service\MatchingService
      */
-    protected function getRedirectService()
+    protected function getMatchingService()
     {
-        return $this->getObjectManager()->get(\KoninklijkeCollective\MyRedirects\Service\RedirectService::class);
+        return $this->getObjectManager()->get(\KoninklijkeCollective\MyRedirects\Service\MatchingService::class);
     }
 
     /**

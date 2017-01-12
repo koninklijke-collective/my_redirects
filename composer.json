@@ -21,8 +21,8 @@
         }
     },
     
-    "require": {
-        "witrin/formal-theory": "1.1.0"
+    "suggest": {
+        "witrin/formal-theory": "Allows possibility for regular expressions and wildcards in redirect links"
     },
 
     "authors": [

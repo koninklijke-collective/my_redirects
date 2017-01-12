@@ -36,16 +36,20 @@ class RequestController
      */
     public function redirectAction()
     {
-        $path = GeneralUtility::getIndpEnv('TYPO3_SITE_SCRIPT');
-        $path = strtolower(trim($path));
-        if (!empty($path)) {
-            $redirect = $this->getRedirectService()->queryByPathAndDomain(
-                $path,
-                $this->getDomainService()->getCurrentDomainId()
-            );
-            if (is_array($redirect) && (int) $redirect['uid'] > 0) {
-                $this->getRedirectService()->handleRedirect($redirect);
+        try {
+            $path = GeneralUtility::getIndpEnv('TYPO3_SITE_SCRIPT');
+            $path = strtolower(trim($path));
+            if (!empty($path)) {
+                $redirect = $this->getRedirectService()->queryByPathAndDomain(
+                    $path,
+                    $this->getDomainService()->getCurrentDomainId()
+                );
+                if (is_array($redirect) && (int)$redirect['uid'] > 0) {
+                    $this->getRedirectService()->handleRedirect($redirect);
+                }
             }
+        } catch (\Exception $e) {
+            // There should be no exception when trying to redirect!
         }
     }
 
