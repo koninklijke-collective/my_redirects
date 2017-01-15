@@ -204,10 +204,7 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
             );
         }
 
-        $destination = $redirect['destination'];
-        if (MathUtility::canBeInterpretedAsInteger($destination)) {
-            $destination = $this->generateLink((int)$destination);
-        }
+        $destination = $this->generateLink($redirect['destination']);
 
         if (!empty($this->keptQueryParameters)) {
             $urlParts = parse_url($destination);
@@ -266,22 +263,36 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
     /**
      * Generate link based on current page information
      *
-     * @param integer $pageId
+     * @param string $target
      * @return string
      */
-    protected function generateLink($pageId)
+    protected function generateLink($target)
     {
         $link = null;
-        $controller = $this->getTypoScriptFrontendController($pageId);
-        $page = BackendUtility::getRecord('pages', $pageId);
-        $linkData = $controller->tmpl->linkData(
-            $page,
-            '',
-            false,
-            ''
-        );
-        if (!empty($linkData) && isset($linkData['totalURL'])) {
-            $link = $linkData['totalURL'];
+
+        if (MathUtility::canBeInterpretedAsInteger($target)) {
+            $target = (int)$target;
+            $controller = $this->getTypoScriptFrontendController($target);
+            $page = BackendUtility::getRecord('pages', $target);
+            $linkData = $controller->tmpl->linkData(
+                $page,
+                '',
+                false,
+                ''
+            );
+            if (!empty($linkData) && isset($linkData['totalURL'])) {
+                $link = $linkData['totalURL'];
+            }
+        } elseif (GeneralUtility::isValidUrl($target) === false) {
+            // Render it via the cObj with default rootpage id if available
+            $defaultRootPageId = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['realurl']['_DEFAULT']['pagePath']['rootpage_id'] ?: 1;
+            $controller = $this->getTypoScriptFrontendController($defaultRootPageId);
+
+            $link = $controller->cObj->typoLink_URL(
+                ['parameter' => $target]
+            );
+        } else {
+            $link = $target;
         }
 
         return $link;
