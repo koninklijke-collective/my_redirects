@@ -3,9 +3,14 @@ namespace KoninklijkeCollective\MyRedirects\Service;
 
 use KoninklijkeCollective\MyRedirects\Domain\Model\Redirect;
 use KoninklijkeCollective\MyRedirects\Utility\EidUtility;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Error\Http\BadRequestException;
+use TYPO3\CMS\Core\Error\Http\StatusException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\HttpUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
+use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 
 /**
  * Service: Handle Redirects
@@ -53,10 +58,10 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
             $details = [];
             $this->curlUrl($url, $details);
 
-            if ((int) $details['response']['http_code'] !== 200) {
+            if ((int)$details['response']['http_code'] !== 200) {
                 $active = false;
 
-                if ((int) $details['response']['http_code'] === 0) {
+                if ((int)$details['response']['http_code'] === 0) {
                     $redirect->setInactiveReason('Response timeout');
                 } elseif (isset($details['error']['id'])) {
                     $redirect->setInactiveReason($details['error']['id'] . ': ' . $details['error']['message']);
@@ -130,36 +135,46 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
      * @param integer $domain
      * @param string $fields
      * @return array
+     * @throws \TYPO3\CMS\Core\Error\Http\StatusException
      */
     public function queryByPathAndDomain($path, $domain = 0, $fields = 'uid, destination, http_response, domain')
     {
         $redirect = null;
         if (!empty($path)) {
-            list($redirect, $path, $domain, $fields) = $this->getSignalSlotDispatcher()->dispatch(
-                self::class,
-                'beforeQueryByPathAndDomain',
-                [$redirect, $path, $domain, $fields]
-            );
-
-            if ($redirect === null) {
-                $hash = $this->generateUrlHash($path);
-                $redirect = $this->getDatabaseConnection()->exec_SELECTgetSingleRow(
-                    $fields,
-                    Redirect::TABLE,
-                    'url_hash = "' . $hash . '"'
-                    . ' AND domain IN (0,' . $domain . ')',
-                    null,
-                    'domain DESC'
-                );
+            // Hook: beforeQueryByPathAndDomain
+            if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['my_redirects']['beforeQueryByPathAndDomain'])) {
+                foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['my_redirects']['beforeQueryByPathAndDomain'] as $key => $_funcRef) {
+                    $_params = [
+                        'redirect' => &$redirect,
+                        'path' => &$path,
+                        'domain' => &$domain,
+                        'fields' => &$fields
+                    ];
+                    GeneralUtility::callUserFunction($_funcRef, $_params, $this);
+                }
             }
 
-            list($redirect) = $this->getSignalSlotDispatcher()->dispatch(
-                self::class,
-                'afterQueryByPathAndDomain',
-                [$redirect, $path, $domain, $fields]
-            );
-        }
+            if ($redirect === null) {
+                $path = $this->generateCleanPath($path);
+                $redirects = $this->getMatchingService()->matchRedirects($path, $domain, $fields);
+                if ($redirects) {
+                    $redirect = reset($redirects);
+                }
+            }
 
+            // Hook: afterQueryByPathAndDomain
+            if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['my_redirects']['afterQueryByPathAndDomain'])) {
+                foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['my_redirects']['afterQueryByPathAndDomain'] as $key => $_funcRef) {
+                    $_params = [
+                        'redirect' => &$redirect,
+                        'path' => $path,
+                        'domain' => $domain,
+                        'fields' => $fields
+                    ];
+                    $redirect = GeneralUtility::callUserFunction($_funcRef, $_params, $this);
+                }
+            }
+        }
         return $redirect;
     }
 
@@ -167,11 +182,11 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
      * Handle redirect with core HTTP Response constants
      *
      * @param array $redirect
-     * @return string
+     * @return void
      */
     public function handleRedirect($redirect)
     {
-        if ((bool) $_SERVER['HTTP_X_REDIRECT_SERVICE'] === false) {
+        if ((bool)$_SERVER['HTTP_X_REDIRECT_SERVICE'] === false) {
             // Update statistics
             $updateFields = [
                 'counter' => 'counter+1',
@@ -183,16 +198,13 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
 
             $this->getDatabaseConnection()->exec_UPDATEquery(
                 Redirect::TABLE,
-                'uid = ' . (int) $redirect['uid'],
+                'uid = ' . (int)$redirect['uid'],
                 $updateFields,
                 ['counter']
             );
         }
 
-        $destination = $redirect['destination'];
-        if (MathUtility::canBeInterpretedAsInteger($destination)) {
-            $destination = $this->generateLink((int) $destination);
-        }
+        $destination = $this->generateLink($redirect['destination']);
 
         if (!empty($this->keptQueryParameters)) {
             $urlParts = parse_url($destination);
@@ -212,13 +224,13 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
     /**
      * Generate the Url Hash
      *
-     * @param string $url
+     * @param string $path
      * @return string
      * @throws \Exception
      */
-    public function generateUrlHash($url)
+    public function generateCleanPath($path)
     {
-        if ($urlParts = parse_url($url)) {
+        if ($urlParts = parse_url($path)) {
             if (!empty($urlParts['path'])) {
                 // Remove trailing slash from url generation
                 $urlParts['path'] = rtrim($urlParts['path'], '/');
@@ -242,31 +254,45 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
             $url = HttpUtility::buildUrl($urlParts);
             // Make sure the hash is case-insensitive
             $url = strtolower($url);
-            return sha1($url);
+            return $url;
         }
 
-        throw new \TYPO3\CMS\Core\Error\Http\BadRequestException('Incorrect url given.', 1467622163);
+        throw new BadRequestException('Incorrect url given.', 1467622163);
     }
 
     /**
      * Generate link based on current page information
      *
-     * @param integer $pageId
+     * @param string $target
      * @return string
      */
-    protected function generateLink($pageId)
+    protected function generateLink($target)
     {
         $link = null;
-        $controller = $this->getTypoScriptFrontendController($pageId);
-        $page = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecord('pages', $pageId);
-        $linkData = $controller->tmpl->linkData(
-            $page,
-            '',
-            false,
-            ''
-        );
-        if (!empty($linkData) && isset($linkData['totalURL'])) {
-            $link = $linkData['totalURL'];
+
+        if (MathUtility::canBeInterpretedAsInteger($target)) {
+            $target = (int)$target;
+            $controller = $this->getTypoScriptFrontendController($target);
+            $page = BackendUtility::getRecord('pages', $target);
+            $linkData = $controller->tmpl->linkData(
+                $page,
+                '',
+                false,
+                ''
+            );
+            if (!empty($linkData) && isset($linkData['totalURL'])) {
+                $link = $linkData['totalURL'];
+            }
+        } elseif (GeneralUtility::isValidUrl($target) === false) {
+            // Render it via the cObj with default rootpage id if available
+            $defaultRootPageId = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['realurl']['_DEFAULT']['pagePath']['rootpage_id'] ?: 1;
+            $controller = $this->getTypoScriptFrontendController($defaultRootPageId);
+
+            $link = $controller->cObj->typoLink_URL(
+                ['parameter' => $target]
+            );
+        } else {
+            $link = $target;
         }
 
         return $link;
@@ -302,11 +328,22 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
     }
 
     /**
-     * @return \TYPO3\CMS\Extbase\Object\ObjectManager
+     * @return \TYPO3\CMS\Extbase\Object\ObjectManagerInterface
      */
     protected function getObjectManager()
     {
-        return GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\ObjectManager::class);
+        return GeneralUtility::makeInstance(ObjectManager::class);
+    }
+
+    /**
+     * @return \KoninklijkeCollective\MyRedirects\Service\MatchingService
+     */
+    protected function getMatchingService()
+    {
+        if (!isset($this->matchingService)) {
+            $this->matchingService = $this->getObjectManager()->get(MatchingService::class);
+        }
+        return $this->matchingService;
     }
 
     /**
@@ -315,7 +352,7 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
     protected function getDomainService()
     {
         if (!isset($this->domainService)) {
-            $this->domainService = $this->getObjectManager()->get(\KoninklijkeCollective\MyRedirects\Service\DomainService::class);
+            $this->domainService = $this->getObjectManager()->get(DomainService::class);
         }
         return $this->domainService;
     }
@@ -327,7 +364,7 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
      */
     protected function getSignalSlotDispatcher()
     {
-        return $this->getObjectManager()->get(\TYPO3\CMS\Extbase\SignalSlot\Dispatcher::class);
+        return $this->getObjectManager()->get(Dispatcher::class);
     }
 
 }

@@ -3,6 +3,9 @@ namespace KoninklijkeCollective\MyRedirects\Hook;
 
 use KoninklijkeCollective\MyRedirects\Domain\Model\Redirect;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Messaging\FlashMessage;
+use TYPO3\CMS\Core\Messaging\FlashMessageService;
+use TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility;
 
 /**
  * DataHandler: Hook to update needed lookup variables
@@ -26,17 +29,17 @@ class DataHandlerHook
         if (!empty($type) && $table === Redirect::TABLE) {
             if (isset($row['url'])) {
                 $row['url'] = ltrim($row['url'], '/');
-                $row['url_hash'] = $this->getRedirectService()->generateUrlHash($row['url']);
+                $row['url_hash'] = $this->getMatchingService()->generateUrlHash($row['url']);
             }
         }
     }
 
     /**
-     * @return \KoninklijkeCollective\MyRedirects\Service\RedirectService
+     * @return \KoninklijkeCollective\MyRedirects\Service\MatchingService
      */
-    protected function getRedirectService()
+    protected function getMatchingService()
     {
-        return $this->getObjectManager()->get(\KoninklijkeCollective\MyRedirects\Service\RedirectService::class);
+        return $this->getObjectManager()->get(\KoninklijkeCollective\MyRedirects\Service\MatchingService::class);
     }
 
     /**

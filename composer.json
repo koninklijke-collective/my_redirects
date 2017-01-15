@@ -20,6 +20,10 @@
             "KoninklijkeCollective\\MyRedirects\\": "Classes/"
         }
     },
+    
+    "suggest": {
+        "witrin/formal-theory": "Allows possibility for regular expressions and wildcards in redirect links"
+    },
 
     "authors": [
         {
