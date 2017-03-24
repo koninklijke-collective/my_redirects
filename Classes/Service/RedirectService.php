@@ -139,7 +139,8 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
         $redirect = null;
         if (!empty($path)) {
             $hookObjects = null;
-            // Before Hook
+            // Get hook objects for queryByPathAndDomain
+            // Example: $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['my_redirects']['queryByPathAndDomainHook'][] = Your\Class\For\Hook::class;
             if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF'][ConfigurationUtility::EXTENSION]['queryByPathAndDomainHook'])) {
                 $hookObjects = [];
                 foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF'][ConfigurationUtility::EXTENSION]['queryByPathAndDomainHook'] as $class) {
