@@ -138,11 +138,26 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
     {
         $redirect = null;
         if (!empty($path)) {
-            list($redirect, $path, $domain, $fields) = $this->getSignalSlotDispatcher()->dispatch(
-                self::class,
-                'beforeQueryByPathAndDomain',
-                [$redirect, $path, $domain, $fields]
-            );
+            $hookObjects = null;
+            // Before Hook
+            if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF'][ConfigurationUtility::EXTENSION]['queryByPathAndDomainHook'])) {
+                $hookObjects = [];
+                foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF'][ConfigurationUtility::EXTENSION]['queryByPathAndDomainHook'] as $class) {
+                    $hookObject = GeneralUtility::getUserObj($class);
+                    if ($hookObject !== null) {
+                        $hookObjects[] = $hookObject;
+                    }
+                }
+            }
+
+            if ($hookObjects) {
+                // Hook: beforeQueryByPathAndDomain
+                foreach ($hookObjects as $hookObject) {
+                    if (method_exists($hookObject, 'beforeQueryByPathAndDomain')) {
+                        $redirect = $hookObject->beforeQueryByPathAndDomain($redirect, $path, $domain, $fields);
+                    }
+                }
+            }
 
             if ($redirect === null) {
                 $hash = $this->generateUrlHash($path);
@@ -156,11 +171,14 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
                 );
             }
 
-            list($redirect) = $this->getSignalSlotDispatcher()->dispatch(
-                self::class,
-                'afterQueryByPathAndDomain',
-                [$redirect, $path, $domain, $fields]
-            );
+            if ($hookObjects) {
+                // Hook: afterQueryByPathAndDomain
+                foreach ($hookObjects as $hookObject) {
+                    if (method_exists($hookObject, 'afterQueryByPathAndDomain')) {
+                        $redirect = $hookObject->afterQueryByPathAndDomain($redirect, $path, $domain, $fields);
+                    }
+                }
+            }
         }
 
         return $redirect;
@@ -307,15 +325,4 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
         }
         return $this->domainService;
     }
-
-    /**
-     * Get the SignalSlot dispatcher
-     *
-     * @return \TYPO3\CMS\Extbase\SignalSlot\Dispatcher
-     */
-    protected function getSignalSlotDispatcher()
-    {
-        return GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\SignalSlot\Dispatcher::class);
-    }
-
 }
