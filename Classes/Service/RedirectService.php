@@ -2,6 +2,7 @@
 namespace KoninklijkeCollective\MyRedirects\Service;
 
 use KoninklijkeCollective\MyRedirects\Domain\Model\Redirect;
+use KoninklijkeCollective\MyRedirects\Utility\ConfigurationUtility;
 use KoninklijkeCollective\MyRedirects\Utility\EidUtility;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -222,7 +223,7 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
                 $urlParts['path'] = rtrim($urlParts['path'], '/');
             }
             if (!empty($urlParts['query'])) {
-                $excludedQueryParameters = $this->getCHashExcludedParameters();
+                $excludedQueryParameters = ConfigurationUtility::getCHashExcludedParameters();
                 if (!empty($excludedQueryParameters)) {
                     parse_str($urlParts['query'], $queryParameters);
                     if (!empty($queryParameters)) {
@@ -270,7 +271,7 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
             }
         } elseif (GeneralUtility::isValidUrl($target) === false) {
             // Render it via the cObj with default rootpage id if available
-            $controller = $this->getTypoScriptFrontendController(\KoninklijkeCollective\MyRedirects\Utility\ConfigurationUtility::getDefaultRootPageId());
+            $controller = $this->getTypoScriptFrontendController(ConfigurationUtility::getDefaultRootPageId());
             $link = $controller->cObj->typoLink_URL(
                 ['parameter' => $target]
             );

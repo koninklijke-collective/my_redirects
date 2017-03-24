@@ -2,6 +2,8 @@
 
 namespace KoninklijkeCollective\MyRedirects\Utility;
 
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /**
  * Utility: Extension Configuration
  *
@@ -18,6 +20,16 @@ class ConfigurationUtility
     {
         $configuration = static::getConfiguration();
         return (int)($configuration['defaultRootPageId'] ?: ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['realurl']['_DEFAULT']['pagePath']['rootpage_id'] ?: 1));
+    }
+
+    /**
+     * Get configured excluded parameters to keep in redirect
+     *
+     * @return array
+     */
+    public static function getCHashExcludedParameters()
+    {
+        return GeneralUtility::trimExplode(',', $GLOBALS['TYPO3_CONF_VARS']['FE']['cHashExcludedParameters'], true);
     }
 
     /**
