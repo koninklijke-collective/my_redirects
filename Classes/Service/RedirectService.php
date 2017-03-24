@@ -300,20 +300,12 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
     }
 
     /**
-     * @return \TYPO3\CMS\Extbase\Object\ObjectManager
-     */
-    protected function getObjectManager()
-    {
-        return GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\ObjectManager::class);
-    }
-
-    /**
      * @return \KoninklijkeCollective\MyRedirects\Service\DomainService
      */
     protected function getDomainService()
     {
         if (!isset($this->domainService)) {
-            $this->domainService = $this->getObjectManager()->get(\KoninklijkeCollective\MyRedirects\Service\DomainService::class);
+            $this->domainService = GeneralUtility::makeInstance(\KoninklijkeCollective\MyRedirects\Service\DomainService::class);
         }
         return $this->domainService;
     }
@@ -325,7 +317,7 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
      */
     protected function getSignalSlotDispatcher()
     {
-        return $this->getObjectManager()->get(\TYPO3\CMS\Extbase\SignalSlot\Dispatcher::class);
+        return GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\SignalSlot\Dispatcher::class);
     }
 
 }
