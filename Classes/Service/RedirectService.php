@@ -273,9 +273,6 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
                 $link = $controller->cObj->typoLink_URL(
                     ['parameter' => $target]
                 );
-
-                \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($link);
-                exit;
             }
         }
         return $link;
