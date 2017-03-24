@@ -1,10 +1,6 @@
 <?php
 use KoninklijkeCollective\MyRedirects\Domain\Model\Redirect;
 
-if (!defined('TYPO3_MODE')) {
-    die ('Access denied.');
-}
-
 $translation = 'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:' . Redirect::TABLE;
 
 return [
@@ -21,6 +17,10 @@ return [
         'rootLevel' => true,
         'canNotCollapse' => true,
         'hideTable' => true, // don't show in listing..
+        'enablecolumns' => [
+            'starttime' => 'start_time',
+            'endtime' => 'end_time',
+        ],
         'security' => [
             'ignoreWebMountRestriction' => true,
             'ignoreRootLevelRestriction' => true,
@@ -33,6 +33,8 @@ return [
     'types' => [
         0 => [
             'showitem' => '--palette--;' . $translation . '.palette.from;from, --palette--;' . $translation . '.palette.to;to, --palette--;' . $translation . '.palette.information;information,'
+                . '--div--;' . $translation . '.div.schedule,'
+                . '--palette--;' . $translation . '.palette.schedule;schedule,'
                 . '--div--;' . $translation . '.div.health,'
                 . 'url_hash, --palette--;' . $translation . '.palette.visited;visited, --palette--;' . $translation . '.palette.response;response'
         ]
@@ -45,6 +47,10 @@ return [
         ],
         'to' => [
             'showitem' => 'destination, http_response',
+            'canNotCollapse' => true
+        ],
+        'schedule' => [
+            'showitem' => 'start_time, end_time',
             'canNotCollapse' => true
         ],
         'information' => [
@@ -81,6 +87,33 @@ return [
                 'eval' => 'datetime'
             ]
         ],
+        'start_time' => [
+            'exclude' => 1,
+            'label' => $translation . '.start_time',
+            'config' => [
+                'type' => 'input',
+                'size' => '13',
+                'eval' => 'datetime',
+                'default' => 0
+            ],
+            'l10n_mode' => 'exclude',
+            'l10n_display' => 'defaultAsReadonly'
+        ],
+        'end_time' => [
+            'exclude' => 1,
+            'label' => $translation . '.end_time',
+            'config' => [
+                'type' => 'input',
+                'size' => '13',
+                'eval' => 'datetime',
+                'default' => 0,
+                'range' => [
+                    'upper' => mktime(0, 0, 0, 1, 1, 2038)
+                ]
+            ],
+            'l10n_mode' => 'exclude',
+            'l10n_display' => 'defaultAsReadonly'
+        ],
         'url_hash' => [
             'exclude' => 0,
             'label' => $translation . '.url_hash',
@@ -113,9 +146,9 @@ return [
                         'type' => 'popup',
                         'title' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:header_link_formlabel',
                         'icon' => 'EXT:backend/Resources/Public/Images/FormFieldWizard/wizard_link.gif',
-                        'module' => array(
+                        'module' => [
                             'name' => 'wizard_link',
-                        ),
+                        ],
                         'JSopenParams' => 'height=800,width=600,status=0,menubar=0,scrollbars=1',
                         'params' => [
                             'blindLinkOptions' => 'mail, folder, spec, url',

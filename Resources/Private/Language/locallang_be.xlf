@@ -24,6 +24,12 @@
             <trans-unit id="tx_myredirects_domain_model_redirect.backend_note">
                 <source>Backend Note</source>
             </trans-unit>
+            <trans-unit id="tx_myredirects_domain_model_redirect.start_time">
+                <source>Activate on</source>
+            </trans-unit>
+            <trans-unit id="tx_myredirects_domain_model_redirect.end_time">
+                <source>Disable on</source>
+            </trans-unit>
             <trans-unit id="tx_myredirects_domain_model_redirect.last_referrer">
                 <source>Last Known Referrer</source>
             </trans-unit>
@@ -61,11 +67,17 @@
             <trans-unit id="tx_myredirects_domain_model_redirect.div.health">
                 <source>Health</source>
             </trans-unit>
+            <trans-unit id="tx_myredirects_domain_model_redirect.div.schedule">
+                <source>Schedule</source>
+            </trans-unit>
             <trans-unit id="tx_myredirects_domain_model_redirect.palette.from">
                 <source>From</source>
             </trans-unit>
             <trans-unit id="tx_myredirects_domain_model_redirect.palette.to">
                 <source>To</source>
+            </trans-unit>
+            <trans-unit id="tx_myredirects_domain_model_redirect.palette.schedule">
+                <source>Start/End</source>
             </trans-unit>
             <trans-unit id="tx_myredirects_domain_model_redirect.palette.information">
                 <source>Information</source>

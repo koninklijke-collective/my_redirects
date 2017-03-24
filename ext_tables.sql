@@ -8,6 +8,8 @@ CREATE TABLE tx_myredirects_domain_model_redirect (
     crdate int(11) DEFAULT '0' NOT NULL,
     cruser_id int(11) DEFAULT '0' NOT NULL,
     editlock tinyint(4) DEFAULT '0' NOT NULL,
+    start_time int(11) unsigned DEFAULT '0' NOT NULL,
+    end_time int(11) unsigned DEFAULT '0' NOT NULL,
 
     url_hash varchar(40) DEFAULT '',
     url text NOT NULL,
@@ -23,5 +25,6 @@ CREATE TABLE tx_myredirects_domain_model_redirect (
     inactive_reason text,
 
     PRIMARY KEY (uid),
-    UNIQUE KEY active (url_hash,domain)
+    UNIQUE KEY active (url_hash,domain),
+    INDEX query (url_hash,domain,start_time,end_time)
 );
