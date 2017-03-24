@@ -118,7 +118,7 @@ return [
                         ),
                         'JSopenParams' => 'height=800,width=600,status=0,menubar=0,scrollbars=1',
                         'params' => [
-                            'blindLinkOptions' => 'mail, folder, spec',
+                            'blindLinkOptions' => 'mail, folder, spec, url',
                             'blindLinkFields' => 'target, title, class, params',
                         ],
                     ]
