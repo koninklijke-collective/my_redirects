@@ -1,4 +1,5 @@
 <?php
+
 namespace KoninklijkeCollective\MyRedirects\Controller;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -39,12 +40,16 @@ class RequestController
         $path = GeneralUtility::getIndpEnv('TYPO3_SITE_SCRIPT');
         $path = strtolower(trim($path));
         if (!empty($path)) {
-            $redirect = $this->getRedirectService()->queryByPathAndDomain(
-                $path,
-                $this->getDomainService()->getCurrentDomainId()
-            );
-            if (is_array($redirect) && (int) $redirect['uid'] > 0) {
-                $this->getRedirectService()->handleRedirect($redirect);
+            try {
+                $redirect = $this->getRedirectService()->queryByPathAndDomain(
+                    $path,
+                    $this->getDomainService()->getCurrentDomainId()
+                );
+                if (is_array($redirect) && (int)$redirect['uid'] > 0) {
+                    $this->getRedirectService()->handleRedirect($redirect);
+                }
+            } catch (\Exception $e) {
+                // There should be no exception when trying to redirect!
             }
         }
     }
