@@ -38,7 +38,7 @@ class RequestController
     public function redirectAction()
     {
         $path = GeneralUtility::getIndpEnv('TYPO3_SITE_SCRIPT');
-        $path = strtolower(trim($path));
+        $path = $this->getCharsetConverter()->conv_case('utf-8', $path, 'toLower');
         if (!empty($path)) {
             try {
                 $redirect = $this->getRedirectService()->queryByPathAndDomain(
@@ -87,4 +87,11 @@ class RequestController
         return $this->domainService;
     }
 
+    /**
+     * @return \TYPO3\CMS\Core\Charset\CharsetConverter
+     */
+    protected function getCharsetConverter()
+    {
+        return GeneralUtility::makeInstance(\TYPO3\CMS\Core\Charset\CharsetConverter::class);
+    }
 }
