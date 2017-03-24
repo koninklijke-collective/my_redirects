@@ -13,20 +13,12 @@ class RequestController
 {
 
     /**
-     * @var \TYPO3\CMS\Extbase\Object\ObjectManagerInterface
-     * @inject
-     */
-    protected $objectManager;
-
-    /**
      * @var \KoninklijkeCollective\MyRedirects\Service\RedirectService
-     * @inject
      */
     protected $redirectService;
 
     /**
      * @var \KoninklijkeCollective\MyRedirects\Service\DomainService
-     * @inject
      */
     protected $domainService;
 
@@ -59,21 +51,10 @@ class RequestController
      */
     protected function getRedirectService()
     {
-        if (!isset($this->redirectService)) {
-            $this->redirectService = $this->getObjectManager()->get(\KoninklijkeCollective\MyRedirects\Service\RedirectService::class);
+        if ($this->redirectService === null) {
+            $this->redirectService = GeneralUtility::makeInstance(\KoninklijkeCollective\MyRedirects\Service\RedirectService::class);
         }
         return $this->redirectService;
-    }
-
-    /**
-     * @return \TYPO3\CMS\Extbase\Object\ObjectManager
-     */
-    protected function getObjectManager()
-    {
-        if (!isset($this->objectManager)) {
-            $this->objectManager = GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\ObjectManager::class);
-        }
-        return $this->objectManager;
     }
 
     /**
@@ -81,8 +62,8 @@ class RequestController
      */
     protected function getDomainService()
     {
-        if (!isset($this->domainService)) {
-            $this->domainService = $this->getObjectManager()->get(\KoninklijkeCollective\MyRedirects\Service\DomainService::class);
+        if ($this->domainService === null) {
+            $this->domainService = GeneralUtility::makeInstance(\KoninklijkeCollective\MyRedirects\Service\DomainService::class);
         }
         return $this->domainService;
     }
