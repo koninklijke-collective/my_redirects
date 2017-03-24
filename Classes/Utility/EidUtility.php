@@ -56,9 +56,7 @@ class EidUtility
             $controller->initTemplate();
         }
 
-        if (!is_array($controller->config)) {
-            $controller->getConfigArray();
-        }
+        $controller->getConfigArray();
 
         if (!($controller->cObj instanceof ContentObjectRenderer)) {
             $controller->newCObj();

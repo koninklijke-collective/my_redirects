@@ -1,4 +1,5 @@
 <?php
+
 namespace KoninklijkeCollective\MyRedirects\Service;
 
 use KoninklijkeCollective\MyRedirects\Domain\Model\Redirect;
@@ -55,10 +56,10 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
             $details = [];
             $this->curlUrl($url, $details);
 
-            if ((int) $details['response']['http_code'] !== 200) {
+            if ((int)$details['response']['http_code'] !== 200) {
                 $active = false;
 
-                if ((int) $details['response']['http_code'] === 0) {
+                if ((int)$details['response']['http_code'] === 0) {
                     $redirect->setInactiveReason('Response timeout');
                 } elseif (isset($details['error']['id'])) {
                     $redirect->setInactiveReason($details['error']['id'] . ': ' . $details['error']['message']);
@@ -173,7 +174,7 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
      */
     public function handleRedirect($redirect)
     {
-        if ((bool) $_SERVER['HTTP_X_REDIRECT_SERVICE'] === false) {
+        if ((bool)$_SERVER['HTTP_X_REDIRECT_SERVICE'] === false) {
             // Update statistics
             $updateFields = [
                 'counter' => 'counter+1',
@@ -185,7 +186,7 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
 
             $this->getDatabaseConnection()->exec_UPDATEquery(
                 Redirect::TABLE,
-                'uid = ' . (int) $redirect['uid'],
+                'uid = ' . (int)$redirect['uid'],
                 $updateFields,
                 ['counter']
             );
@@ -256,27 +257,23 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
     protected function generateLink($target)
     {
         $link = null;
-        if (MathUtility::canBeInterpretedAsInteger($target)) {
-            $target = (int)$target;
-            $controller = $this->getTypoScriptFrontendController($target);
-            $page = BackendUtility::getRecord('pages', $target);
-            $linkData = $controller->tmpl->linkData(
-                $page,
-                '',
-                false,
-                ''
-            );
-            if (!empty($linkData) && isset($linkData['totalURL'])) {
-                $link = $linkData['totalURL'];
-            }
-        } elseif (GeneralUtility::isValidUrl($target) === false) {
-            // Render it via the cObj with default rootpage id if available
-            $controller = $this->getTypoScriptFrontendController(ConfigurationUtility::getDefaultRootPageId());
-            $link = $controller->cObj->typoLink_URL(
-                ['parameter' => $target]
-            );
-        } else {
+
+        if (GeneralUtility::isValidUrl($target)) {
             $link = $target;
+        } else {
+            $controller = null;
+            if (MathUtility::canBeInterpretedAsInteger($target)) {
+                $controller = $this->getTypoScriptFrontendController((int)$target);
+            } elseif (GeneralUtility::isValidUrl($target) === false) {
+                // Render it via the cObj with default rootpage id if available
+                $controller = $this->getTypoScriptFrontendController(ConfigurationUtility::getDefaultRootPageId());
+            }
+
+            if ($controller !== null) {
+                $link = $controller->cObj->typoLink_URL(
+                    ['parameter' => $target]
+                );
+            }
         }
         return $link;
     }
