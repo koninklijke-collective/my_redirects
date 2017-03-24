@@ -96,7 +96,7 @@ return [
             'config' => [
                 'type' => 'input',
                 'size' => 30,
-                'eval' => 'trim, unique',
+                'eval' => 'trim',
                 'max' => 65535,
             ]
         ],
