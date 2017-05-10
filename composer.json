@@ -13,7 +13,6 @@
     ],
     "homepage": "https://github.com/koninklijke-collective/my_redirects",
     "license": "LGPL-3.0+",
-    "version": "3.3.3",
     "require": {
         "typo3/cms-core": ">=7.6.0 <9.0.0",
         "typo3/cms-frontend": ">=7.6.0 <9.0.0",

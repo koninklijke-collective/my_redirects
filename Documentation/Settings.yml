@@ -6,6 +6,6 @@
 conf.py:
   copyright: 2002-2017
   project: MyRedirects
-  version: 3.3.3
-  release: 3.3.3
+  version: 3.3.4
+  release: 3.3.4
 ...
