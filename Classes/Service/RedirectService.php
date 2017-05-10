@@ -270,27 +270,23 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
     /**
      * Generate link based on current page information
      *
-     * @param string $target
+     * @param string $link
      * @return string
      */
-    protected function generateLink($target)
+    protected function generateLink($link)
     {
-        $link = null;
-
-        if (GeneralUtility::isValidUrl($target)) {
-            $link = $target;
-        } else {
+        if (stripos($link, 't3://') === 0 || GeneralUtility::isValidUrl($link) === false) {
             $controller = null;
-            if (MathUtility::canBeInterpretedAsInteger($target)) {
-                $controller = $this->getTypoScriptFrontendController((int)$target);
-            } elseif (GeneralUtility::isValidUrl($target) === false) {
+            if (MathUtility::canBeInterpretedAsInteger($link)) {
+                $controller = $this->getTypoScriptFrontendController((int)$link);
+            } elseif (GeneralUtility::isValidUrl($link) === false) {
                 // Render it via the cObj with default rootpage id if available
                 $controller = $this->getTypoScriptFrontendController(ConfigurationUtility::getDefaultRootPageId());
             }
 
             if ($controller !== null) {
                 $link = $controller->cObj->typoLink_URL(
-                    ['parameter' => $target]
+                    ['parameter' => $link]
                 );
             }
         }
