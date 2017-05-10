@@ -1,1 +1,1 @@
-<INCLUDE_TYPOSCRIPT: source="FILE: ./Configuration/TypoScript/setup.txt">
+<INCLUDE_TYPOSCRIPT: source="FILE: EXT:my_redirects/Configuration/TypoScript/setup.txt">
