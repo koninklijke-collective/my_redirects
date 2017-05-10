@@ -279,7 +279,7 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
             $controller = null;
             if (MathUtility::canBeInterpretedAsInteger($link)) {
                 $controller = $this->getTypoScriptFrontendController((int)$link);
-            } elseif (GeneralUtility::isValidUrl($link) === false) {
+            } else {
                 // Render it via the cObj with default rootpage id if available
                 $controller = $this->getTypoScriptFrontendController(ConfigurationUtility::getDefaultRootPageId());
             }
