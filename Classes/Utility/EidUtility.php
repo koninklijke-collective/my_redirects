@@ -41,7 +41,12 @@ class EidUtility
                 $pageId,
                 0
             );
-            \TYPO3\CMS\Core\Core\Bootstrap::getInstance()->loadCachedTca();
+            $bootstrap = \TYPO3\CMS\Core\Core\Bootstrap::getInstance();
+            if (is_callable([$bootstrap, 'loadCachedTca'])) {
+                $bootstrap->loadCachedTca();
+            } else {
+                $bootstrap->loadBaseTca(true);
+            }
         }
 
         if (!($controller->fe_user instanceof FrontendUserAuthentication)) {
