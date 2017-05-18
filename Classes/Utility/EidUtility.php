@@ -37,11 +37,12 @@ class EidUtility
                 $pageId,
                 0
             );
-
+          
             // @TODO: deprecated workaround since 8/9
-            if (method_exists(\TYPO3\CMS\Core\Core\Bootstrap::getInstance(), 'loadExtensionTables')) {
+            $bootstrap = \TYPO3\CMS\Core\Core\Bootstrap::getInstance();
+            if (is_callable([$bootstrap, 'loadExtensionTables'])) {
                 \TYPO3\CMS\Core\Core\Bootstrap::getInstance()->loadExtensionTables();
-            } elseif (method_exists(\TYPO3\CMS\Core\Core\Bootstrap::getInstance(), 'loadCachedTca')) {
+            } elseif (is_callable([$bootstrap, 'loadCachedTca'])) {
                 \TYPO3\CMS\Core\Core\Bootstrap::getInstance()->loadCachedTca();
             }
         }
