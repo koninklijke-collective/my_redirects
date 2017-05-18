@@ -1,4 +1,5 @@
 <?php
+
 namespace KoninklijkeCollective\MyRedirects\Utility;
 
 use TYPO3\CMS\Core\TypoScript\TemplateService;
@@ -27,11 +28,6 @@ class EidUtility
     {
         global $TYPO3_CONF_VARS;
 
-        // fallback for timetracker
-        if (!is_object($GLOBALS['TT'])) {
-            $GLOBALS['TT'] = new \TYPO3\CMS\Core\TimeTracker\NullTimeTracker();
-        }
-
         $controller = &$GLOBALS['TSFE'];
 
         if (!($controller instanceof TypoScriptFrontendController)) {
@@ -41,7 +37,13 @@ class EidUtility
                 $pageId,
                 0
             );
-            \TYPO3\CMS\Core\Core\Bootstrap::getInstance()->loadCachedTca();
+
+            // @TODO: deprecated workaround since 8/9
+            if (method_exists(\TYPO3\CMS\Core\Core\Bootstrap::getInstance(), 'loadExtensionTables')) {
+                \TYPO3\CMS\Core\Core\Bootstrap::getInstance()->loadExtensionTables();
+            } elseif (method_exists(\TYPO3\CMS\Core\Core\Bootstrap::getInstance(), 'loadCachedTca')) {
+                \TYPO3\CMS\Core\Core\Bootstrap::getInstance()->loadCachedTca();
+            }
         }
 
         if (!($controller->fe_user instanceof FrontendUserAuthentication)) {
