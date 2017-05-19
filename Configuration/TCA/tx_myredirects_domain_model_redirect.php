@@ -202,6 +202,7 @@ return [
                 ],
                 'foreign_table' => 'sys_domain',
                 'foreign_table_where' => ' AND sys_domain.redirectTo = ""',
+                'default' => 0,
             ]
         ],
         'active' => [
