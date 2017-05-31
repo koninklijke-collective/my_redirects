@@ -54,8 +54,8 @@
             <trans-unit id="tx_myredirects_domain_model_redirect.domain">
                 <source>Domain</source>
             </trans-unit>
-            <trans-unit id="tx_myredirects_domain_model_redirect.domain.I.0">
-                <source>All domains</source>
+            <trans-unit id="tx_myredirects_domain_model_redirect.root_page_domain">
+                <source>Domain</source>
             </trans-unit>
 
             <trans-unit id="tx_myredirects_domain_model_redirect.div.health">

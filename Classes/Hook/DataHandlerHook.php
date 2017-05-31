@@ -1,8 +1,8 @@
 <?php
+
 namespace KoninklijkeCollective\MyRedirects\Hook;
 
 use KoninklijkeCollective\MyRedirects\Domain\Model\Redirect;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * DataHandler: Hook to update needed lookup variables
@@ -11,6 +11,28 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class DataHandlerHook
 {
+
+    use \KoninklijkeCollective\MyRedirects\Functions\ObjectManagerTrait;
+
+    /**
+     * Safely check for redirect links and generate query hash
+     *
+     * @param array $incomingFieldArray
+     * @param string $table
+     * @param string $id
+     * @param \TYPO3\CMS\Core\DataHandling\DataHandler $reference
+     */
+    public function processDatamap_preProcessFieldArray(&$incomingFieldArray, $table, $id, $reference)
+    {
+        if ($table === Redirect::TABLE) {
+            if (isset($incomingFieldArray['root_page_domain'])) {
+                $info = Redirect::getDomainInfo($incomingFieldArray['root_page_domain']);
+                // Set Page ID & domain based on configured domain selection
+                $incomingFieldArray['pid'] = $info['storage'];
+                $incomingFieldArray['domain'] = $info['domain'];
+            }
+        }
+    }
 
     /**
      * Safely check for redirect links and generate query hash
@@ -37,14 +59,6 @@ class DataHandlerHook
     protected function getRedirectService()
     {
         return $this->getObjectManager()->get(\KoninklijkeCollective\MyRedirects\Service\RedirectService::class);
-    }
-
-    /**
-     * @return \TYPO3\CMS\Extbase\Object\ObjectManager
-     */
-    protected function getObjectManager()
-    {
-        return GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\ObjectManager::class);
     }
 
 }

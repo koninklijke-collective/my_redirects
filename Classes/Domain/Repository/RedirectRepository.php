@@ -1,6 +1,9 @@
 <?php
+
 namespace KoninklijkeCollective\MyRedirects\Domain\Repository;
 
+use KoninklijkeCollective\MyRedirects\Domain\Model\DTO\Filter;
+use KoninklijkeCollective\MyRedirects\Domain\Model\Redirect;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
 /**
@@ -15,73 +18,70 @@ class RedirectRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
      * @var array
      */
     protected $defaultOrderings = [
-        'domain' => QueryInterface::ORDER_ASCENDING,
         'url' => QueryInterface::ORDER_ASCENDING,
+        'pid' => QueryInterface::ORDER_ASCENDING,
+        'domain' => QueryInterface::ORDER_ASCENDING,
         'destination' => QueryInterface::ORDER_ASCENDING,
         'counter' => QueryInterface::ORDER_ASCENDING,
     ];
 
     /**
-     * Find redirects by given order
+     * Query specific redirects by filter object
      *
-     * @param array $filter
-     * @param string $order
-     * @param string $direction
-     * @return \TYPO3\CMS\Extbase\Persistence\QueryResultInterface|array
+     * @param Filter $filter
+     * @return array|\TYPO3\CMS\Extbase\Persistence\QueryResultInterface
      */
-    public function findByOrder($filter, $order, $direction)
+    public function findAllByFilter(Filter $filter = null)
     {
         $query = $this->createQuery();
 
-        $newOrderings = [];
-        switch ($order) {
-            case 'url':
-                $newOrderings = $this->defaultOrderings;
-                $newOrderings['domain'] = $direction;
-                $newOrderings['url'] = $direction;
-                break;
-            case 'destination':
-            case 'last_hit':
-            case 'counter':
-            case 'has_moved':
-                $newOrderings[$order] = $direction;
-                foreach ($this->defaultOrderings as $order => $direction) {
-                    if (!isset($newOrderings[$order])) {
-                        $newOrderings[$order] = $direction;
+        if ($filter->getOrder()) {
+            $newOrderings = [];
+            switch ($filter->getOrder()) {
+                case Filter::ORDER_URL:
+                    $newOrderings = $this->defaultOrderings;
+                    $newOrderings['domain'] = $filter->getDirection();
+                    $newOrderings['url'] = $filter->getDirection();
+                    break;
+                default:
+                    $newOrderings[$filter->getOrder()] = $filter->getDirection();
+                    foreach ($this->defaultOrderings as $order => $direction) {
+                        if (!isset($newOrderings[$order])) {
+                            $newOrderings[$order] = $direction;
+                        }
                     }
-                }
-                break;
+                    break;
+            }
         }
+
         if (!empty($newOrderings)) {
             $query->setOrderings($newOrderings);
         }
 
-        if (!empty($filter)) {
+        if ($filter->isActive()) {
             $constraints = [];
-            foreach ($filter as $key => $value) {
-                switch ($key) {
-                    case 'page':
-                        $constraints[] = $query->equals('destination', (int) $value);
-                        break;
+            if ($value = $filter->getSearch()) {
+                $constraints[] = $query->logicalOr([
+                    $query->like('url', '%' . ltrim($value, '/') . '%', false),
+                    $query->like('destination', '%' . $value . '%', false)
+                ]);
+            }
 
-                    case 'sword':
-                        $constraints[] = $query->logicalOr(
-                            $query->like('url', '%' . ltrim($value, '/') . '%', false),
-                            $query->like('destination', '%' . $value . '%', false)
-                        );
-                        break;
+            if ($value = $filter->getStatus()) {
+                if ($value === Filter::STATUS_ACTIVE) {
+                    $constraints[] = $query->equals('active', true);
+                } elseif ($value === Filter::STATUS_INACTIVE) {
+                    $constraints[] = $query->equals('active', false);
+                }
+            }
 
-                    case 'status':
-                        if ($value == 'active') {
-                            $constraints[] = $query->equals('active', true);
-                        } elseif ($value == 'inactive') {
-                            $constraints[] = $query->equals('active', false);
-                        }
-                        break;
-
-                    case 'domain':
-                        $constraints[] = $query->equals('domain', $value);
-                        break;
+            if ($value = $filter->getRootDomain()) {
+                $info = Redirect::getDomainInfo($value);
+                if ($info['storage'] > 0) {
+                    $constraints[] = $query->equals('pid', $info['storage']);
+                    if ($info['domain'] > 0) {
+                        $constraints[] = $query->in('domain', [0, $info['domain']]);
+                    }
                 }
             }
 

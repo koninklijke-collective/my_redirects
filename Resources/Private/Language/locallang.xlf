@@ -20,10 +20,10 @@
             <trans-unit id="redirect.filter">
                 <source>Filter</source>
             </trans-unit>
-            <trans-unit id="redirect.filter.sword">
+            <trans-unit id="redirect.filter.search">
                 <source>Term</source>
             </trans-unit>
-            <trans-unit id="redirect.filter.sword.placeholder">
+            <trans-unit id="redirect.filter.search.placeholder">
                 <source>Search term</source>
             </trans-unit>
             <trans-unit id="redirect.filter.status">
@@ -42,14 +42,7 @@
                 <source>Search</source>
             </trans-unit>
             <trans-unit id="redirect.filter.reset">
-                <source><![CDATA[Reset &raquo;]]></source>
-            </trans-unit>
-
-            <trans-unit id="redirect.filter.ignore_page.title">
-                <source>Filter active</source>
-            </trans-unit>
-            <trans-unit id="redirect.filter.ignore_page.description">
-                <source><![CDATA[Filtering on page destination (<span title="ID: %s">%s</span>) is active, please click %s to disable this filtering.]]></source>
+                <source><![CDATA[Reset filter (!)]]></source>
             </trans-unit>
 
             <trans-unit id="redirect.results">
@@ -69,36 +62,14 @@
                 <source>Last Hit</source>
             </trans-unit>
 
-            <trans-unit id="redirect.action.edit">
-                <source>Edit redirect</source>
-            </trans-unit>
-            <trans-unit id="redirect.action.lookup">
-                <source>Check active redirect</source>
-            </trans-unit>
-            <trans-unit id="redirect.action.last_lookup">
-                <source>Last checked: %s</source>
-            </trans-unit>
-            <trans-unit id="redirect.action.error">
-                <source>Reason: '%s' at %s</source>
-            </trans-unit>
-            <trans-unit id="redirect.action.last_hit">
-                <source>Last Hit: %s</source>
-            </trans-unit>
-            <trans-unit id="redirect.action.delete">
-                <source>Delete redirect</source>
-            </trans-unit>
-
             <trans-unit id="redirect.form.source">
                 <source>Source</source>
             </trans-unit>
             <trans-unit id="redirect.form.source_url">
                 <source>URL</source>
             </trans-unit>
-            <trans-unit id="redirect.form.domain">
-                <source>Domain</source>
-            </trans-unit>
-            <trans-unit id="redirect.form.domain.I.0">
-                <source>All domains</source>
+            <trans-unit id="redirect.all.domains.in.root">
+                <source>All domains inside root</source>
             </trans-unit>
             <trans-unit id="redirect.form.destination">
                 <source>Destination</source>
@@ -116,16 +87,36 @@
                 <source>302 Found</source>
             </trans-unit>
 
-            <trans-unit id="deactivate">
-                <source>Deactivate</source>
+            <trans-unit id="action.note.tooltip">
+                <source>Backend Note</source>
             </trans-unit>
-            <trans-unit id="confirm_delete">
+            <trans-unit id="action.note.title">
+                <source>Backend Note (Redirect: #%s)</source>
+            </trans-unit>
+            <trans-unit id="action.lookup_info.tooltip">
+                <source>Active redirect lookup error</source>
+            </trans-unit>
+            <trans-unit id="action.lookup_info.title">
+                <source>Redirect (#%s) checked on %s</source>
+            </trans-unit>
+            <trans-unit id="action.tooltip.active_error">
+                <source>Active redirect lookup error</source>
+            </trans-unit>
+            <trans-unit id="action.edit.tooltip">
+                <source>Edit redirect</source>
+            </trans-unit>
+            <trans-unit id="action.lookup.tooltip">
+                <source>Validate redirect</source>
+            </trans-unit>
+            <trans-unit id="action.delete.tooltip">
+                <source>Delete redirect (!)</source>
+            </trans-unit>
+            <trans-unit id="action.delete.title">
+                <source>Delete redirect</source>
+            </trans-unit>
+            <trans-unit id="action.delete.message">
                 <source><![CDATA[Are you sure you want to delete this redirect:
 (%s => %s)]]></source>
-            </trans-unit>
-
-            <trans-unit id="no-records-found">
-                <source>No redirects found.</source>
             </trans-unit>
 
             <trans-unit id="controller.action.add.record">
@@ -154,6 +145,18 @@
             </trans-unit>
             <trans-unit id="controller.action.success.delete.description">
                 <source>Redirect is successfully removed.</source>
+            </trans-unit>
+            <trans-unit id="controller.action.error.delete.title">
+                <source>Redirect deletion aborted</source>
+            </trans-unit>
+            <trans-unit id="controller.action.error.delete.description">
+                <source>You are not allowed to delete this redirect.</source>
+            </trans-unit>
+            <trans-unit id="controller.action.success.activate.title">
+                <source>Redirect activated</source>
+            </trans-unit>
+            <trans-unit id="controller.action.success.activate.description">
+                <source>Redirect is successfully activated.</source>
             </trans-unit>
             <trans-unit id="controller.initialize.error.no_typoscript.title">
                 <source>TypoScript missing</source>

@@ -16,6 +16,7 @@ CREATE TABLE tx_myredirects_domain_model_redirect (
     counter int(11) unsigned DEFAULT '0' NOT NULL,
     http_response int(11) DEFAULT '301' NOT NULL,
     domain int(11) unsigned DEFAULT '0' NOT NULL,
+    root_page_domain varchar(100) DEFAULT '0-0' NOT NULL,
     backend_note text,
     active tinyint(3) unsigned DEFAULT '1' NOT NULL,
     last_hit int(11) unsigned DEFAULT '0' NOT NULL,
@@ -23,5 +24,6 @@ CREATE TABLE tx_myredirects_domain_model_redirect (
     inactive_reason text,
 
     PRIMARY KEY (uid),
-    UNIQUE KEY active (url_hash,domain)
+    KEY parent (pid),
+    UNIQUE KEY active (url_hash,pid,domain)
 );

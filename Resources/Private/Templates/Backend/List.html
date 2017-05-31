@@ -1,0 +1,16 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+
+<f:layout name="Default"/>
+
+<f:section name="Headline">
+    <h1>{f:translate(key: 'redirect.plural')}</h1>
+</f:section>
+
+<f:section name="Content">
+    <f:render partial="List/Filter" arguments="{filter: filter}"/>
+
+    <f:flashMessages queueIdentifier="extbase.flashmessages.tx_myredirects_web_myredirectsmyredirects"/>
+
+    <f:render partial="List/Redirects" arguments="{_all}"/>
+</f:section>
+</html>

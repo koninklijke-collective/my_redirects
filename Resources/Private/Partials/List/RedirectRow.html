@@ -1,0 +1,99 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+    xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+    xmlns:s="http://typo3.org/ns/KoninklijkeCollective/MyRedirects/ViewHelpers"
+    data-namespace-typo3-fluid="true">
+
+<tr>
+    <td class="col-icon col-domain-from">
+        <span class="domains">
+            <f:if condition="{redirect.domain} > 0">
+                <f:then>
+                    <span data-toggle="tooltip" data-title="{s:domainInfo(domain: redirect.domain)}" data-placement="right">
+                        <core:icon identifier="apps-pagetree-page-domain"/>
+                    </span>
+                </f:then>
+                <f:else>
+                    <span data-toggle="tooltip" data-title="{s:domainInfo(page: redirect.pid)}" data-placement="right">
+                        <core:icon identifier="apps-pagetree-page-content-from-page-root"/>
+                    </span>
+                </f:else>
+            </f:if>
+        </span>
+    </td>
+    <td class="col-title col-redirect-from">
+        /{redirect.url}
+    </td>
+    <td class="col-redirect-to">
+        <span data-toggle="tooltip" data-title="{redirect.destination}" data-placement="left">
+            {redirect.absoluteDestination -> f:format.crop(maxCharacters: '50|...')}
+        </span>
+    </td>
+    <td class="col-control">
+        <div class="btn-group" role="group">
+            <f:if condition="{redirect.backendNote}">
+                <f:then>
+                    <s:linkConfirm
+                        link="{moduleUrl}" icon="mimetypes-x-sys_note" iconOverlay="overlay-info" severity="info" modalClass="my-redirects-info-trigger"
+                        tooltip="{f:translate(key: 'action.note.tooltip')}" title="{f:translate(key: 'action.note.title', arguments: '{0: redirect.uid}')}"
+                        message="{redirect.backendNote -> f:format.htmlspecialchars() -> f:format.nl2br()}"/>
+                </f:then>
+                <f:else>
+                    <span class="btn btn-default disabled">
+                        <core:icon identifier="empty-empty"/>
+                    </span>
+                </f:else>
+            </f:if>
+            <f:if condition="{redirect.lastChecked}">
+                <f:then>
+                    <f:if condition="{redirect.active} == 0">
+                        <f:then>
+                            <s:linkConfirm
+                                tooltip="{f:translate(key: 'action.lookup_info.tooltip')}"
+                                link="{f:uri.action(action:'activate', controller:'Redirect', arguments: '{redirect: redirect, returnUrl: currentUrl}')}"
+                                message="{redirect.inactiveReason}" icon="actions-preview" iconOverlay="overlay-readonly" severity="info"
+                                title="{f:translate(key: 'action.lookup_info.title', arguments: '{0: redirect.uid, 1: redirect.ageLastChecked}')}"
+                                okButton="Mark as fixed"/>
+                        </f:then>
+                        <f:else>
+                            <span class="btn btn-default disabled"
+                                title="{f:translate(key: 'action.lookup_info.title', arguments: '{0: redirect.uid, 1: redirect.ageLastChecked}')}">
+                                <core:icon identifier="actions-preview" overlay="overlay-approved"/>
+                            </span>
+                        </f:else>
+                    </f:if>
+                </f:then>
+                <f:else>
+                    <span class="btn btn-default disabled">
+                        <core:icon identifier="empty-empty"/>
+                    </span>
+                </f:else>
+            </f:if>
+        </div>
+
+        <div class="btn-group" role="group">
+            <a class="btn btn-default" title="{f:translate(key: 'action.edit.tooltip')}"
+                href="{s:editRecord(parameters: 'edit[{settings.table.redirects}][{redirect.uid}]=edit&returnUrl={moduleUrl -> f:format.urlencode()}')}">
+                <core:icon identifier="actions-document-open"/>
+            </a>
+
+            <f:link.action class="btn btn-default" action="lookup" controller="Redirect"
+                data="{original-title: 'Active lookup'}"
+                arguments="{redirect: redirect, returnUrl: currentUrl}" title="{f:translate(key: 'action.lookup.tooltip')}">
+                <core:icon identifier="actions-refresh"/>
+            </f:link.action>
+
+            <s:linkConfirm
+                link="{f:uri.action(action:'delete', controller:'Redirect', arguments: '{redirect: redirect, returnUrl: currentUrl}')}"
+                message="{f:translate(key: 'action.delete.message', arguments: '{0: \'/{redirect.url}\', 1: redirect.absoluteDestination}')}"
+                tooltip="{f:translate(key: 'action.delete.tooltip')}" title="{f:translate(key: 'action.delete.title')}"/>
+        </div>
+
+    </td>
+    <td class="col-redirect-hits">
+        {redirect.counter}
+    </td>
+    <td class="col-redirect-last-hit-date">
+        {redirect.lastHit -> f:format.date(format: settings.dateFormat)}
+    </td>
+</tr>
+</html>

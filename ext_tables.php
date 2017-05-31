@@ -1,28 +1,33 @@
 <?php
-if (!defined('TYPO3_MODE')) {
-    die ('Access denied.');
-}
+defined('TYPO3_MODE') or die ('Access denied.');
 
-if (TYPO3_MODE === 'BE') {
-    \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
-        'KoninklijkeCollective.' . $_EXTKEY,
-        'web',
-        'my_redirects',
-        '',
-        [
-            // Allowed controller action combinations
-            'Redirect' => 'list, delete, lookup',
-        ],
-        [
-            // Additional configuration
-            'access' => 'user, group',
-            'icon' => 'EXT:' . $_EXTKEY . '/Resources/Public/Icons/my_redirects_module.png',
-            'labels' => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/locallang_mod.xlf',
-        ]
-    );
+call_user_func(function ($extension) {
 
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addLLrefForTCAdescr(
-        \KoninklijkeCollective\MyRedirects\Domain\Model\Redirect::TABLE,
-        'EXT:my_redirects/Resources/Private/Language/locallang_csh.xlf'
-    );
-}
+    if (TYPO3_MODE === 'BE') {
+        \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
+            'KoninklijkeCollective.' . $extension,
+            'web',
+            $extension,
+            '',
+            [
+                // Allowed controller action combinations
+                'Redirect' => 'list, delete, activate, lookup',
+            ],
+            [
+                // Additional configuration
+                'access' => 'user, group',
+                'icon' => 'EXT:' . $extension . '/Resources/Public/Icons/my_redirects_module.png',
+                'labels' => 'LLL:EXT:' . $extension . '/Resources/Private/Language/locallang_mod.xlf',
+                // Disable
+                'navigationComponentId' => ''
+            ]
+        );
+
+        \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addLLrefForTCAdescr(
+            \KoninklijkeCollective\MyRedirects\Domain\Model\Redirect::TABLE,
+            'EXT:' . $extension . '/Resources/Private/Language/locallang_csh.xlf'
+        );
+    }
+
+    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages(\KoninklijkeCollective\MyRedirects\Domain\Model\Redirect::TABLE);
+}, \KoninklijkeCollective\MyRedirects\Utility\ConfigurationUtility::EXTENSION);
