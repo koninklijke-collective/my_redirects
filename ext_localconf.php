@@ -10,4 +10,7 @@ call_user_func(function ($extension) {
     if ('FE' === TYPO3_MODE) {
         $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tslib/index_ts.php']['preprocessRequest'][$extension] = \KoninklijkeCollective\MyRedirects\Hook\RedirectActionHook::class . '->redirectAction';
     }
+
+    // Install tool migrations
+    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/install']['update'][$extension.'_realurl_redirects_import'] = \KoninklijkeCollective\MyRedirects\Install\Updates\RealUrlRedirectsImport::class;
 }, \KoninklijkeCollective\MyRedirects\Utility\ConfigurationUtility::EXTENSION);
