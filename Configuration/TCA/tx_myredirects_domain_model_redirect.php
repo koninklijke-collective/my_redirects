@@ -233,7 +233,8 @@ return [
             'exclude' => 0,
             'label' => $translation . '.inactive_reason',
             'config' => [
-                'type' => 'none',
+                'readOnly' => true,
+                'type' => 'text',
                 'cols' => 48,
                 'rows' => 10,
                 'eval' => 'trim'
