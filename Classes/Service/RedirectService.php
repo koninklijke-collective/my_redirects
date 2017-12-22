@@ -126,10 +126,9 @@ class RedirectService
      * @param Redirect $redirect
      * @return void
      */
-    public function handleRedirect($redirect)
+    public function handleRedirect(Redirect $redirect)
     {
         if ((bool)$_SERVER['HTTP_X_REDIRECT_SERVICE'] === false) {
-            // Update statistics
             $queryBuilder = $this->getQueryBuilderForTable(Redirect::TABLE);
             $queryBuilder->update(Redirect::TABLE)
                 ->set('counter', 'counter+1', false)
@@ -139,20 +138,26 @@ class RedirectService
                 ->execute();
         }
 
-        $destination = $this->generateLink($redirect->getDestination());
-        if ($redirect->getStoredParameters()) {
-            $urlParts = parse_url($destination);
-            $urlParts['query'] .= '&' . http_build_query($redirect->getStoredParameters());
-            $urlParts['query'] = trim($urlParts['query'], '&');
-            $destination = HttpUtility::buildUrl($urlParts);
+        try {
+            $destination = $this->generateLink($redirect->getDestination());
+            if ($redirect->getStoredParameters()) {
+                $urlParts = parse_url($destination);
+                $urlParts['query'] .= '&' . http_build_query($redirect->getStoredParameters());
+                $urlParts['query'] = trim($urlParts['query'], '&');
+                $destination = HttpUtility::buildUrl($urlParts);
+            }
+
+            header('X-Redirect-Handler: my_redirects:' . $redirect->getUid());
+
+            // Get response code constant from core
+            $constantLookUp = HttpUtility::class . '::HTTP_STATUS_' . $redirect->getHttpResponse();
+            $httpStatus = (defined($constantLookUp) ? constant($constantLookUp) : HttpUtility::HTTP_STATUS_302);
+            HttpUtility::redirect($destination, $httpStatus);
+
+        } catch (\Exception $e) {
+            // If there is an exception while making the url, the configuration seems to be invalid
+            // and should not crash by this extension
         }
-
-        header('X-Redirect-Handler: my_redirects:' . $redirect->getUid());
-
-        // Get response code constant from core
-        $constantLookUp = HttpUtility::class . '::HTTP_STATUS_' . $redirect->getHttpResponse();
-        $httpStatus = (defined($constantLookUp) ? constant($constantLookUp) : HttpUtility::HTTP_STATUS_302);
-        HttpUtility::redirect($destination, $httpStatus);
     }
 
     /**
@@ -164,13 +169,10 @@ class RedirectService
     protected function generateLink($link)
     {
         if (stripos($link, 't3://') === 0 || GeneralUtility::isValidUrl($link) === false) {
-            $controller = $this->getTypoScriptFrontendController(ConfigurationUtility::getDefaultRootPageId($link));
+            $link = $this->getTypoScriptFrontendController(ConfigurationUtility::getDefaultRootPageId($link))->cObj->typoLink_URL(
+                ['parameter' => $link]
+            );
 
-            if ($controller !== null) {
-                $link = $controller->cObj->typoLink_URL(
-                    ['parameter' => $link]
-                );
-            }
         }
         return $link;
     }
