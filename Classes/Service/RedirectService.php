@@ -5,10 +5,8 @@ namespace KoninklijkeCollective\MyRedirects\Service;
 use KoninklijkeCollective\MyRedirects\Domain\Model\Redirect;
 use KoninklijkeCollective\MyRedirects\Utility\ConfigurationUtility;
 use KoninklijkeCollective\MyRedirects\Utility\EidUtility;
-use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\HttpUtility;
-use TYPO3\CMS\Core\Utility\MathUtility;
 
 /**
  * Service: Handle Redirects
@@ -189,7 +187,7 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
      * Handle redirect with core HTTP Response constants
      *
      * @param array $redirect
-     * @return string
+     * @return void
      */
     public function handleRedirect($redirect)
     {
@@ -211,21 +209,25 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
             );
         }
 
-        $destination = $this->generateLink($redirect['destination']);
+        try {
+            $destination = $this->generateLink($redirect['destination']);
+            if (!empty($this->keptQueryParameters)) {
+                $urlParts = parse_url($destination);
+                $urlParts['query'] .= '&' . http_build_query($this->keptQueryParameters);
+                $urlParts['query'] = trim($urlParts['query'], '&');
+                $destination = HttpUtility::buildUrl($urlParts);
+            }
 
-        if (!empty($this->keptQueryParameters)) {
-            $urlParts = parse_url($destination);
-            $urlParts['query'] .= '&' . http_build_query($this->keptQueryParameters);
-            $urlParts['query'] = trim($urlParts['query'], '&');
-            $destination = HttpUtility::buildUrl($urlParts);
+            header('X-Redirect-Handler: my_redirects:' . $redirect['uid']);
+
+            // Get response code constant from core
+            $constantLookUp = '\TYPO3\CMS\Core\Utility\HttpUtility::HTTP_STATUS_' . $redirect['http_response'];
+            $httpStatus = (defined($constantLookUp) ? constant($constantLookUp) : HttpUtility::HTTP_STATUS_302);
+            HttpUtility::redirect($destination, $httpStatus);
+        } catch (\Exception $e) {
+            // If there is an exception while making the url, the configuration seems to be invalid
+            // and should not crash by this extension
         }
-
-        header('X-Redirect-Handler: my_redirects:' . $redirect['uid']);
-
-        // Get response code constant from core
-        $constantLookUp = '\TYPO3\CMS\Core\Utility\HttpUtility::HTTP_STATUS_' . $redirect['http_response'];
-        $httpStatus = (defined($constantLookUp) ? constant($constantLookUp) : HttpUtility::HTTP_STATUS_302);
-        HttpUtility::redirect($destination, $httpStatus);
     }
 
     /**
@@ -276,19 +278,9 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
     protected function generateLink($link)
     {
         if (stripos($link, 't3://') === 0 || GeneralUtility::isValidUrl($link) === false) {
-            $controller = null;
-            if (MathUtility::canBeInterpretedAsInteger($link)) {
-                $controller = $this->getTypoScriptFrontendController((int)$link);
-            } else {
-                // Render it via the cObj with default rootpage id if available
-                $controller = $this->getTypoScriptFrontendController(ConfigurationUtility::getDefaultRootPageId());
-            }
-
-            if ($controller !== null) {
-                $link = $controller->cObj->typoLink_URL(
-                    ['parameter' => $link]
-                );
-            }
+            $link = $this->getTypoScriptFrontendController(ConfigurationUtility::getDefaultRootPageId())->cObj->typoLink_URL(
+                ['parameter' => $link]
+            );
         }
         return $link;
     }
