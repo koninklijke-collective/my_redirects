@@ -80,7 +80,9 @@ class RedirectRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
                         break;
 
                     case 'domain':
-                        $constraints[] = $query->equals('domain', $value);
+                        if (!empty($value)) {
+                            $constraints[] = $query->equals('domain', $value);
+                        }
                         break;
                 }
             }
