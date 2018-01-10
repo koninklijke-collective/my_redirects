@@ -261,8 +261,6 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
                 }
             }
             $url = HttpUtility::buildUrl($urlParts);
-            // Make sure the hash is case-insensitive
-            $url = strtolower($url);
             return sha1($url);
         }
 
