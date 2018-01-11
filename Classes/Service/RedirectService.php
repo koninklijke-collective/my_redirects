@@ -5,6 +5,7 @@ namespace KoninklijkeCollective\MyRedirects\Service;
 use KoninklijkeCollective\MyRedirects\Domain\Model\Redirect;
 use KoninklijkeCollective\MyRedirects\Utility\ConfigurationUtility;
 use KoninklijkeCollective\MyRedirects\Utility\EidUtility;
+use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\HttpUtility;
 
@@ -62,7 +63,7 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
                 } elseif (isset($details['error']['id'])) {
                     $redirect->setInactiveReason($details['error']['id'] . ': ' . $details['error']['message']);
                 } else {
-                    $redirect->setInactiveReason('Unknown: ' . var_export($details, true));
+                    $redirect->setInactiveReason('Unknown: ' . ArrayUtility::arrayExport($details));
                 }
             } elseif ($details['response']['url'] == $url) {
                 $active = false;
