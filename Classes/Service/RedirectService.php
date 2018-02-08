@@ -8,6 +8,7 @@ use KoninklijkeCollective\MyRedirects\Utility\EidUtility;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\HttpUtility;
+use TYPO3\CMS\Core\Utility\MathUtility;
 
 /**
  * Service: Handle Redirects
@@ -274,15 +275,44 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
      * Generate link based on current page information
      *
      * @param string $link
+     *
      * @return string
      */
     protected function generateLink($link)
     {
-        if (stripos($link, 't3://') === 0 || GeneralUtility::isValidUrl($link) === false) {
-            $link = $this->getTypoScriptFrontendController(ConfigurationUtility::getDefaultRootPageId())->cObj->typoLink_URL(
-                ['parameter' => $link]
+        // Fallback if we don't have a Page for FrontendController
+        $pageId = 1;
+
+        if (preg_match('/^(?:t3:\/\/page\?uid=)?([0-9]+)$/', $link, $matches)) {
+            // TYPO3 8 and higher
+            $pageId = (int)$matches[1];
+        } elseif (MathUtility::canBeInterpretedAsInteger($link)) {
+            // TYPO3 7 and below (uid was an integer)
+            $pageId = $link;
+        } else {
+            // Fallback to Domainroot
+            $currentDomain = GeneralUtility::getIndpEnv('HTTP_HOST');
+            $domainRecord  = $this->getDatabaseConnection()->exec_SELECTgetSingleRow(
+                'pid',
+                'sys_domain',
+                'domainName = "' . $currentDomain . '"'
             );
+
+            if ($domainRecord['pid']) {
+                $pageId = $domainRecord['pid'];
+            } else {
+                // Fallback to configuration/realurl-config/default
+                $configuration = ConfigurationUtility::getConfiguration();
+                $pageId        = (int)($configuration['defaultRootPageId']
+                    ? : ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['realurl']['_DEFAULT']['pagePath']['rootpage_id']
+                        ? : 1));
+            }
         }
+
+        $link = $this->getTypoScriptFrontendController($pageId)->cObj->typoLink_URL(
+            ['parameter' => $link]
+        );
+
         return $link;
     }
 

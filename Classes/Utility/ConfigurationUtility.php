@@ -14,15 +14,6 @@ class ConfigurationUtility
     const EXTENSION = 'my_redirects';
 
     /**
-     * @return integer
-     */
-    public static function getDefaultRootPageId()
-    {
-        $configuration = static::getConfiguration();
-        return (int)($configuration['defaultRootPageId'] ?: ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['realurl']['_DEFAULT']['pagePath']['rootpage_id'] ?: 1));
-    }
-
-    /**
      * Get configured excluded parameters to keep in redirect
      *
      * @return array
