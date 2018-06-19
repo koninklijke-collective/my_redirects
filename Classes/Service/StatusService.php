@@ -3,6 +3,7 @@
 namespace KoninklijkeCollective\MyRedirects\Service;
 
 use KoninklijkeCollective\MyRedirects\Domain\Model\Redirect;
+use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -51,7 +52,7 @@ class StatusService
                     } elseif (isset($details['error']['id'])) {
                         $inactiveReason = $details['error']['id'] . ': ' . $details['error']['message'];
                     } else {
-                        $inactiveReason = 'Unknown: ' . var_export($details, true);
+                        $inactiveReason = 'Unknown: ' . ArrayUtility::arrayExport($details);
                     }
                 } elseif ($details['response']['url'] == $url) {
                     $active = false;

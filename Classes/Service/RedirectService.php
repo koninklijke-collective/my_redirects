@@ -54,7 +54,6 @@ class RedirectService
             }
             $query = $queryBuilder->execute();
             while ($row = $query->fetch()) {
-                var_dump($row);
                 // If domain matches the redirect, all good it should redirect to this row!
                 if (
                     // Current domain matches record domain
@@ -66,7 +65,6 @@ class RedirectService
                     break;
                 }
             }
-            //
 
             if (!empty($_redirect)) {
                 $redirect = Redirect::create($_redirect);
