@@ -30,6 +30,7 @@ class RedirectRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
      *
      * @param Filter $filter
      * @return array|\TYPO3\CMS\Extbase\Persistence\QueryResultInterface
+     * @throws \TYPO3\CMS\Extbase\Persistence\Exception\InvalidQueryException
      */
     public function findAllByFilter(Filter $filter = null)
     {

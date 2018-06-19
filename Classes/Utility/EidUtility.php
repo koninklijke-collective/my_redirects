@@ -23,6 +23,7 @@ class EidUtility
      *
      * @param integer $pageId
      * @return void
+     * @throws \Exception
      */
     public static function initializeTypoScriptFrontendController($pageId = 0)
     {
@@ -57,11 +58,15 @@ class EidUtility
 
         if (!($controller->tmpl instanceof TemplateService)) {
             $controller->initTemplate();
-            $controller->rootLine = $controller->sys_page->getRootLine($controller->id, $controller->MP);
-            $controller->page = $controller->sys_page->getPage($controller->id);
         }
 
-        $controller->getConfigArray();
+        if (empty($controller->rootLine)) {
+            $controller->rootLine = $controller->sys_page->getRootLine($controller->id, $controller->MP);
+        }
+
+        if (empty($controller->page)) {
+            $controller->page = $controller->sys_page->getPage($controller->id);
+        }
 
         if (!($controller->cObj instanceof ContentObjectRenderer)) {
             $controller->newCObj();

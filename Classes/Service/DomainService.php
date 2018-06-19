@@ -96,6 +96,12 @@ class DomainService implements \TYPO3\CMS\Core\SingletonInterface
         return $domains;
     }
 
+    /**
+     * Get domain by specific redirect
+     *
+     * @param Redirect $redirect
+     * @return array
+     */
     public function getDomainNameByRedirect(Redirect $redirect)
     {
         $domain = null;

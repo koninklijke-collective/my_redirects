@@ -18,8 +18,7 @@ call_user_func(function ($extension) {
                 'access' => 'user, group',
                 'icon' => 'EXT:' . $extension . '/Resources/Public/Icons/my_redirects_module.png',
                 'labels' => 'LLL:EXT:' . $extension . '/Resources/Private/Language/locallang_mod.xlf',
-                // Disable
-                'navigationComponentId' => ''
+                'navigationComponentId' => 'typo3-pagetree'
             ]
         );
 

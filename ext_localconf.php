@@ -12,5 +12,6 @@ call_user_func(function ($extension) {
     }
 
     // Install tool migrations
-    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/install']['update'][$extension.'_realurl_redirects_import'] = \KoninklijkeCollective\MyRedirects\Install\Updates\RealUrlRedirectsImport::class;
+    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/install']['update'][$extension . '_realurl_redirects_import'] = \KoninklijkeCollective\MyRedirects\Install\Updates\RealUrlRedirectsImport::class;
+    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/install']['update'][$extension . '_domain_tree_redirects'] = \KoninklijkeCollective\MyRedirects\Install\Updates\DomainTreeRedirects::class;
 }, \KoninklijkeCollective\MyRedirects\Utility\ConfigurationUtility::EXTENSION);

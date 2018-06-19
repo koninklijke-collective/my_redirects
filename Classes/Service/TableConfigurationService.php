@@ -70,8 +70,9 @@ class TableConfigurationService implements \TYPO3\CMS\Core\SingletonInterface
                     $page['title'],
                     '--div--'
                 ];
+                $totalItems = count($items[$pageId]);
 
-                if ($hasAccess && count($items[$pageId]) > 1) {
+                if ($hasAccess && $totalItems > 1) {
                     $data[] = [
                         $this->translate('redirect.all.domains.in.root'),
                         $pageId . '-' . '0'
@@ -80,12 +81,22 @@ class TableConfigurationService implements \TYPO3\CMS\Core\SingletonInterface
 
                 // Only add possible selection when more than 1 page
                 if (isset($items[$pageId])) {
-                    foreach ($items[$pageId] as $domain) {
-                        if ($hasAccess || $active === $domain['pid'] . '-' . $domain['uid']) {
+                    if ($totalItems > 1) {
+                        foreach ($items[$pageId] as $domain) {
+                            if ($hasAccess || $active === $domain['pid'] . '-' . $domain['uid']) {
+                                $data[] = [
+                                    $domain['domainName'],
+                                    $domain['pid'] . '-' . $domain['uid']
+                                ];
+                            }
+                        }
+                    } else {
+                        foreach ($items[$pageId] as $domain) {
                             $data[] = [
                                 $domain['domainName'],
-                                $domain['pid'] . '-' . $domain['uid']
+                                $domain['pid'] . '-0'
                             ];
+                            break;
                         }
                     }
                     unset($items[$pageId]);

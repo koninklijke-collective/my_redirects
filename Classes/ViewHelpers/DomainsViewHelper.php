@@ -40,20 +40,18 @@ class DomainsViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHel
      */
     public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
     {
-
         if (static::getTableConfigurationService()->hasAllowedDomains()) {
-            $domains = static::getTableConfigurationService()->parseDomainsInPageRoots(
-                static::getDomainService()->getDomains(),
-                static::getRootPageService()->getRootPages()
-            );
-
             $select = [];
-            $group = 0;
-            foreach ($domains as $domain) {
-                if ($domain[1] === '--div--') {
-                    $group = $domain[0];
-                } else {
-                    $select[$group][] = $domain;
+            $domains = static::getDomainService()->getDomains();
+
+            if (count($domains) > 1) {
+                $group = 0;
+                foreach (static::getTableConfigurationService()->parseDomainsInPageRoots($domains, static::getRootPageService()->getRootPages()) as $domain) {
+                    if ($domain[1] === '--div--') {
+                        $group = $domain[0];
+                    } else {
+                        $select[$group][] = $domain;
+                    }
                 }
             }
 

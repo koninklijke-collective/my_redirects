@@ -8,7 +8,6 @@ use KoninklijkeCollective\MyRedirects\Utility\FlashMessageUtility;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 
 /**
  * Backend Module Controller: Redirects
@@ -39,8 +38,8 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
      *
      * @param \TYPO3\CMS\Extbase\Mvc\RequestInterface $request The request object
      * @param \TYPO3\CMS\Extbase\Mvc\ResponseInterface $response The response, modified by this handler
-     * @throws StopActionException
      * @return void
+     * @throws \Exception
      */
     public function processRequest(\TYPO3\CMS\Extbase\Mvc\RequestInterface $request, \TYPO3\CMS\Extbase\Mvc\ResponseInterface $response)
     {
@@ -58,7 +57,7 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
         try {
             parent::processRequest($request, $response);
             $this->getFilterDataService()->persistModuleFilter($this->filter);
-        } catch (StopActionException $e) {
+        } catch (\Exception $e) {
             $this->getFilterDataService()->persistModuleFilter($this->filter);
             throw $e;
         }
@@ -192,6 +191,7 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
      * @param \KoninklijkeCollective\MyRedirects\Domain\Model\Redirect $redirect
      * @param string $returnUrl
      * @return void
+     * @throws \Exception
      */
     public function deleteAction($redirect, $returnUrl = '')
     {
@@ -227,6 +227,7 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
      * @param \KoninklijkeCollective\MyRedirects\Domain\Model\Redirect $redirect
      * @param string $returnUrl
      * @return void
+     * @throws \Exception
      */
     public function activateAction($redirect, $returnUrl = '')
     {
@@ -256,6 +257,7 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
      * @param \KoninklijkeCollective\MyRedirects\Domain\Model\Redirect $redirect
      * @param string $returnUrl
      * @return void
+     * @throws \Exception
      */
     public function lookupAction($redirect, $returnUrl = '')
     {

@@ -35,27 +35,31 @@ class RealUrlRedirectsImport extends \TYPO3\CMS\Install\Updates\AbstractUpdate
      */
     public function checkForUpdate(&$description)
     {
-        $existingRows = $this->getQueryBuilderForTable(Redirect::TABLE)
-            ->select('*')
-            ->from(Redirect::TABLE)
-            ->count('uid')
-            ->execute();
-        if ($existingRows === 0 && $this->isWizardDone() === false && ExtensionManagementUtility::isLoaded('realurl')) {
-            try {
-                $realurlRedirects = $this->getQueryBuilderForTable('tx_realurl_redirects')
-                    ->select('*')
-                    ->from('tx_realurl_redirects')
-                    ->count('uid')
-                    ->execute();
+        static $update;
+        if ($update === null) {
+            $update = false;
+            $existingRows = $this->getQueryBuilderForTable(Redirect::TABLE)
+                ->select('*')
+                ->from(Redirect::TABLE)
+                ->count('uid')
+                ->execute()->fetchColumn(0);
+            if ($existingRows === 0 && $this->isWizardDone() === false && ExtensionManagementUtility::isLoaded('realurl')) {
+                try {
+                    $realurlRedirects = $this->getQueryBuilderForTable('tx_realurl_redirects')
+                        ->select('*')
+                        ->from('tx_realurl_redirects')
+                        ->count('uid')
+                        ->execute()->fetchColumn(0);
 
-                if ($realurlRedirects > 0) {
-                    $description = 'For initial import you can use the deprecated RealURL redirects inside this module.';
-                    return true;
+                    if ($realurlRedirects > 0) {
+                        $description = 'For initial import you can use the deprecated RealURL redirects inside this module.';
+                        $update = true;
+                    }
+                } catch (\Exception $e) {
                 }
-            } catch (\Exception $e) {
             }
         }
-        return false;
+        return $update;
     }
 
     /**

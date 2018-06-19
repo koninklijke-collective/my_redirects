@@ -10,6 +10,7 @@ use TYPO3\CMS\Core\Error\Http\BadRequestException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\HttpUtility;
 use TYPO3\CMS\Extbase\Persistence\Generic\Query;
+use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 /**
  * Service: Redirect
@@ -167,7 +168,7 @@ class RedirectService
     protected function generateLink($link)
     {
         if (stripos($link, 't3://') === 0 || GeneralUtility::isValidUrl($link) === false) {
-            $link = $this->getTypoScriptFrontendController(ConfigurationUtility::getDefaultRootPageId($link))->cObj->typoLink_URL(
+            $link = $this->getContentObjectRenderer(ConfigurationUtility::getDefaultRootPageId($link))->typoLink_URL(
                 ['parameter' => $link]
             );
 
@@ -177,13 +178,17 @@ class RedirectService
 
     /**
      * @param integer $pageId
-     * @return \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController
+     * @return ContentObjectRenderer
      */
-    protected function getTypoScriptFrontendController($pageId = 1)
+    protected function getContentObjectRenderer($pageId = 1)
     {
-        // Check if GLOBALS['TSFE'] is initiated correctly
-        EidUtility::initializeTypoScriptFrontendController($pageId);
-        return $GLOBALS['TSFE'];
+        try {
+            // Check if GLOBALS['TSFE'] is initiated correctly
+            EidUtility::initializeTypoScriptFrontendController($pageId);
+            return $GLOBALS['TSFE']->cObj;
+        } catch (\Exception $e) {
+            return GeneralUtility::makeInstance(ContentObjectRenderer::class);
+        }
     }
 
     /**
