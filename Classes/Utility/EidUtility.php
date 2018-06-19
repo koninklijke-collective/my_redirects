@@ -57,6 +57,8 @@ class EidUtility
 
         if (!($controller->tmpl instanceof TemplateService)) {
             $controller->initTemplate();
+            $controller->rootLine = $controller->sys_page->getRootLine($controller->id, $controller->MP);
+            $controller->page = $controller->sys_page->getPage($controller->id);
         }
 
         $controller->getConfigArray();
