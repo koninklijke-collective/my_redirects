@@ -4,6 +4,7 @@ namespace KoninklijkeCollective\MyRedirects\Domain\Model;
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\LinkHandling\LinkService;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 
 /**
@@ -226,27 +227,22 @@ class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
         $destination = $this->destination;
         // linking to any t3:// syntax
         if (stripos($destination, 't3://') === 0) {
-            // lets parse the urn
-            $url = parse_url($destination);
-            $type = $url['host'];
-            if (isset($url['query'])) {
-                parse_str(htmlspecialchars_decode($url['query']), $data);
-            } else {
-                $data = [];
-            }
+            try {
+                $linkService = GeneralUtility::makeInstance(LinkService::class);
+                $urn = $linkService->resolveByStringRepresentation($destination);
 
-            switch ($type) {
-                case LinkService::TYPE_PAGE:
-                    $destination = 'Page: ' . $data['uid'];
-                    break;
-                case LinkService::TYPE_FILE:
-                    $destination = 'File: ' . $data['uid'];
-                    break;
-                case LinkService::TYPE_RECORD:
-                    $destination = 'Record: ' . $data['uid'];
-                    break;
-                default:
-                    $destination = 'Unknown: ' . $type . ' - ' . $url['query'];
+                switch ($urn['type']) {
+                    case LinkService::TYPE_PAGE:
+                        $destination = 'Page: ' . $urn['pageuid'];
+                        break;
+                    case LinkService::TYPE_FILE:
+                        $destination = 'File: ' . $urn['file'];
+                        break;
+                    case LinkService::TYPE_RECORD:
+                        $destination = 'Record: ' . ($urn['identifier'] ?? $urn['uid']);
+                        break;
+                }
+            } catch (\Exception $e) {
             }
         }
         return $destination;

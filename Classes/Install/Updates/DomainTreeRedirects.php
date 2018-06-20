@@ -77,7 +77,8 @@ class DomainTreeRedirects extends \TYPO3\CMS\Install\Updates\AbstractUpdate
             $updateQuery = clone $queryBuilder;
             $updateQuery->update(Redirect::TABLE)
                 ->where($queryBuilder->expr()->eq('uid', (int)$row['uid']))
-                ->set('tstamp', time(), false);
+                ->set('tstamp', time(), false)
+                ->set('active', true, false);
 
             // Fix destination for TYPO3 8.7
             if (MathUtility::canBeInterpretedAsInteger($row['destination'])) {

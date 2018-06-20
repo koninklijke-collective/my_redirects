@@ -30,7 +30,6 @@ class StatusService
         if (!empty($url)) {
             if ($domain = $this->getDomainService()->getDomainNameByRedirect($redirect)) {
                 $url = rtrim($domain, '/') . '/' . $url;
-
                 $urlDetails = parse_url($url);
                 if (!isset($urlDetails['scheme'])) {
                     $url = (GeneralUtility::getIndpEnv('TYPO3_SSL') ? 'https://' : 'http://') . $url;

@@ -20,7 +20,6 @@ use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 class RedirectService
 {
 
-    use \KoninklijkeCollective\MyRedirects\Functions\ObjectManagerTrait;
     use \KoninklijkeCollective\MyRedirects\Functions\QueryBuilderTrait;
 
     /**
@@ -30,6 +29,7 @@ class RedirectService
      * @param string $path
      * @param array $domain
      * @return Redirect
+     * @throws \Exception
      */
     public function findRedirect($path, $domain)
     {
@@ -53,6 +53,7 @@ class RedirectService
                     $queryBuilder->createNamedParameter([0, $domainId], Connection::PARAM_INT_ARRAY)
                 ));
             }
+
             $query = $queryBuilder->execute();
             while ($row = $query->fetch()) {
                 // If domain matches the redirect, all good it should redirect to this row!
@@ -124,6 +125,7 @@ class RedirectService
      *
      * @param Redirect $redirect
      * @return void
+     * @throws BadRequestException
      */
     public function handleRedirect(Redirect $redirect)
     {
@@ -146,13 +148,18 @@ class RedirectService
                 $destination = HttpUtility::buildUrl($urlParts);
             }
 
-            header('X-Redirect-Handler: my_redirects:' . $redirect->getUid());
+            if (GeneralUtility::getIndpEnv('TYPO3_SITE_SCRIPT') === $destination) {
+                throw new BadRequestException('Endless loop ended, #' . $redirect->getUid() . '.', 1529501111463);
+            } else {
+                header('X-Redirect-Handler: my_redirects:' . $redirect->getUid());
 
-            // Get response code constant from core
-            $constantLookUp = HttpUtility::class . '::HTTP_STATUS_' . $redirect->getHttpResponse();
-            $httpStatus = (defined($constantLookUp) ? constant($constantLookUp) : HttpUtility::HTTP_STATUS_302);
-            HttpUtility::redirect($destination, $httpStatus);
-
+                // Get response code constant from core
+                $constantLookUp = HttpUtility::class . '::HTTP_STATUS_' . $redirect->getHttpResponse();
+                $httpStatus = (defined($constantLookUp) ? constant($constantLookUp) : HttpUtility::HTTP_STATUS_302);
+                HttpUtility::redirect($destination, $httpStatus);
+            }
+        } catch (BadRequestException $e) {
+            throw $e;
         } catch (\Exception $e) {
             // If there is an exception while making the url, the configuration seems to be invalid
             // and should not crash by this extension
@@ -164,39 +171,32 @@ class RedirectService
      *
      * @param string $link
      * @return string
+     * @todo future; refactor for TYPO3 9.x support
      */
     protected function generateLink($link)
     {
-        if (stripos($link, 't3://') === 0 || GeneralUtility::isValidUrl($link) === false) {
-            $link = $this->getContentObjectRenderer(ConfigurationUtility::getDefaultRootPageId($link))->typoLink_URL(
-                ['parameter' => $link]
+        try {
+            EidUtility::initializeTypoScriptFrontendController(ConfigurationUtility::getDefaultRootPageId($link));
+            list ($url, $hash) = explode('#', $link, 2);
+            // Remove hashbang and append at the end
+            $_link = $this->getContentObjectRenderer()->typoLink_URL(
+                ['parameter' => $url]
             );
-
+            $link = $_link . ($hash ? '#' . $hash : '');
+        } catch (\Exception $e) {
         }
         return $link;
     }
 
     /**
-     * @param integer $pageId
      * @return ContentObjectRenderer
      */
-    protected function getContentObjectRenderer($pageId = 1)
+    protected function getContentObjectRenderer()
     {
-        try {
-            // Check if GLOBALS['TSFE'] is initiated correctly
-            EidUtility::initializeTypoScriptFrontendController($pageId);
+        if ($GLOBALS['TSFE']->cObj instanceof ContentObjectRenderer) {
             return $GLOBALS['TSFE']->cObj;
-        } catch (\Exception $e) {
-            return GeneralUtility::makeInstance(ContentObjectRenderer::class);
         }
-    }
-
-    /**
-     * @return RootPageService|object
-     */
-    protected function getRootPageService()
-    {
-        return $this->getObjectManager()->get(RootPageService::class);
+        return GeneralUtility::makeInstance(ContentObjectRenderer::class);
     }
 
 }

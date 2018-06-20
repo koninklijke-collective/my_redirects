@@ -56,6 +56,7 @@ class ActiveLookupCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\Co
                     if ($check) {
                         // Only do daily checks on active url's or when this is skipped
                         if ($redirect->getActive() || $skipInactive === false) {
+                            $this->outputLine(date('d M y H:i:s') . ' - Updating "' . $redirect->getUrl() . '"');
                             $this->getStatusService()->activeLookup($redirect, true);
                             $this->getRedirectRepository()->update($redirect);
                         }

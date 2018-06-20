@@ -71,6 +71,9 @@
             <trans-unit id="redirect.all.domains.in.root">
                 <source>All domains inside root</source>
             </trans-unit>
+            <trans-unit id="redirect.all.domains.in.domain">
+                <source>All domains inside %s</source>
+            </trans-unit>
             <trans-unit id="redirect.form.destination">
                 <source>Destination</source>
             </trans-unit>

@@ -17,12 +17,10 @@ return [
         'cruser_id' => 'cruser_id',
         'editlock' => 'editlock',
         'dividers2tabs' => true,
-        'iconfile' => 'EXT:my_redirects/Resources/Public/Icons/' . Redirect::TABLE . '.png',
         'canNotCollapse' => true,
         'hideTable' => true, // don't show in listing..
-        'security' => [
-            'ignoreWebMountRestriction' => true,
-            'ignoreRootLevelRestriction' => true,
+        'typeicon_classes' => [
+            'default' => 'tcarecords-' . Redirect::TABLE . '-default',
         ],
         'searchFields' => 'url, destination, backend_note'
     ],

@@ -44,85 +44,86 @@ class TableConfigurationService implements \TYPO3\CMS\Core\SingletonInterface
     /**
      * @param array $domains
      * @param array $pages
-     * @param null $active
+     * @param string $active
      * @return array
      */
     public function parseDomainsInPageRoots($domains, $pages, $active = null)
     {
-        $data = [];
-
-        // Reorder domains based on parent RootPage
-        $items = [];
-        foreach ($domains as $domain) {
-            $items[$domain['pid']][] = $domain;
-        }
-
-        // Render each page root with their domains
         $activeRootPage = 0;
         if ($active) {
             list ($activeRootPage) = \TYPO3\CMS\Core\Utility\GeneralUtility::intExplode('-', $active);
         }
-        foreach ($pages as $page) {
-            $pageId = $page['uid'];
-            $hasAccess = $this->getBackendUserAuthentication()->isInWebMount($pageId);
-            if ($hasAccess || $pageId === $activeRootPage) {
+
+        $data = [];
+        $page = reset($pages);
+        if (false && count($domains) <= 1 && count($pages) == 1 && $active === $page['uid'] . '-0') {
+            $hasAccess = $this->getBackendUserAuthentication()->isInWebMount($page['uid']);
+            if ($hasAccess) {
                 $data[] = [
-                    $page['title'],
-                    '--div--'
+                    $this->translate('redirect.all.domains.in.domain', [$page['title']]),
+                    $page['uid'] . '-' . '0'
                 ];
-                $totalItems = count($items[$pageId]);
+            }
+        } else {
+            // Reorder domains based on parent RootPage
+            $items = [];
+            foreach ($domains as $domain) {
+                $items[$domain['pid']][] = $domain;
+            }
 
-                if ($hasAccess && $totalItems > 1) {
+            foreach ($pages as $page) {
+                $pageId = $page['uid'];
+                $hasAccess = $this->getBackendUserAuthentication()->isInWebMount($pageId);
+                if ($hasAccess || $pageId === $activeRootPage) {
                     $data[] = [
-                        $this->translate('redirect.all.domains.in.root'),
-                        $pageId . '-' . '0'
+                        $page['title'],
+                        '--div--'
                     ];
-                }
 
-                // Only add possible selection when more than 1 page
-                if (isset($items[$pageId])) {
-                    if ($totalItems > 1) {
-                        foreach ($items[$pageId] as $domain) {
-                            if ($hasAccess || $active === $domain['pid'] . '-' . $domain['uid']) {
-                                $data[] = [
-                                    $domain['domainName'],
-                                    $domain['pid'] . '-' . $domain['uid']
-                                ];
+                    if ($hasAccess && isset($items[$pageId])) {
+                        $data[] = [
+                            $this->translate('redirect.all.domains.in.root'),
+                            $pageId . '-' . '0'
+                        ];
+
+                        // Only add possible selection when more than 1 page
+                        if (count($items[$pageId]) > 1) {
+                            foreach ($items[$pageId] as $domain) {
+                                if ($hasAccess || $active === $domain['pid'] . '-' . $domain['uid']) {
+                                    $data[] = [
+                                        $domain['domainName'],
+                                        $domain['pid'] . '-' . $domain['uid']
+                                    ];
+                                }
                             }
                         }
-                    } else {
-                        foreach ($items[$pageId] as $domain) {
-                            $data[] = [
-                                $domain['domainName'],
-                                $domain['pid'] . '-0'
-                            ];
-                            break;
-                        }
                     }
+
                     unset($items[$pageId]);
                 } else {
                     $data[] = [
-                        'No domains in for root page found',
+                        'No domains for root page found',
                         ''
                     ];
+
                 }
             }
-        }
 
-        // Always render unknown domains for broken stuff
-        if (!empty($items)) {
-            $data[] = [
-                'Unknown',
-                '--div--'
-            ];
+            // Always render unknown domains for broken stuff
+            if (!empty($items)) {
+                $data[] = [
+                    'Unknown',
+                    '--div--'
+                ];
 
-            foreach ($items as $pageId => $domains) {
-                foreach ($domains as $domain) {
-                    if ($this->getBackendUserAuthentication()->isInWebMount($domain['pid']) || $active === $domain['pid'] . '-' . $domain['uid']) {
-                        $data[] = [
-                            $domain['pid'] . ': ' . $domain['domainName'],
-                            $domain['pid'] . '-' . $domain['uid']
-                        ];
+                foreach ($items as $pageId => $domains) {
+                    foreach ($domains as $domain) {
+                        if ($this->getBackendUserAuthentication()->isInWebMount($domain['pid']) || $active === $domain['pid'] . '-' . $domain['uid']) {
+                            $data[] = [
+                                $domain['pid'] . ': ' . $domain['domainName'],
+                                $domain['pid'] . '-' . $domain['uid']
+                            ];
+                        }
                     }
                 }
             }
