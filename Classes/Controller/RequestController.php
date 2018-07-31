@@ -30,7 +30,6 @@ class RequestController
     public function redirectAction()
     {
         $path = GeneralUtility::getIndpEnv('TYPO3_SITE_SCRIPT');
-        $path = $this->getCharsetConverter()->conv_case('utf-8', $path, 'toLower');
         if (!empty($path)) {
             try {
                 $redirect = $this->getRedirectService()->queryByPathAndDomain(
