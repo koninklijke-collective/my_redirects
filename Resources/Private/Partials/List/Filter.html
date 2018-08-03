@@ -1,0 +1,54 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+    xmlns:s="http://typo3.org/ns/KoninklijkeCollective/MyRedirects/ViewHelpers"
+    data-namespace-typo3-fluid="true">
+
+<f:form action="list" objectName="filter" object="{filter}" class="form-inline form-inline-spaced">
+
+    <f:if condition="{filter.active}">
+        <div class="form-group filter-form-reset pull-right">
+            <f:link.action id="reset-filter" arguments="{resetFilter: 1}" class="btn btn-info btn-sm">
+                {f:translate(key: 'redirect.filter.reset') -> f:format.raw()}
+            </f:link.action>
+        </div>
+    </f:if>
+
+    <div class="form-group">
+        <label for="my_redirects_search">{f:translate(key: 'redirect.filter.search')}</label>
+        <f:form.textfield
+            id="my_redirects_search"
+            class="form-control input-sm"
+            property="search"
+            placeholder="{f:translate(key: 'redirect.filter.search.placeholder')}"/>
+    </div>
+
+    <div class="form-group filter-form-status">
+        <label for="my_redirects_status">{f:translate(key: 'redirect.filter.status')}</label>
+        <f:form.select class="t3-select form-control input-sm" id="my_redirects_status" property="status"
+            options="{active: 'Active', inactive: 'Inactive'}"
+            prependOptionLabel="{f:translate(key: 'redirect.filter.status.I.0')}"/>
+    </div>
+
+    <s:domains>
+        <f:if condition="{domains}">
+            <div class="form-group filter-form-status">
+                <label for="my_redirects_domain">{f:translate(key: 'redirect.filter.domain')}</label>
+                <f:form.select class="t3-select form-control input-sm" id="my_redirects_domain" property="rootDomain">
+                    <f:form.select.option value="0-0">{f:translate(key: 'redirect.filter.domain.I.0')}</f:form.select.option>
+
+                    <f:for each="{domains}" key="label" as="options">
+                        <f:form.select.optgroup label="{label}">
+                            <f:for each="{options}" as="option">
+                                <f:form.select.option value="{option.1}">{option.0}</f:form.select.option>
+                            </f:for>
+                        </f:form.select.optgroup>
+                    </f:for>
+                </f:form.select>
+            </div>
+        </f:if>
+    </s:domains>
+
+    <div class="form-group">
+        <f:form.submit value="{f:translate(key: 'redirect.filter.button')}" class="btn btn-default btn-sm"/>
+    </div>
+</f:form>
+</html>

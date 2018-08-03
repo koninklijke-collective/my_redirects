@@ -1,9 +1,7 @@
 <?php
 use KoninklijkeCollective\MyRedirects\Domain\Model\Redirect;
 
-if (!defined('TYPO3_MODE')) {
-    die ('Access denied.');
-}
+defined('TYPO3_MODE') or die('Access denied.');
 
 $translation = 'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:' . Redirect::TABLE;
 
@@ -17,13 +15,10 @@ return [
         'cruser_id' => 'cruser_id',
         'editlock' => 'editlock',
         'dividers2tabs' => true,
-        'iconfile' => 'EXT:my_redirects/Resources/Public/Icons/' . Redirect::TABLE . '.png',
-        'rootLevel' => true,
         'canNotCollapse' => true,
         'hideTable' => true, // don't show in listing..
-        'security' => [
-            'ignoreWebMountRestriction' => true,
-            'ignoreRootLevelRestriction' => true,
+        'typeicon_classes' => [
+            'default' => 'tcarecords-' . Redirect::TABLE . '-default',
         ],
         'searchFields' => 'url, destination, backend_note'
     ],
@@ -40,7 +35,7 @@ return [
     'palettes' => [
 
         'from' => [
-            'showitem' => 'url, domain',
+            'showitem' => 'url, root_page_domain',
             'canNotCollapse' => true
         ],
         'to' => [
@@ -77,6 +72,7 @@ return [
             'config' => [
                 'readOnly' => true,
                 'type' => 'input',
+                'renderType' => 'inputDateTime',
                 'size' => 10,
                 'eval' => 'datetime'
             ]
@@ -105,24 +101,8 @@ return [
             'label' => $translation . '.destination',
             'config' => [
                 'type' => 'input',
-                'size' => 30,
+                'renderType' => 'inputLink',
                 'eval' => 'trim',
-                'max' => 65535,
-                'wizards' => [
-                    'link' => [
-                        'type' => 'popup',
-                        'title' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:header_link_formlabel',
-                        'icon' => 'EXT:backend/Resources/Public/Images/FormFieldWizard/wizard_link.gif',
-                        'module' => array(
-                            'name' => 'wizard_link',
-                        ),
-                        'JSopenParams' => 'height=800,width=600,status=0,menubar=0,scrollbars=1',
-                        'params' => [
-                            'blindLinkOptions' => 'mail, folder, spec, url',
-                            'blindLinkFields' => 'target, title, class, params',
-                        ],
-                    ]
-                ],
             ]
         ],
         'last_hit' => [
@@ -131,6 +111,7 @@ return [
             'config' => [
                 'readOnly' => true,
                 'type' => 'input',
+                'renderType' => 'inputDateTime',
                 'size' => 10,
                 'eval' => 'datetime'
             ]
@@ -190,20 +171,24 @@ return [
         'domain' => [
             'exclude' => 0,
             'label' => $translation . '.domain',
+
+            'config' => [
+                'type' => 'passthrough'
+            ]
+        ],
+        'root_page_domain' => [
+            'exclude' => 0,
+            'label' => $translation . '.root_page_domain',
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
+                'eval' => 'required',
+                'minitems' => 1,
+
                 'size' => 1,
-                'items' => [
-                    [
-                        $translation . '.domain.I.0',
-                        0
-                    ],
-                ],
-                'foreign_table' => 'sys_domain',
-                'foreign_table_where' => ' AND sys_domain.redirectTo = ""',
-                'default' => 0,
-            ]
+                'itemsProcFunc' => \KoninklijkeCollective\MyRedirects\Service\TableConfigurationService::class . '->addAllowedDomains'
+            ],
+            'displayCond' => 'USER:' . \KoninklijkeCollective\MyRedirects\Service\TableConfigurationService::class . '->hasAllowedDomains',
         ],
         'active' => [
             'exclude' => 0,
@@ -225,6 +210,7 @@ return [
             'config' => [
                 'readOnly' => true,
                 'type' => 'input',
+                'renderType' => 'inputDateTime',
                 'size' => 10,
                 'eval' => 'date'
             ]
@@ -233,11 +219,11 @@ return [
             'exclude' => 0,
             'label' => $translation . '.inactive_reason',
             'config' => [
-                'readOnly' => true,
                 'type' => 'text',
                 'cols' => 48,
                 'rows' => 10,
-                'eval' => 'trim'
+                'eval' => 'trim',
+                'readOnly' => true,
             ],
             'displayCond' => 'FIELD:active:REQ:false',
         ],

@@ -11,13 +11,40 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class ConfigurationUtility
 {
+
+    /**
+     * Global approach for $_EXTKEY
+     */
     const EXTENSION = 'my_redirects';
 
     /**
-     * @return integer
+     * Default Queue identifier by extbase controllers
+     * Not always known by other services
      */
-    public static function getDefaultRootPageId()
+    const FLASH_MESSAGE_QUEUE_IDENTIFIER = 'extbase.flashmessages.tx_myredirects_web_myredirectsmyredirects';
+
+    /**
+     * Get default root page id (from link or configuration)
+     *
+     * @param string $link
+     * @return int
+     */
+    public static function getDefaultRootPageId($link)
     {
+        if (stripos($link, 't3://page') === 0) {
+            // lets parse the urn
+            $url = parse_url($link);
+
+            if (isset($url['query'])) {
+                parse_str(htmlspecialchars_decode($url['query']), $data);
+            } else {
+                $data = [];
+            }
+            if (isset($data['uid'])) {
+                return (int)$data['uid'];
+            }
+        }
+        // Fallback on default configuration
         $configuration = static::getConfiguration();
         return (int)($configuration['defaultRootPageId'] ?: ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['realurl']['_DEFAULT']['pagePath']['rootpage_id'] ?: 1));
     }

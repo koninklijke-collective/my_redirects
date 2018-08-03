@@ -1,7 +1,10 @@
 <?php
+
 namespace KoninklijkeCollective\MyRedirects\Domain\Model;
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\LinkHandling\LinkService;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 
 /**
@@ -11,7 +14,6 @@ use TYPO3\CMS\Core\Utility\MathUtility;
  */
 class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
 {
-
     const TABLE = 'tx_myredirects_domain_model_redirect';
 
     /**
@@ -40,6 +42,11 @@ class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     protected $destination;
 
     /**
+     * @var integer
+     */
+    protected $domain;
+
+    /**
      * @var string
      */
     protected $backendNote;
@@ -60,9 +67,9 @@ class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     protected $counter;
 
     /**
-     * @var integer
+     * @var string
      */
-    protected $domain;
+    protected $rootPageDomain;
 
     /**
      * @var boolean
@@ -85,6 +92,11 @@ class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     protected $inactiveReason;
 
     /**
+     * @var array
+     */
+    protected $_internal_storedParameters;
+
+    /**
      * Returns the Url Hash
      *
      * @return string
@@ -98,11 +110,12 @@ class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Sets the Url Hash
      *
      * @param string $urlHash
-     * @return void
+     * @return $this
      */
     public function setUrlHash($urlHash)
     {
         $this->urlHash = $urlHash;
+        return $this;
     }
 
     /**
@@ -119,11 +132,12 @@ class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Sets the Active
      *
      * @param boolean $active
-     * @return void
+     * @return $this
      */
     public function setActive($active)
     {
-        $this->active = (bool) $active;
+        $this->active = (bool)$active;
+        return $this;
     }
 
     /**
@@ -140,11 +154,12 @@ class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Sets the HTTP Response
      *
      * @param integer $httpResponse
-     * @return void
+     * @return $this
      */
     public function setHttpResponse($httpResponse)
     {
         $this->httpResponse = $httpResponse;
+        return $this;
     }
 
     /**
@@ -161,11 +176,12 @@ class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Sets the Counter
      *
      * @param integer $counter
-     * @return void
+     * @return $this
      */
     public function setCounter($counter)
     {
         $this->counter = $counter;
+        return $this;
     }
 
     /**
@@ -182,11 +198,12 @@ class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Sets the Backend Note
      *
      * @param string $backendNote
-     * @return void
+     * @return $this
      */
     public function setBackendNote($backendNote)
     {
         $this->backendNote = $backendNote;
+        return $this;
     }
 
     /**
@@ -207,8 +224,25 @@ class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     public function getAbsoluteDestination()
     {
         $destination = $this->destination;
-        if (MathUtility::canBeInterpretedAsInteger($destination)) {
-            $destination = 'Page: ' . $destination;
+        // linking to any t3:// syntax
+        if (stripos($destination, 't3://') === 0) {
+            try {
+                $linkService = GeneralUtility::makeInstance(LinkService::class);
+                $urn = $linkService->resolveByStringRepresentation($destination);
+
+                switch ($urn['type']) {
+                    case LinkService::TYPE_PAGE:
+                        $destination = 'Page: ' . $urn['pageuid'];
+                        break;
+                    case LinkService::TYPE_FILE:
+                        $destination = 'File: ' . $urn['file'];
+                        break;
+                    case LinkService::TYPE_RECORD:
+                        $destination = 'Record: ' . ($urn['identifier'] ?? $urn['uid']);
+                        break;
+                }
+            } catch (\Exception $e) {
+            }
         }
         return $destination;
     }
@@ -217,11 +251,12 @@ class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Sets the Destination
      *
      * @param string $destination
-     * @return void
+     * @return $this
      */
     public function setDestination($destination)
     {
         $this->destination = $destination;
+        return $this;
     }
 
     /**
@@ -238,11 +273,49 @@ class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Sets the domain
      *
      * @param integer $domain
-     * @return void
+     * @return $this
      */
     public function setDomain($domain)
     {
         $this->domain = $domain;
+        return $this;
+    }
+
+    /**
+     * Returns the root page domain
+     *
+     * @return string
+     */
+    public function getRootPageDomain()
+    {
+        return $this->rootPageDomain;
+    }
+
+    /**
+     * Sets the root page
+     *
+     * @param string $rootPageDomain
+     * @return $this
+     */
+    public function setRootPageDomain($rootPageDomain)
+    {
+        $this->rootPageDomain = $rootPageDomain;
+        return $this;
+    }
+
+    /**
+     * Get the domain info based on configured root page domain
+     *
+     * @param string $domain
+     * @return array
+     */
+    public static function getDomainInfo($domain)
+    {
+        list($storage, $domainId) = \TYPO3\CMS\Core\Utility\GeneralUtility::intExplode('-', $domain);
+        return [
+            'storage' => $storage,
+            'domain' => $domainId
+        ];
     }
 
     /**
@@ -272,12 +345,16 @@ class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * Sets the Last Checked
      *
-     * @param \DateTime $lastChecked
-     * @return void
+     * @param \DateTime|integer $lastChecked
+     * @return $this
      */
-    public function setLastChecked(\DateTime $lastChecked)
+    public function setLastChecked($lastChecked)
     {
+        if (!($lastChecked instanceof \DateTime) && !empty($lastChecked) && MathUtility::canBeInterpretedAsInteger($lastChecked)) {
+            $lastChecked = new \DateTime('@' . $lastChecked);
+        }
         $this->lastChecked = $lastChecked;
+        return $this;
     }
 
     /**
@@ -294,11 +371,12 @@ class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Sets the Last Referrer
      *
      * @param string $lastReferrer
-     * @return void
+     * @return $this
      */
     public function setLastReferrer($lastReferrer)
     {
         $this->lastReferrer = $lastReferrer;
+        return $this;
     }
 
     /**
@@ -314,12 +392,16 @@ class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * Sets the Update At
      *
-     * @param \DateTime $updateAt
-     * @return void
+     * @param \DateTime|integer $updateAt
+     * @return $this
      */
-    public function setUpdateAt(\DateTime $updateAt)
+    public function setUpdateAt($updateAt)
     {
+        if (!($updateAt instanceof \DateTime) && !empty($updateAt) && MathUtility::canBeInterpretedAsInteger($updateAt)) {
+            $updateAt = new \DateTime('@' . $updateAt);
+        }
         $this->tstamp = $updateAt;
+        return $this;
     }
 
     /**
@@ -336,11 +418,12 @@ class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Sets the Url
      *
      * @param string $url
-     * @return void
+     * @return $this
      */
     public function setUrl($url)
     {
         $this->url = $url;
+        return $this;
     }
 
     /**
@@ -357,11 +440,12 @@ class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Sets the Inactive Reason
      *
      * @param string $inactiveReason
-     * @return void
+     * @return $this
      */
     public function setInactiveReason($inactiveReason)
     {
         $this->inactiveReason = $inactiveReason;
+        return $this;
     }
 
     /**
@@ -377,12 +461,16 @@ class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * Sets the LastHit
      *
-     * @param \DateTime $lastHit
-     * @return void
+     * @param \DateTime|integer $lastHit
+     * @return $this
      */
-    public function setLastHit(\DateTime $lastHit)
+    public function setLastHit($lastHit)
     {
+        if (!($lastHit instanceof \DateTime) && !empty($lastHit) && MathUtility::canBeInterpretedAsInteger($lastHit)) {
+            $lastHit = new \DateTime('@' . $lastHit);
+        }
         $this->lastHit = $lastHit;
+        return $this;
     }
 
     /**
@@ -405,4 +493,58 @@ class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
         return $this->crdate;
     }
 
+    /**
+     * Get record data for TYPO3 internal core usage
+     *
+     * @return array
+     */
+    public function getRecordData()
+    {
+        return [
+            'uid' => $this->uid,
+            'pid' => $this->pid,
+            'url' => $this->url,
+            'destination' => $this->destination,
+            'active' => $this->active,
+        ];
+    }
+
+    /**
+     * Create redirect object for rendering
+     *
+     * @param array $row
+     * @return Redirect
+     */
+    public static function create($row)
+    {
+        /** @var Redirect $redirect */
+        $redirect = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(Redirect::class);
+        foreach ($row as $key => $value) {
+            $method = 'set' . \TYPO3\CMS\Core\Utility\GeneralUtility::underscoredToUpperCamelCase($key);
+            if (is_callable([$redirect, $method])) {
+                $redirect->{$method}($value);
+            } else {
+                $redirect->{$key} = $value;
+            }
+        }
+        return $redirect;
+    }
+
+    /**
+     * @param array $storedParameters
+     * @return $this
+     */
+    public function setStoredParameters($storedParameters = [])
+    {
+        $this->_internal_storedParameters = $storedParameters;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getStoredParameters()
+    {
+        return $this->_internal_storedParameters;
+    }
 }

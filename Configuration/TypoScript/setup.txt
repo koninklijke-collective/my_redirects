@@ -1,7 +1,7 @@
 module.tx_myredirects {
     view {
         templateRootPaths {
-            10 = EXT:my_redirects/Resources/Private/Templates
+            10 = EXT:my_redirects/Resources/Private/Templates/Backend
         }
 
         partialRootPaths {
