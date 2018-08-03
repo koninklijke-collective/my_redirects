@@ -5,180 +5,71 @@ namespace KoninklijkeCollective\MyRedirects\Service;
 use KoninklijkeCollective\MyRedirects\Domain\Model\Redirect;
 use KoninklijkeCollective\MyRedirects\Utility\ConfigurationUtility;
 use KoninklijkeCollective\MyRedirects\Utility\EidUtility;
-use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Database\Connection;
+use TYPO3\CMS\Core\Error\Http\BadRequestException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\HttpUtility;
-use TYPO3\CMS\Core\Utility\MathUtility;
+use TYPO3\CMS\Extbase\Persistence\Generic\Query;
+use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 /**
- * Service: Handle Redirects
+ * Service: Redirect
  *
  * @package KoninklijkeCollective\MyRedirects\Service
  */
-class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
+class RedirectService
 {
+    use \KoninklijkeCollective\MyRedirects\Functions\QueryBuilderTrait;
 
     /**
-     * @var array
-     */
-    protected $keptQueryParameters = [];
-
-    /**
-     * Do an active lookup for redirect
-     *
-     * @param \KoninklijkeCollective\MyRedirects\Domain\Model\Redirect $redirect
-     * @param string $defaultDomain
-     * @return void
-     */
-    public function activeLookup(Redirect $redirect, $defaultDomain = null)
-    {
-        $active = true;
-        $url = $redirect->getUrl();
-
-        if ($defaultDomain === null) {
-            $defaultDomain = GeneralUtility::getHostname();
-        }
-
-        if (!empty($url)) {
-            $urlDomain = $this->getDomainService()->getDomainUrlFromRedirect($redirect);
-            // this should be done in the domain service..
-            if ($urlDomain == '/') {
-                $url = rtrim($defaultDomain, '/') . '/' . $url;
-            } else {
-                $url = $urlDomain . $url;
-            }
-
-            $urlDetails = parse_url($url);
-            if (!isset($urlDetails['scheme'])) {
-                $url = (GeneralUtility::getIndpEnv('TYPO3_SSL') ? 'https://' : 'http://') . $url;
-            }
-
-            $details = [];
-            $this->curlUrl($url, $details);
-
-            if ((int)$details['response']['http_code'] !== 200) {
-                $active = false;
-
-                if ((int)$details['response']['http_code'] === 0) {
-                    $redirect->setInactiveReason('Response timeout');
-                } elseif (isset($details['error']['id'])) {
-                    $redirect->setInactiveReason($details['error']['id'] . ': ' . $details['error']['message']);
-                } else {
-                    $redirect->setInactiveReason('Unknown: ' . var_export($details, true));
-                }
-            } elseif ($details['response']['url'] == $url) {
-                $active = false;
-                $redirect->setInactiveReason('Redirect got stuck, could be timeout');
-            }
-            $redirect->setActive($active);
-            $redirect->setLastChecked(new \DateTime());
-
-            if ($active === true) {
-                $redirect->setInactiveReason('');
-            }
-        } else {
-            $redirect->setActive(false);
-        }
-    }
-
-    /**
-     * Get complete report from curled url
-     *
-     * @param string $url
-     * @param array $info
-     */
-    protected function curlUrl($url, &$info = [])
-    {
-        // Use cURL for: http, https, ftp, ftps, sftp and scp
-        if (preg_match('/^(?:http|ftp)s?|s(?:ftp|cp):/', $url)) {
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_HEADER, 1);
-            curl_setopt($ch, CURLOPT_NOBODY, 1);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-
-            // Some sites need a user-agent
-            curl_setopt($ch, CURLOPT_USERAGENT, 'my_redirects: Redirect Lookup/1.0');
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                'X-REDIRECT-SERVICE: 1'
-            ]);
-
-            curl_exec($ch);
-            $curlInfo = curl_getinfo($ch);
-
-            if ($curlInfo['http_code'] > 0) {
-                $info['forwards'][] = $url;
-                $info['response'] = $curlInfo;
-
-                if (curl_errno($ch)) {
-                    $info['error']['id'] = curl_errno($ch);
-                    $info['error']['message'] = curl_error($ch);
-                } else {
-                    $info['total_time'] += $curlInfo['total_time'];
-                    if ($curlInfo['http_code'] >= 300 && $curlInfo['http_code'] < 400 && isset($curlInfo['redirect_url'])) {
-                        $this->curlUrl($curlInfo['redirect_url'], $info);
-                    }
-                }
-            }
-            curl_close($ch);
-        }
-    }
-
-    /**
-     * Query results by path and domain
+     * Find redirect based on path and domain
+     * Skipped RedirectRepository (without ObjectManager) for performance in hook
      *
      * @param string $path
-     * @param integer $domain
-     * @param string $fields
-     * @return array
+     * @param array $domain
+     * @return Redirect
+     * @throws \Exception
      */
-    public function queryByPathAndDomain($path, $domain = 0, $fields = 'uid, destination, http_response, domain')
+    public function findRedirect($path, $domain)
     {
         $redirect = null;
-        if (!empty($path)) {
-            $hookObjects = null;
-            // Get hook objects for queryByPathAndDomain
-            // Example: $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['my_redirects']['queryByPathAndDomainHook'][] = Your\Class\For\Hook::class;
-            if (is_array($GLOBALS['TYPO3_CONF_VARS']['EXTCONF'][ConfigurationUtility::EXTENSION]['queryByPathAndDomainHook'])) {
-                $hookObjects = [];
-                foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF'][ConfigurationUtility::EXTENSION]['queryByPathAndDomainHook'] as $class) {
-                    $hookObject = GeneralUtility::getUserObj($class);
-                    if ($hookObject !== null) {
-                        $hookObjects[] = $hookObject;
-                    }
+
+        $keptParameters = [];
+        if ($urlHash = $this->generateUrlHash($path, $keptParameters)) {
+            $queryBuilder = $this->getQueryBuilderForTable(Redirect::TABLE);
+            $queryBuilder->select('*')
+                ->from(Redirect::TABLE)
+                ->where($queryBuilder->expr()->eq('url_hash', $queryBuilder->createNamedParameter($urlHash)))
+                ->orderBy('domain', Query::ORDER_DESCENDING);
+
+            $domainId = null;
+            $rootPageId = null;
+            if ($domain && isset($domain['uid'])) {
+                $domainId = $domain['uid'];
+                $rootPageId = $domain['pid'];
+                $queryBuilder->andWhere($queryBuilder->expr()->in(
+                    'domain',
+                    $queryBuilder->createNamedParameter([0, $domainId], Connection::PARAM_INT_ARRAY)
+                ));
+            }
+
+            $query = $queryBuilder->execute();
+            while ($row = $query->fetch()) {
+                // If domain matches the redirect, all good it should redirect to this row!
+                if (
+                    // Current domain matches record domain
+                    ($domainId && $row['domain'] === $domainId) ||
+                    // Current root page matches redirects folder & is for all subdomains
+                    ((int)$row['pid'] === $rootPageId && (int)$row['domain'] === 0)
+                ) {
+                    $_redirect = $row;
+                    break;
                 }
             }
 
-            if ($hookObjects) {
-                // Hook: beforeQueryByPathAndDomain
-                foreach ($hookObjects as $hookObject) {
-                    if (method_exists($hookObject, 'beforeQueryByPathAndDomain')) {
-                        $redirect = $hookObject->beforeQueryByPathAndDomain($redirect, $path, $domain, $fields);
-                    }
-                }
-            }
-
-            if ($redirect === null) {
-                $hash = $this->generateUrlHash($path);
-                $redirect = $this->getDatabaseConnection()->exec_SELECTgetSingleRow(
-                    $fields,
-                    Redirect::TABLE,
-                    'url_hash = "' . $hash . '"'
-                    . ' AND domain IN (0,' . $domain . ')',
-                    null,
-                    'domain DESC'
-                );
-            }
-
-            if ($hookObjects) {
-                // Hook: afterQueryByPathAndDomain
-                foreach ($hookObjects as $hookObject) {
-                    if (method_exists($hookObject, 'afterQueryByPathAndDomain')) {
-                        $redirect = $hookObject->afterQueryByPathAndDomain($redirect, $path, $domain, $fields);
-                    }
-                }
+            if (!empty($_redirect)) {
+                $redirect = Redirect::create($_redirect);
+                $redirect->setStoredParameters($keptParameters);
             }
         }
 
@@ -186,58 +77,17 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
     }
 
     /**
-     * Handle redirect with core HTTP Response constants
-     *
-     * @param array $redirect
-     * @return string
-     */
-    public function handleRedirect($redirect)
-    {
-        if ((bool)$_SERVER['HTTP_X_REDIRECT_SERVICE'] === false) {
-            // Update statistics
-            $updateFields = [
-                'counter' => 'counter+1',
-                'last_hit' => time(),
-                'last_referrer' => GeneralUtility::getIndpEnv('HTTP_REFERER')
-            ];
-            // Remove empty values
-            $updateFields = array_filter($updateFields);
-
-            $this->getDatabaseConnection()->exec_UPDATEquery(
-                Redirect::TABLE,
-                'uid = ' . (int)$redirect['uid'],
-                $updateFields,
-                ['counter']
-            );
-        }
-
-        $destination = $this->generateLink($redirect['destination']);
-
-        if (!empty($this->keptQueryParameters)) {
-            $urlParts = parse_url($destination);
-            $urlParts['query'] .= '&' . http_build_query($this->keptQueryParameters);
-            $urlParts['query'] = trim($urlParts['query'], '&');
-            $destination = HttpUtility::buildUrl($urlParts);
-        }
-
-        header('X-Redirect-Handler: my_redirects:' . $redirect['uid']);
-
-        // Get response code constant from core
-        $constantLookUp = '\TYPO3\CMS\Core\Utility\HttpUtility::HTTP_STATUS_' . $redirect['http_response'];
-        $httpStatus = (defined($constantLookUp) ? constant($constantLookUp) : HttpUtility::HTTP_STATUS_302);
-        HttpUtility::redirect($destination, $httpStatus);
-    }
-
-    /**
      * Generate the Url Hash
      *
-     * @param string $url
+     * @param string $url target of current url without hostname so; ex: /index.php?id=12
+     * @param array $keptParameters store skipped parameters for future redirect
      * @return string
-     * @throws \Exception
+     * @throws BadRequestException
      */
-    public function generateUrlHash($url)
+    public function generateUrlHash($url, &$keptParameters = null)
     {
         if ($urlParts = parse_url($url)) {
+            $hash = null;
             if (!empty($urlParts['path'])) {
                 // Remove trailing slash from url generation
                 $urlParts['path'] = rtrim($urlParts['path'], '/');
@@ -250,7 +100,9 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
                         foreach ($queryParameters as $key => $value) {
                             if (in_array($key, $excludedQueryParameters)) {
                                 unset($queryParameters[$key]);
-                                $this->keptQueryParameters[$key] = $value;
+                                if (is_array($keptParameters)) {
+                                    $keptParameters[$key] = $value;
+                                }
                             }
                         }
 
@@ -264,7 +116,53 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
             return sha1($url);
         }
 
-        throw new \TYPO3\CMS\Core\Error\Http\BadRequestException('Incorrect url given.', 1467622163);
+        throw new BadRequestException('Incorrect url given.', 1467622163);
+    }
+
+    /**
+     * Handle redirect with core HTTP Response constants
+     *
+     * @param Redirect $redirect
+     * @return void
+     * @throws BadRequestException
+     */
+    public function handleRedirect(Redirect $redirect)
+    {
+        if ((bool)$_SERVER['HTTP_X_REDIRECT_SERVICE'] === false) {
+            $queryBuilder = $this->getQueryBuilderForTable(Redirect::TABLE);
+            $queryBuilder->update(Redirect::TABLE)
+                ->set('counter', 'counter+1', false)
+                ->set('last_hit', time())
+                ->set('last_referrer', GeneralUtility::getIndpEnv('HTTP_REFERER'))
+                ->where($queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($redirect->getUid(), Connection::PARAM_INT)))
+                ->execute();
+        }
+
+        try {
+            $destination = $this->generateLink($redirect->getDestination());
+            if ($redirect->getStoredParameters()) {
+                $urlParts = parse_url($destination);
+                $urlParts['query'] .= '&' . http_build_query($redirect->getStoredParameters());
+                $urlParts['query'] = trim($urlParts['query'], '&');
+                $destination = HttpUtility::buildUrl($urlParts);
+            }
+
+            if (GeneralUtility::getIndpEnv('TYPO3_SITE_SCRIPT') === $destination) {
+                throw new BadRequestException('Endless loop ended, #' . $redirect->getUid() . '.', 1529501111463);
+            } else {
+                header('X-Redirect-Handler: my_redirects:' . $redirect->getUid());
+
+                // Get response code constant from core
+                $constantLookUp = HttpUtility::class . '::HTTP_STATUS_' . $redirect->getHttpResponse();
+                $httpStatus = (defined($constantLookUp) ? constant($constantLookUp) : HttpUtility::HTTP_STATUS_302);
+                HttpUtility::redirect($destination, $httpStatus);
+            }
+        } catch (BadRequestException $e) {
+            throw $e;
+        } catch (\Exception $e) {
+            // If there is an exception while making the url, the configuration seems to be invalid
+            // and should not crash by this extension
+        }
     }
 
     /**
@@ -272,54 +170,31 @@ class RedirectService implements \TYPO3\CMS\Core\SingletonInterface
      *
      * @param string $link
      * @return string
+     * @todo future; refactor for TYPO3 9.x support
      */
     protected function generateLink($link)
     {
-        if (stripos($link, 't3://') === 0 || GeneralUtility::isValidUrl($link) === false) {
-            $controller = null;
-            if (MathUtility::canBeInterpretedAsInteger($link)) {
-                $controller = $this->getTypoScriptFrontendController((int)$link);
-            } else {
-                // Render it via the cObj with default rootpage id if available
-                $controller = $this->getTypoScriptFrontendController(ConfigurationUtility::getDefaultRootPageId());
-            }
-
-            if ($controller !== null) {
-                $link = $controller->cObj->typoLink_URL(
-                    ['parameter' => $link]
-                );
-            }
+        try {
+            EidUtility::initializeTypoScriptFrontendController(ConfigurationUtility::getDefaultRootPageId($link));
+            list($url, $hash) = explode('#', $link, 2);
+            // Remove hashbang and append at the end
+            $_link = $this->getContentObjectRenderer()->typoLink_URL(
+                ['parameter' => $url]
+            );
+            $link = $_link . ($hash ? '#' . $hash : '');
+        } catch (\Exception $e) {
         }
         return $link;
     }
 
     /**
-     * @return \TYPO3\CMS\Core\Database\DatabaseConnection
+     * @return ContentObjectRenderer
      */
-    protected function getDatabaseConnection()
+    protected function getContentObjectRenderer()
     {
-        return $GLOBALS['TYPO3_DB'];
-    }
-
-    /**
-     * @param integer $pageId
-     * @return \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController
-     */
-    protected function getTypoScriptFrontendController($pageId = 0)
-    {
-        // Check if GLOBALS['TSFE'] is initiated correctly
-        EidUtility::initializeTypoScriptFrontendController($pageId);
-        return $GLOBALS['TSFE'];
-    }
-
-    /**
-     * @return \KoninklijkeCollective\MyRedirects\Service\DomainService
-     */
-    protected function getDomainService()
-    {
-        if (!isset($this->domainService)) {
-            $this->domainService = GeneralUtility::makeInstance(\KoninklijkeCollective\MyRedirects\Service\DomainService::class);
+        if ($GLOBALS['TSFE']->cObj instanceof ContentObjectRenderer) {
+            return $GLOBALS['TSFE']->cObj;
         }
-        return $this->domainService;
+        return GeneralUtility::makeInstance(ContentObjectRenderer::class);
     }
 }

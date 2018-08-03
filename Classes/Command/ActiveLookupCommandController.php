@@ -1,8 +1,8 @@
 <?php
+
 namespace KoninklijkeCollective\MyRedirects\Command;
 
 use KoninklijkeCollective\MyRedirects\Domain\Model\Redirect;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * ExtBase Command: Refresh all redirects states
@@ -11,147 +11,85 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class ActiveLookupCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandController
 {
-
-    /**
-     * @var \TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface
-     * @inject
-     */
-    protected $persistenceManager;
-
-    /**
-     * @var \KoninklijkeCollective\MyRedirects\Domain\Repository\RedirectRepository
-     * @inject
-     */
-    protected $redirectRepository;
-
-    /**
-     * @var \KoninklijkeCollective\MyRedirects\Service\RedirectService
-     * @inject
-     */
-    protected $redirectService;
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        // Force a 20 seconds curl timeout
-        $GLOBALS['TYPO3_CONF_VARS']['SYS']['curlTimeout'] = 20;
-    }
+    use \KoninklijkeCollective\MyRedirects\Functions\QueryBuilderTrait;
+    use \KoninklijkeCollective\MyRedirects\Functions\ObjectManagerTrait;
 
     /**
      * Command: Refresh feeds
      *
-     * @param string $defaultDomain Default domain (ex: http://serfhos.com/)
+     * @param boolean $skipInactive By default only crawl active redirects for possible performance problems
      * @return boolean
      */
-    public function refreshCommand($defaultDomain = '')
+    public function refreshCommand($skipInactive = true)
     {
-        if ($this->validateVariables($defaultDomain)) {
-            return $this->updateRedirects($defaultDomain);
-        }
-        return false;
-    }
-
-    /**
-     * Validate required variables
-     *
-     * @param string $defaultDomain
-     * @throws \TYPO3\CMS\Core\Exception
-     * @return boolean
-     */
-    protected function validateVariables($defaultDomain)
-    {
-        if (empty($defaultDomain)) {
-            throw new \TYPO3\CMS\Core\Exception('No default domain configured');
-        } elseif (GeneralUtility::isValidUrl($defaultDomain) === false) {
-            throw new \TYPO3\CMS\Core\Exception('Default domain invalid');
-        }
-
-        return true;
+        return $this->updateRedirects($skipInactive);
     }
 
     /**
      * Goes through all items in the cache and updates them.
      *
-     * @param string $defaultDomain
+     * @param boolean $skipInactive
      * @return boolean
      */
-    protected function updateRedirects($defaultDomain)
+    protected function updateRedirects($skipInactive)
     {
         $i = 0;
-        $redirects = $this->getRedirectRepository()->findAll();
-        foreach ($redirects as $redirect) {
-            $i++;
-            if ($redirect instanceof Redirect) {
-                $check = true;
+        $itemsPerLoop = 20;
+        do {
+            $records = $this->getRedirectRepository()->createQuery()
+                ->setOffset($i)
+                ->setLimit($itemsPerLoop)
+                ->execute();
 
-                // Only check redirects that are not already checked today
-                $lastChecked = $redirect->getLastChecked();
-                if ($lastChecked instanceof \DateTime) {
-                    $yesterday = new \DateTime('yesterday');
-                    $check = ($lastChecked < $yesterday);
-                }
+            foreach ($records as $redirect) {
+                if ($redirect instanceof Redirect) {
+                    $check = true;
 
-                if ($check) {
-                    // Only do daily checks on active url's
-                    $active = $redirect->getActive();
-                    if ($active === true) {
-                        $this->getRedirectService()->activeLookup($redirect, $defaultDomain);
-                        $this->getRedirectRepository()->update($redirect);
+                    // Only check redirects that are not already checked today
+                    $lastChecked = $redirect->getLastChecked();
+                    if ($lastChecked instanceof \DateTime) {
+                        $yesterday = new \DateTime('yesterday');
+                        $check = ($lastChecked < $yesterday);
+                    }
+
+                    if ($check) {
+                        // Only do daily checks on active url's or when this is skipped
+                        if ($redirect->getActive() || $skipInactive === false) {
+                            $this->outputLine(date('d M y H:i:s') . ' - Updating "' . $redirect->getUrl() . '"');
+                            $this->getStatusService()->activeLookup($redirect, true);
+                            $this->getRedirectRepository()->update($redirect);
+                        }
                     }
                 }
+                $i++;
             }
-
-            if ($i % 50 === 0) {
-                $this->getPersistenceManager()->persistAll();
-            }
-        }
-
-        $this->getPersistenceManager()->persistAll();
+            $this->getPersistenceManager()->persistAll();
+        } while ($records && $records->count() > 0);
 
         return true;
     }
 
     /**
-     * @return \KoninklijkeCollective\MyRedirects\Domain\Repository\RedirectRepository
+     * @return \KoninklijkeCollective\MyRedirects\Service\StatusService|object
+     */
+    protected function getStatusService()
+    {
+        return $this->getObjectManager()->get(\KoninklijkeCollective\MyRedirects\Service\StatusService::class);
+    }
+
+    /**
+     * @return \KoninklijkeCollective\MyRedirects\Domain\Repository\RedirectRepository|object
      */
     protected function getRedirectRepository()
     {
-        if (!isset($this->redirectRepository)) {
-            $this->redirectRepository = $this->getObjectManager()->get(\KoninklijkeCollective\MyRedirects\Domain\Repository\RedirectRepository::class);
-        }
-        return $this->redirectRepository;
+        return $this->getObjectManager()->get(\KoninklijkeCollective\MyRedirects\Domain\Repository\RedirectRepository::class);
     }
 
     /**
-     * @return \TYPO3\CMS\Extbase\Object\ObjectManager
-     */
-    protected function getObjectManager()
-    {
-        return GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\ObjectManager::class);
-    }
-
-    /**
-     * @return \KoninklijkeCollective\MyRedirects\Service\RedirectService
-     */
-    protected function getRedirectService()
-    {
-        if (!isset($this->redirectService)) {
-            $this->redirectService = $this->getObjectManager()->get(\KoninklijkeCollective\MyRedirects\Service\RedirectService::class);
-        }
-        return $this->redirectService;
-    }
-
-    /**
-     * @return \TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface
+     * @return \TYPO3\CMS\Extbase\Persistence\PersistenceManagerInterface|object
      */
     protected function getPersistenceManager()
     {
-        if (!isset($this->persistenceManager)) {
-            $this->persistenceManager = $this->getObjectManager()->get(\TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager::class);
-        }
-        return $this->persistenceManager;
+        return $this->getObjectManager()->get(\TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager::class);
     }
-
 }

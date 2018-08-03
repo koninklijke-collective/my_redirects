@@ -18,10 +18,12 @@
         "typo3/cms-frontend": ">=7.6.0 <9.0.0",
         "typo3/cms-scheduler": ">=7.6.0 <9.0.0"
     },
+
     "replace": {
         "my_redirects": "self.version",
         "typo3-ter/my-redirects": "self.version"
     },
+
     "autoload": {
         "psr-4": {
             "KoninklijkeCollective\\MyRedirects\\": "Classes/"

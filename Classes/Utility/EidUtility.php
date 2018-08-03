@@ -7,7 +7,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
-use TYPO3\CMS\Frontend\Page\PageGenerator;
 use TYPO3\CMS\Frontend\Page\PageRepository;
 
 /**
@@ -23,6 +22,7 @@ class EidUtility
      *
      * @param integer $pageId
      * @return void
+     * @throws \Exception
      */
     public static function initializeTypoScriptFrontendController($pageId = 0)
     {
@@ -38,36 +38,49 @@ class EidUtility
                 0
             );
 
-            // @TODO: deprecated workaround since 8/9
-            $bootstrap = \TYPO3\CMS\Core\Core\Bootstrap::getInstance();
-            if (is_callable([$bootstrap, 'loadExtensionTables'])) {
-                $bootstrap->loadExtensionTables();
-            } elseif (is_callable([$bootstrap, 'loadCachedTca'])) {
-                $bootstrap->loadCachedTca();
-            }
+            static::invokeMethod(\TYPO3\CMS\Core\Core\Bootstrap::getInstance(), 'loadBaseTca');
+            static::invokeMethod(\TYPO3\CMS\Core\Core\Bootstrap::getInstance(), 'loadExtTables');
         }
 
         if (!($controller->fe_user instanceof FrontendUserAuthentication)) {
-            $controller->initFEuser();
+            static::invokeMethod($controller, 'initFEuser');
         }
 
         if (!($controller->sys_page instanceof PageRepository)) {
-            $controller->determineId();
+            static::invokeMethod($controller, 'determineId');
         }
 
         if (!($controller->tmpl instanceof TemplateService)) {
-            $controller->initTemplate();
+            static::invokeMethod($controller, 'initTemplate');
+            static::invokeMethod($controller, 'getFromCache');
+            static::invokeMethod($controller, 'getConfigArray');
         }
 
-        $controller->getConfigArray();
+        if (empty($controller->rootLine)) {
+            $controller->rootLine = $controller->sys_page->getRootLine($controller->id, $controller->MP);
+        }
+
+        if (empty($controller->page)) {
+            $controller->page = $controller->sys_page->getPage($controller->id);
+        }
 
         if (!($controller->cObj instanceof ContentObjectRenderer)) {
             $controller->newCObj();
         }
-
-        if (empty($controller->indexedDocTitle)) {
-            PageGenerator::pagegenInit();
-        }
     }
 
+    /**
+     * @param object $object
+     * @param string $method
+     * @return void
+     */
+    protected static function invokeMethod($object, $method)
+    {
+        try {
+            if (is_callable([$object, $method])) {
+                $object->{$method}();
+            }
+        } catch (\Exception $e) {
+        }
+    }
 }

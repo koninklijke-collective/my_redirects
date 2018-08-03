@@ -1,28 +1,27 @@
 <?php
-if (!defined('TYPO3_MODE')) {
-    die ('Access denied.');
-}
+defined('TYPO3_MODE') or die('Access denied.');
 
-if (TYPO3_MODE === 'BE') {
+call_user_func(function ($extension) {
     \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
-        'KoninklijkeCollective.' . $_EXTKEY,
+        'KoninklijkeCollective.' . $extension,
         'web',
-        'my_redirects',
+        $extension,
         '',
-        [
-            // Allowed controller action combinations
-            'Redirect' => 'list, delete, lookup',
-        ],
+        ['Redirect' => 'list, delete, activate, lookup'],
         [
             // Additional configuration
             'access' => 'user, group',
-            'icon' => 'EXT:' . $_EXTKEY . '/Resources/Public/Icons/my_redirects_module.png',
-            'labels' => 'LLL:EXT:' . $_EXTKEY . '/Resources/Private/Language/locallang_mod.xlf',
+            'icon' => 'EXT:' . $extension . '/Resources/Public/Icons/module-my_redirects.svg',
+            'iconIdentifier' => 'module-my_redirects',
+            'labels' => 'LLL:EXT:' . $extension . '/Resources/Private/Language/locallang_mod.xlf',
+            'navigationComponentId' => ''
         ]
     );
 
     \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addLLrefForTCAdescr(
         \KoninklijkeCollective\MyRedirects\Domain\Model\Redirect::TABLE,
-        'EXT:my_redirects/Resources/Private/Language/locallang_csh.xlf'
+        'EXT:' . $extension . '/Resources/Private/Language/locallang_csh.xlf'
     );
-}
+
+    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages(\KoninklijkeCollective\MyRedirects\Domain\Model\Redirect::TABLE);
+}, \KoninklijkeCollective\MyRedirects\Utility\ConfigurationUtility::EXTENSION);
