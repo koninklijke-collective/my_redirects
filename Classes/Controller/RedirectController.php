@@ -16,7 +16,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
 {
-
     use \KoninklijkeCollective\MyRedirects\Functions\TranslateTrait;
     use \KoninklijkeCollective\MyRedirects\Functions\ObjectManagerTrait;
     use \KoninklijkeCollective\MyRedirects\Functions\BackendUserAuthenticationTrait;
@@ -303,5 +302,4 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
     {
         return $this->getObjectManager()->get(\KoninklijkeCollective\MyRedirects\Service\FilterDataService::class);
     }
-
 }

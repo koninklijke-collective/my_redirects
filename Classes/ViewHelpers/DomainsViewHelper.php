@@ -11,7 +11,6 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
  */
 class DomainsViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper implements \TYPO3\CMS\Fluid\Core\ViewHelper\Facets\CompilableInterface
 {
-
     use \TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
     use \KoninklijkeCollective\MyRedirects\Functions\ObjectManagerTrait;
     use \KoninklijkeCollective\MyRedirects\Functions\BackendUserAuthenticationTrait;

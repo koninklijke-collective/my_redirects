@@ -11,7 +11,6 @@ use KoninklijkeCollective\MyRedirects\Domain\Model\Redirect;
  */
 class ActiveLookupCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandController
 {
-
     use \KoninklijkeCollective\MyRedirects\Functions\QueryBuilderTrait;
     use \KoninklijkeCollective\MyRedirects\Functions\ObjectManagerTrait;
 

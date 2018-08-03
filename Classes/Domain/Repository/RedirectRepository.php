@@ -83,7 +83,6 @@ class RedirectRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
                     if ($info['domain'] > 0) {
                         $constraints[] = $query->in('domain', [0, $info['domain']]);
                     }
-
                 }
             }
 
@@ -106,5 +105,4 @@ class RedirectRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
         $query->getQuerySettings()->setRespectStoragePage(false);
         return $query;
     }
-
 }

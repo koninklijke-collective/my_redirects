@@ -83,5 +83,4 @@ class EidUtility
         } catch (\Exception $e) {
         }
     }
-
 }

@@ -11,7 +11,6 @@ use KoninklijkeCollective\MyRedirects\Domain\Model\Redirect;
  */
 class DataHandlerHook
 {
-
     use \KoninklijkeCollective\MyRedirects\Functions\ObjectManagerTrait;
 
     /**
@@ -60,5 +59,4 @@ class DataHandlerHook
     {
         return $this->getObjectManager()->get(\KoninklijkeCollective\MyRedirects\Service\RedirectService::class);
     }
-
 }

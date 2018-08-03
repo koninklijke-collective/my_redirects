@@ -13,7 +13,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class RootPageService implements \TYPO3\CMS\Core\SingletonInterface
 {
-
     use \KoninklijkeCollective\MyRedirects\Functions\QueryBuilderTrait;
 
     /**

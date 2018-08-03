@@ -11,7 +11,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class FlashMessageUtility
 {
-
     const QUEUE_IDENTIFIER = 'ext_my_redirects_queue';
 
     /**

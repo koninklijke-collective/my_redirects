@@ -14,7 +14,6 @@ use TYPO3\CMS\Core\Utility\MathUtility;
  */
 class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
 {
-
     const TABLE = 'tx_myredirects_domain_model_redirect';
 
     /**

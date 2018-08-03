@@ -141,5 +141,4 @@ class DomainTreeRedirects extends \TYPO3\CMS\Install\Updates\AbstractUpdate
     {
         return $this->getObjectManager()->get(DomainService::class);
     }
-
 }

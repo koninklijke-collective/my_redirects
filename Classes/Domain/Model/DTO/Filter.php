@@ -167,7 +167,7 @@ class Filter
      */
     public function getSearch()
     {
-        return preg_replace('/[^a-zA-Z0-9_-]/', ' ', $this->search);;
+        return preg_replace('/[^a-zA-Z0-9_-]/', ' ', $this->search);
     }
 
     /**
@@ -282,5 +282,4 @@ class Filter
         }
         return $this;
     }
-
 }

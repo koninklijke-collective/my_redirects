@@ -9,7 +9,6 @@ namespace KoninklijkeCollective\MyRedirects\ViewHelpers;
  */
 class DomainInfoViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
 {
-
     use \KoninklijkeCollective\MyRedirects\Functions\ObjectManagerTrait;
 
     /**
@@ -54,5 +53,4 @@ class DomainInfoViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractView
     {
         return $this->getObjectManager()->get(\KoninklijkeCollective\MyRedirects\Service\DomainService::class);
     }
-
 }

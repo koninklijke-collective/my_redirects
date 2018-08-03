@@ -1,9 +1,7 @@
 <?php
 use KoninklijkeCollective\MyRedirects\Domain\Model\Redirect;
 
-if (!defined('TYPO3_MODE')) {
-    die ('Access denied.');
-}
+defined('TYPO3_MODE') or die('Access denied.');
 
 $translation = 'LLL:EXT:my_redirects/Resources/Private/Language/locallang_be.xlf:' . Redirect::TABLE;
 

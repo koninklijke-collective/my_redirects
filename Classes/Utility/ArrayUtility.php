@@ -27,5 +27,4 @@ class ArrayUtility
         }
         return $array;
     }
-
 }

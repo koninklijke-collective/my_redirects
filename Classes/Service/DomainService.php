@@ -12,7 +12,6 @@ use TYPO3\CMS\Core\Database\Connection;
  */
 class DomainService implements \TYPO3\CMS\Core\SingletonInterface
 {
-
     use \KoninklijkeCollective\MyRedirects\Functions\QueryBuilderTrait;
 
     protected $results = [];

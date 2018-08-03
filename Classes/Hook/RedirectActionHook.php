@@ -89,5 +89,4 @@ class RedirectActionHook
     {
         return GeneralUtility::makeInstance(\KoninklijkeCollective\MyRedirects\Service\RedirectService::class);
     }
-
 }

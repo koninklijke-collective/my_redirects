@@ -13,7 +13,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class StatusService
 {
-
     use \KoninklijkeCollective\MyRedirects\Functions\ObjectManagerTrait;
 
     /**

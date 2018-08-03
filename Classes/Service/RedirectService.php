@@ -19,7 +19,6 @@ use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
  */
 class RedirectService
 {
-
     use \KoninklijkeCollective\MyRedirects\Functions\QueryBuilderTrait;
 
     /**
@@ -177,7 +176,7 @@ class RedirectService
     {
         try {
             EidUtility::initializeTypoScriptFrontendController(ConfigurationUtility::getDefaultRootPageId($link));
-            list ($url, $hash) = explode('#', $link, 2);
+            list($url, $hash) = explode('#', $link, 2);
             // Remove hashbang and append at the end
             $_link = $this->getContentObjectRenderer()->typoLink_URL(
                 ['parameter' => $url]
@@ -198,5 +197,4 @@ class RedirectService
         }
         return GeneralUtility::makeInstance(ContentObjectRenderer::class);
     }
-
 }

@@ -12,7 +12,6 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
  */
 class RealUrlRedirectsImport extends \TYPO3\CMS\Install\Updates\AbstractUpdate
 {
-
     use \KoninklijkeCollective\MyRedirects\Functions\ObjectManagerTrait;
     use \KoninklijkeCollective\MyRedirects\Functions\QueryBuilderTrait;
     use \KoninklijkeCollective\MyRedirects\Functions\BackendUserAuthenticationTrait;
@@ -83,7 +82,7 @@ class RealUrlRedirectsImport extends \TYPO3\CMS\Install\Updates\AbstractUpdate
             ->getConnectionForTable(Redirect::TABLE);
 
         while ($row = $query->fetch()) {
-            list ($storage, $domainId) = $this->getDomainInfo((int)$row['domain_limit']);
+            list($storage, $domainId) = $this->getDomainInfo((int)$row['domain_limit']);
 
             $urlHash = $this->generateNewHash($row['url']);
             if ($urlHash) {

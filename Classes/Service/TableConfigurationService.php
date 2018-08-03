@@ -4,7 +4,6 @@ namespace KoninklijkeCollective\MyRedirects\Service;
 
 class TableConfigurationService implements \TYPO3\CMS\Core\SingletonInterface
 {
-
     use \KoninklijkeCollective\MyRedirects\Functions\TranslateTrait;
     use \KoninklijkeCollective\MyRedirects\Functions\ObjectManagerTrait;
     use \KoninklijkeCollective\MyRedirects\Functions\BackendUserAuthenticationTrait;
@@ -51,7 +50,7 @@ class TableConfigurationService implements \TYPO3\CMS\Core\SingletonInterface
     {
         $activeRootPage = 0;
         if ($active) {
-            list ($activeRootPage) = \TYPO3\CMS\Core\Utility\GeneralUtility::intExplode('-', $active);
+            list($activeRootPage) = \TYPO3\CMS\Core\Utility\GeneralUtility::intExplode('-', $active);
         }
 
         $data = [];
@@ -105,7 +104,6 @@ class TableConfigurationService implements \TYPO3\CMS\Core\SingletonInterface
                         'No domains for root page found',
                         ''
                     ];
-
                 }
             }
 

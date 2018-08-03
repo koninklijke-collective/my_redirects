@@ -11,7 +11,6 @@ use KoninklijkeCollective\MyRedirects\Domain\Model\DTO\Filter;
  */
 class FilterDataService implements \TYPO3\CMS\Core\SingletonInterface
 {
-
     use \KoninklijkeCollective\MyRedirects\Functions\BackendUserAuthenticationTrait;
 
     const KEY = 'tx_myredirects_filter';
@@ -38,5 +37,4 @@ class FilterDataService implements \TYPO3\CMS\Core\SingletonInterface
     {
         $this->getBackendUserAuthentication()->pushModuleData(self::KEY, $filter->unload());
     }
-
 }

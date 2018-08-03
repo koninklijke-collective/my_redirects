@@ -24,5 +24,4 @@ class EditRecordViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractView
         $parameters = GeneralUtility::explodeUrl2Array($parameters);
         return BackendUtility::getModuleUrl('record_edit', $parameters);
     }
-
 }
