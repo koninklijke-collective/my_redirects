@@ -92,7 +92,7 @@ return [
             'config' => [
                 'type' => 'input',
                 'size' => 30,
-                'eval' => 'trim',
+                'eval' => 'trim, required',
                 'max' => 65535,
             ]
         ],
@@ -102,7 +102,7 @@ return [
             'config' => [
                 'type' => 'input',
                 'renderType' => 'inputLink',
-                'eval' => 'trim',
+                'eval' => 'trim, required',
             ]
         ],
         'last_hit' => [
