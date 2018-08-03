@@ -14,9 +14,9 @@
     "homepage": "https://github.com/koninklijke-collective/my_redirects",
     "license": "LGPL-3.0+",
     "require": {
-        "typo3/cms-core": ">=7.6.0 <9.0.0",
-        "typo3/cms-frontend": ">=7.6.0 <9.0.0",
-        "typo3/cms-scheduler": ">=7.6.0 <9.0.0"
+        "typo3/cms-core": ">=8.7.0 <9.0.0",
+        "typo3/cms-frontend": ">8.7.0 <9.0.0",
+        "typo3/cms-scheduler": ">=8.7.0 <9.0.0"
     },
 
     "replace": {
