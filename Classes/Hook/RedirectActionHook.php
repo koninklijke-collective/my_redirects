@@ -21,7 +21,7 @@ class RedirectActionHook
     public function redirectAction()
     {
         $path = GeneralUtility::getIndpEnv('TYPO3_SITE_SCRIPT');
-        $path = mb_strtolower($path, 'utf-8');
+        $path = mb_convert_encoding($path, 'utf-8');
 
         if (!empty($path)) {
             try {
@@ -52,10 +52,7 @@ class RedirectActionHook
                         }
                     }
                 }
-                $redirect = $this->getRedirectService()->findRedirect(
-                    $path,
-                    $domain
-                );
+                $redirect = $this->getRedirectService()->findRedirect($path, $domain);
 
                 if ($hookObjects) {
                     // Hook: afterQueryByPathAndDomain
