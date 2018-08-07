@@ -247,9 +247,9 @@ class Filter
      */
     public function setOrder($order = null)
     {
-        if (in_array($this->order, $this->_allowedOrders)) {
+        if (in_array($order, $this->_allowedOrders)) {
             $this->order = $order;
-        } else {
+        } elseif (!empty($order)) {
             throw new \InvalidArgumentException('Invalid order given', 1496135747866);
         }
         return $this;
@@ -275,9 +275,9 @@ class Filter
      */
     public function setDirection($direction = null)
     {
-        if (in_array($this->direction, $this->_allowedDirections)) {
+        if (in_array($direction, $this->_allowedDirections)) {
             $this->direction = $direction;
-        } else {
+        } elseif (!empty($direction)) {
             throw new \InvalidArgumentException('Invalid direction given', 1496135702441);
         }
         return $this;

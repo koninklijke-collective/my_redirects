@@ -1,4 +1,6 @@
-<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      data-namespace-typo3-fluid="true">
 
 <f:comment>
     Listing of all users
@@ -11,20 +13,20 @@
                     <th></th>
                     <th class="col-title col-redirect-from">
                         <f:render section="ListHeaderSorting"
-                            arguments="{type: 'url', order: order, direction: direction}"/>
+                                  arguments="{type: 'url', order: filter.order, direction: filter.direction}"/>
                     </th>
                     <th class="col-title col-redirect-to">
                         <f:render section="ListHeaderSorting"
-                            arguments="{type: 'destination', order: order, direction: direction}"/>
+                                  arguments="{type: 'destination', order: filter.order, direction: filter.direction}"/>
                     </th>
                     <th class="col-control"></th>
                     <th class="col-redirect-hits">
                         <f:render section="ListHeaderSorting"
-                            arguments="{type: 'counter', order: order, direction: direction}"/>
+                                  arguments="{type: 'counter', order: filter.order, direction: filter.direction}"/>
                     </th>
                     <th class="col-redirect-last-hit-date">
                         <f:render section="ListHeaderSorting"
-                            arguments="{type: 'last_hit', order: order, direction: direction}"/>
+                                  arguments="{type: 'last_hit', order: filter.order, direction: filter.direction}"/>
                     </th>
                 </tr>
             </thead>
@@ -38,11 +40,12 @@
                 Footer row: no officially defined style yet
             </f:comment>
             <tfoot>
-                <tr>
-                    <td colspan="6">
-                        <f:count subject="{redirects}" /> <f:translate key="redirect.plural" />
-                    </td>
-                </tr>
+            <tr>
+                <td colspan="6">
+                    <f:count subject="{redirects}"/>
+                    <f:translate key="redirect.plural"/>
+                </td>
+            </tr>
             </tfoot>
         </table>
     </div>
@@ -54,19 +57,19 @@
         <f:then>
             <f:if condition="{0: direction} == {0: 'ASC'}">
                 <f:then>
-                    <f:link.action arguments="{order: type, direction: 'DESC'}">
+                    <f:link.action arguments="{filter: '{order: type, direction: \'DESC\'}'}">
                         {f:translate(key: 'table.header.{type}')}
                     </f:link.action>
                 </f:then>
                 <f:else>
-                    <f:link.action arguments="{order: type, direction: 'ASC'}">
+                    <f:link.action arguments="{filter: '{order: type, direction: \'ASC\'}'}">
                         {f:translate(key: 'table.header.{type}')}
                     </f:link.action>
                 </f:else>
             </f:if>
         </f:then>
         <f:else>
-            <f:link.action arguments="{order: type, direction: 'ASC'}">
+            <f:link.action arguments="{filter: '{order: type, direction: \'ASC\'}'}">
                 {f:translate(key: 'table.header.{type}')}
             </f:link.action>
         </f:else>
