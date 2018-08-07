@@ -51,6 +51,10 @@ class RedirectService
                     'domain',
                     $queryBuilder->createNamedParameter([0, $domainId], Connection::PARAM_INT_ARRAY)
                 ));
+            } else {
+                // Fallback on default root page ID.. if no domain is configured
+                $domainId = 0;
+                $rootPageId = ConfigurationUtility::getDefaultRootPageId('');
             }
 
             $query = $queryBuilder->execute();
@@ -72,7 +76,6 @@ class RedirectService
                 $redirect->setStoredParameters($keptParameters);
             }
         }
-
         return $redirect;
     }
 

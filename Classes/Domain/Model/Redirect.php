@@ -405,6 +405,16 @@ class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     }
 
     /**
+     * Returns the Url Length
+     *
+     * @return integer
+     */
+    public function getUrlLength()
+    {
+        return strlen($this->url);
+    }
+
+    /**
      * Returns the Url
      *
      * @return string

@@ -2,6 +2,8 @@
 
 namespace KoninklijkeCollective\MyRedirects\Service;
 
+use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
+
 class TableConfigurationService implements \TYPO3\CMS\Core\SingletonInterface
 {
     use \KoninklijkeCollective\MyRedirects\Functions\TranslateTrait;
@@ -19,6 +21,7 @@ class TableConfigurationService implements \TYPO3\CMS\Core\SingletonInterface
     protected $domains;
 
     /**
+     * @return boolean
      */
     public function hasAllowedDomains()
     {
@@ -54,37 +57,27 @@ class TableConfigurationService implements \TYPO3\CMS\Core\SingletonInterface
         }
 
         $data = [];
-        $page = reset($pages);
-        if (false && count($domains) <= 1 && count($pages) == 1 && $active === $page['uid'] . '-0') {
-            $hasAccess = $this->getBackendUserAuthentication()->isInWebMount($page['uid']);
-            if ($hasAccess) {
+        // Reorder domains based on parent RootPage
+        $items = [];
+        foreach ($domains as $domain) {
+            $items[$domain['pid']][] = $domain;
+        }
+
+        foreach ($pages as $page) {
+            $pageId = $page['uid'];
+            $hasAccess = $this->getBackendUserAuthentication()->isInWebMount($pageId);
+            if ($hasAccess || $pageId === $activeRootPage) {
                 $data[] = [
-                    $this->translate('redirect.all.domains.in.domain', [$page['title']]),
-                    $page['uid'] . '-' . '0'
+                    $page['title'],
+                    '--div--'
                 ];
-            }
-        } else {
-            // Reorder domains based on parent RootPage
-            $items = [];
-            foreach ($domains as $domain) {
-                $items[$domain['pid']][] = $domain;
-            }
 
-            foreach ($pages as $page) {
-                $pageId = $page['uid'];
-                $hasAccess = $this->getBackendUserAuthentication()->isInWebMount($pageId);
-                if ($hasAccess || $pageId === $activeRootPage) {
+                if ($hasAccess) {
                     $data[] = [
-                        $page['title'],
-                        '--div--'
+                        $this->translate('redirect.all.domains.in.root'),
+                        $pageId . '-' . '0'
                     ];
-
-                    if ($hasAccess && isset($items[$pageId])) {
-                        $data[] = [
-                            $this->translate('redirect.all.domains.in.root'),
-                            $pageId . '-' . '0'
-                        ];
-
+                    if (isset($items[$pageId])) {
                         // Only add possible selection when more than 1 page
                         if (count($items[$pageId]) > 1) {
                             foreach ($items[$pageId] as $domain) {
@@ -97,31 +90,31 @@ class TableConfigurationService implements \TYPO3\CMS\Core\SingletonInterface
                             }
                         }
                     }
-
-                    unset($items[$pageId]);
-                } else {
-                    $data[] = [
-                        'No domains for root page found',
-                        ''
-                    ];
                 }
-            }
 
-            // Always render unknown domains for broken stuff
-            if (!empty($items)) {
+                unset($items[$pageId]);
+            } else {
                 $data[] = [
-                    'Unknown',
-                    '--div--'
+                    'No domains for root page found',
+                    ''
                 ];
+            }
+        }
 
-                foreach ($items as $pageId => $domains) {
-                    foreach ($domains as $domain) {
-                        if ($this->getBackendUserAuthentication()->isInWebMount($domain['pid']) || $active === $domain['pid'] . '-' . $domain['uid']) {
-                            $data[] = [
-                                $domain['pid'] . ': ' . $domain['domainName'],
-                                $domain['pid'] . '-' . $domain['uid']
-                            ];
-                        }
+        // Always render unknown domains for broken stuff
+        if (!empty($items)) {
+            $data[] = [
+                'Unknown',
+                '--div--'
+            ];
+
+            foreach ($items as $pageId => $rows) {
+                foreach ($rows as $domain) {
+                    if ($this->getBackendUserAuthentication()->isInWebMount($domain['pid']) || $active === $domain['pid'] . '-' . $domain['uid']) {
+                        $data[] = [
+                            $domain['pid'] . ': ' . $domain['domainName'],
+                            $domain['pid'] . '-' . $domain['uid']
+                        ];
                     }
                 }
             }

@@ -107,7 +107,7 @@ class DomainTreeRedirects extends \TYPO3\CMS\Install\Updates\AbstractUpdate
     protected function getRootPageByDomain(int $domain)
     {
         $rootPages = $this->getAvailableRootPages();
-        if ((int)$domain > 0) {
+        if ($domain > 0) {
             if (!isset($this->domains[$domain])) {
                 $this->domains[$domain] = $this->getDomainService()->getDomain($domain);
             }

@@ -39,9 +39,7 @@ class RedirectActionHook
                 }
 
                 $redirect = null;
-                $domain = $this->getDomainService()->getDomainByDomainName(
-                    GeneralUtility::getIndpEnv('HTTP_HOST')
-                );
+                $domain = $this->getDomainService()->getDomainByDomainName(GeneralUtility::getIndpEnv('HTTP_HOST'));
                 /** @var string $fields @deprecated */
                 $fields = '*';
                 if ($hookObjects) {

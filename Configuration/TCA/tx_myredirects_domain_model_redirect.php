@@ -67,7 +67,7 @@ return [
             ]
         ],
         'crdate' => [
-            'exclude' => 0,
+            'exclude' => false,
             'label' => $translation . '.crdate',
             'config' => [
                 'readOnly' => true,
@@ -78,7 +78,7 @@ return [
             ]
         ],
         'url_hash' => [
-            'exclude' => 0,
+            'exclude' => false,
             'label' => $translation . '.url_hash',
             'config' => [
                 'readOnly' => true,
@@ -87,7 +87,7 @@ return [
             ]
         ],
         'url' => [
-            'exclude' => 0,
+            'exclude' => false,
             'label' => $translation . '.url',
             'config' => [
                 'type' => 'input',
@@ -97,7 +97,7 @@ return [
             ]
         ],
         'destination' => [
-            'exclude' => 0,
+            'exclude' => false,
             'label' => $translation . '.destination',
             'config' => [
                 'type' => 'input',
@@ -106,7 +106,7 @@ return [
             ]
         ],
         'last_hit' => [
-            'exclude' => 0,
+            'exclude' => false,
             'label' => $translation . '.last_hit',
             'config' => [
                 'readOnly' => true,
@@ -117,7 +117,7 @@ return [
             ]
         ],
         'last_referrer' => [
-            'exclude' => 0,
+            'exclude' => false,
             'label' => $translation . '.last_referrer',
             'config' => [
                 'readOnly' => true,
@@ -126,7 +126,7 @@ return [
             ]
         ],
         'counter' => [
-            'exclude' => 0,
+            'exclude' => false,
             'label' => $translation . '.counter',
             'config' => [
                 'type' => 'input',
@@ -138,7 +138,7 @@ return [
             ]
         ],
         'http_response' => [
-            'exclude' => 0,
+            'exclude' => false,
             'label' => $translation . '.http_response',
             'config' => [
                 'type' => 'select',
@@ -169,7 +169,7 @@ return [
             ]
         ],
         'domain' => [
-            'exclude' => 0,
+            'exclude' => false,
             'label' => $translation . '.domain',
 
             'config' => [
@@ -177,7 +177,7 @@ return [
             ]
         ],
         'root_page_domain' => [
-            'exclude' => 0,
+            'exclude' => false,
             'label' => $translation . '.root_page_domain',
             'config' => [
                 'type' => 'select',
@@ -191,7 +191,7 @@ return [
             'displayCond' => 'USER:' . \KoninklijkeCollective\MyRedirects\Service\TableConfigurationService::class . '->hasAllowedDomains',
         ],
         'active' => [
-            'exclude' => 0,
+            'exclude' => false,
             'label' => $translation . '.active',
             'config' => [
                 'readOnly' => true,
@@ -205,7 +205,7 @@ return [
             ]
         ],
         'last_checked' => [
-            'exclude' => 0,
+            'exclude' => false,
             'label' => $translation . '.last_checked',
             'config' => [
                 'readOnly' => true,
@@ -216,7 +216,7 @@ return [
             ]
         ],
         'inactive_reason' => [
-            'exclude' => 0,
+            'exclude' => false,
             'label' => $translation . '.inactive_reason',
             'config' => [
                 'type' => 'text',
@@ -228,7 +228,7 @@ return [
             'displayCond' => 'FIELD:active:REQ:false',
         ],
         'backend_note' => [
-            'exclude' => 0,
+            'exclude' => false,
             'label' => $translation . '.backend_note',
             'config' => [
                 'type' => 'text',
