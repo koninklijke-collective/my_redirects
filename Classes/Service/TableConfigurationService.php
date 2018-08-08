@@ -2,8 +2,10 @@
 
 namespace KoninklijkeCollective\MyRedirects\Service;
 
-use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
-
+/**
+ * Service: TCA Functions
+ * @package KoninklijkeCollective\MyRedirects\Service
+ */
 class TableConfigurationService implements \TYPO3\CMS\Core\SingletonInterface
 {
     use \KoninklijkeCollective\MyRedirects\Functions\TranslateTrait;

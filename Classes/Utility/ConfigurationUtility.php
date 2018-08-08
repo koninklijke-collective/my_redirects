@@ -73,7 +73,7 @@ class ConfigurationUtility
         if ($configuration === null) {
             $data = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF'][static::EXTENSION] ?: $GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][static::EXTENSION];
             if (!is_array($data)) {
-                $configuration = (array)unserialize($data);
+                $configuration = (array)unserialize($data, false);
             } else {
                 $configuration = $data;
             }
