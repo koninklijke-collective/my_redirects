@@ -88,18 +88,18 @@ class RealUrlRedirectsImport extends \TYPO3\CMS\Install\Updates\AbstractUpdate
             if ($urlHash) {
                 $queryBuilder = $connection->createQueryBuilder();
                 $queryBuilder->insert(Redirect::TABLE)
-                    ->set('pid', $storage, false)
-                    ->set('tstamp', $row['tstamp'], false)
-                    ->set('crdate', $row['tstamp'], false)
-                    ->set('cruser_id', $userId, false)
-                    ->set('url_hash', $urlHash)
-                    ->set('url', $row['url'])
-                    ->set('destination', $this->correctUrl($row['destination']))
-                    ->set('last_referrer', $row['last_referer'])
-                    ->set('counter', $row['counter'])
-                    ->set('http_response', ($row['has_moved'] ? 301 : 302))
-                    ->set('domain', $domainId)
-                    ->set('root_page_domain', $storage . '-' . $domainId);
+                    ->setValue('pid', $storage, false)
+                    ->setValue('tstamp', $row['tstamp'], false)
+                    ->setValue('crdate', $row['tstamp'], false)
+                    ->setValue('cruser_id', $userId, false)
+                    ->setValue('url_hash', $urlHash)
+                    ->setValue('url', $row['url'])
+                    ->setValue('destination', $this->correctUrl($row['destination']))
+                    ->setValue('last_referrer', $row['last_referer'])
+                    ->setValue('counter', $row['counter'])
+                    ->setValue('http_response', ($row['has_moved'] ? 301 : 302))
+                    ->setValue('domain', $domainId)
+                    ->setValue('root_page_domain', $storage . '-' . $domainId);
 
                 $databaseQueries[] = $queryBuilder->getSQL();
                 if ($queryBuilder->execute()) {
@@ -180,7 +180,7 @@ class RealUrlRedirectsImport extends \TYPO3\CMS\Install\Updates\AbstractUpdate
     {
         if ($this->defaultRootPage === null) {
             $rootPages = $this->getRootPageService()->getRootPages();
-            $this->defaultRootPage = $rootPages[0]['uid'];
+            $this->defaultRootPage = reset($rootPages)['uid'];
         }
         return $this->defaultRootPage;
     }
