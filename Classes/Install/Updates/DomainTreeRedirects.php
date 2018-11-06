@@ -42,7 +42,7 @@ class DomainTreeRedirects extends \TYPO3\CMS\Install\Updates\AbstractUpdate
     {
         static $update;
         if ($update === null) {
-            $queryBuilder = $this->getQueryBuilderForTable(Redirect::TABLE);
+            $queryBuilder = static::getQueryBuilderForTable(Redirect::TABLE);
             $existingRows = $queryBuilder
                 ->select('*')
                 ->from(Redirect::TABLE)
@@ -65,7 +65,7 @@ class DomainTreeRedirects extends \TYPO3\CMS\Install\Updates\AbstractUpdate
     public function performUpdate(array &$databaseQueries, &$customMessage)
     {
         $migrated = 0;
-        $queryBuilder = $this->getQueryBuilderForTable(Redirect::TABLE);
+        $queryBuilder = static::getQueryBuilderForTable(Redirect::TABLE);
 
         $query = $queryBuilder
             ->select('*')
@@ -89,11 +89,12 @@ class DomainTreeRedirects extends \TYPO3\CMS\Install\Updates\AbstractUpdate
             $info = $this->getRootPageByDomain((int)$row['domain']);
             $updateQuery->set('pid', (int)$info['uid'], false);
             $updateQuery->set('domain', (int)$row['domain'], false);
-            $updateQuery->set('root_page_domain', $info['uid'] . '-' . $row['domain']);
+            $updateQuery->set('root_page_domain', $info['uid'] . '-' . $row['domain'], false);
 
             $databaseQueries[] = $updateQuery->getSQL();
-            $updateQuery->execute();
-            $migrated++;
+            if ($updateQuery->execute()) {
+                $migrated++;
+            }
             unset($updateQuery);
         }
         $customMessage = '<p>A total of ' . $migrated . ' redirects are updated.</p>';
@@ -128,7 +129,7 @@ class DomainTreeRedirects extends \TYPO3\CMS\Install\Updates\AbstractUpdate
     protected function getAvailableRootPages()
     {
         if ($this->availableRootPages === null) {
-            $this->availableRootPages = $this->getObjectManager()->get(RootPageService::class)
+            $this->availableRootPages = static::getObjectManager()->get(RootPageService::class)
                 ->getRootPages();
         }
         return $this->availableRootPages;
@@ -139,6 +140,6 @@ class DomainTreeRedirects extends \TYPO3\CMS\Install\Updates\AbstractUpdate
      */
     protected function getDomainService()
     {
-        return $this->getObjectManager()->get(DomainService::class);
+        return static::getObjectManager()->get(DomainService::class);
     }
 }
