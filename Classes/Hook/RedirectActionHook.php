@@ -22,7 +22,6 @@ class RedirectActionHook
     {
         $path = GeneralUtility::getIndpEnv('TYPO3_SITE_SCRIPT');
         $path = mb_convert_encoding($path, 'utf-8');
-
         if (!empty($path)) {
             try {
                 // Get hook objects for queryByPathAndDomain

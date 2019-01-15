@@ -157,7 +157,7 @@ class RedirectService
 
                 // Get response code constant from core
                 $constantLookUp = HttpUtility::class . '::HTTP_STATUS_' . $redirect->getHttpResponse();
-                $httpStatus = (defined($constantLookUp) ? constant($constantLookUp) : HttpUtility::HTTP_STATUS_302);
+                $httpStatus = (defined($constantLookUp) ? constant($constantLookUp) : ConfigurationUtility::getDefaultHeaderStatusCode());
                 HttpUtility::redirect($destination, $httpStatus);
             }
         } catch (BadRequestException $e) {
