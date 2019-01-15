@@ -104,7 +104,7 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
             }
 
             $returnUrl = rawurlencode(BackendUtility::getModuleUrl('web_MyRedirectsMyRedirects'));
-            $parameters = GeneralUtility::explodeUrl2Array('edit[' . Redirect::TABLE . '][0]=new&returnUrl=' . $returnUrl);
+            $parameters = GeneralUtility::explodeUrl2Array('edit[' . Redirect::TABLE . '][' . ConfigurationUtility::getDefaultRootPageId('avoid-root-page') . ']=new&returnUrl=' . $returnUrl);
             $addUserLink = BackendUtility::getModuleUrl('record_edit', $parameters);
 
             $title = $this->translate('controller.action.add.record');
