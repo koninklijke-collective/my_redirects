@@ -3,6 +3,7 @@
 namespace KoninklijkeCollective\MyRedirects\Utility;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\HttpUtility;
 
 /**
  * Utility: Extension Configuration
@@ -29,7 +30,7 @@ class ConfigurationUtility
      * @param string $link
      * @return int
      */
-    public static function getDefaultRootPageId($link)
+    public static function getDefaultRootPageId($link): int
     {
         if (stripos($link, 't3://page') === 0) {
             // lets parse the urn
@@ -50,11 +51,20 @@ class ConfigurationUtility
     }
 
     /**
+     * @return string
+     */
+    public static function getDefaultHeaderStatusCode(): string
+    {
+        $configuration = static::getConfiguration();
+        return $configuration['defaultHeaderStatusCode'] ?? HttpUtility::HTTP_STATUS_302;
+    }
+
+    /**
      * Get configured excluded parameters to keep in redirect
      *
      * @return array
      */
-    public static function getCHashExcludedParameters()
+    public static function getCHashExcludedParameters(): array
     {
         return GeneralUtility::trimExplode(',', $GLOBALS['TYPO3_CONF_VARS']['FE']['cHashExcludedParameters'], true);
     }
@@ -67,7 +77,7 @@ class ConfigurationUtility
      *
      * @return array
      */
-    public static function getConfiguration()
+    public static function getConfiguration(): array
     {
         static $configuration;
         if ($configuration === null) {

@@ -3,18 +3,29 @@
 namespace KoninklijkeCollective\MyRedirects\Install\Updates;
 
 use KoninklijkeCollective\MyRedirects\Domain\Model\Redirect;
+use KoninklijkeCollective\MyRedirects\Functions\BackendUserAuthenticationTrait;
+use KoninklijkeCollective\MyRedirects\Functions\ObjectManagerTrait;
+use KoninklijkeCollective\MyRedirects\Functions\QueryBuilderTrait;
+use KoninklijkeCollective\MyRedirects\Service\DomainService;
+use KoninklijkeCollective\MyRedirects\Service\RedirectService;
+use KoninklijkeCollective\MyRedirects\Service\RootPageService;
+use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\HttpUtility;
+use TYPO3\CMS\Core\Utility\MathUtility;
+use TYPO3\CMS\Install\Updates\AbstractUpdate;
 
 /**
  * Class RealUrlRedirectsImport
  *
  * @package KoninklijkeCollective\MyRedirects\Install\Updates
  */
-class RealUrlRedirectsImport extends \TYPO3\CMS\Install\Updates\AbstractUpdate
+class RealUrlRedirectsImport extends AbstractUpdate
 {
-    use \KoninklijkeCollective\MyRedirects\Functions\ObjectManagerTrait;
-    use \KoninklijkeCollective\MyRedirects\Functions\QueryBuilderTrait;
-    use \KoninklijkeCollective\MyRedirects\Functions\BackendUserAuthenticationTrait;
+    use ObjectManagerTrait;
+    use QueryBuilderTrait;
+    use BackendUserAuthenticationTrait;
 
     /**
      * @var string
@@ -24,7 +35,7 @@ class RealUrlRedirectsImport extends \TYPO3\CMS\Install\Updates\AbstractUpdate
     /**
      * @var integer
      */
-    private $defaultRootPage;
+    protected $defaultRootPage;
 
     /**
      * Checks if an update is needed
@@ -37,14 +48,14 @@ class RealUrlRedirectsImport extends \TYPO3\CMS\Install\Updates\AbstractUpdate
         static $update;
         if ($update === null) {
             $update = false;
-            $existingRows = $this->getQueryBuilderForTable(Redirect::TABLE)
+            $existingRows = static::getQueryBuilderForTable(Redirect::TABLE)
                 ->select('*')
                 ->from(Redirect::TABLE)
                 ->count('uid')
                 ->execute()->fetchColumn(0);
             if ($existingRows === 0 && $this->isWizardDone() === false && ExtensionManagementUtility::isLoaded('realurl')) {
                 try {
-                    $realurlRedirects = $this->getQueryBuilderForTable('tx_realurl_redirects')
+                    $realurlRedirects = static::getQueryBuilderForTable('tx_realurl_redirects')
                         ->select('*')
                         ->from('tx_realurl_redirects')
                         ->count('uid')
@@ -71,14 +82,14 @@ class RealUrlRedirectsImport extends \TYPO3\CMS\Install\Updates\AbstractUpdate
     public function performUpdate(array &$databaseQueries, &$customMessages)
     {
         $migrated = 0;
-        $userId = ($this->getBackendUserAuthentication()) ? (int)$this->getBackendUserAuthentication()->user['uid'] : 0;
-        $query = $this->getQueryBuilderForTable('tx_realurl_redirects')
+        $userId = $this->getBackendUserAuthentication() ? (int)$this->getBackendUserAuthentication()->user['uid'] : 0;
+        $query = static::getQueryBuilderForTable('tx_realurl_redirects')
             ->select('*')
             ->from('tx_realurl_redirects')
             ->execute();
 
         /** @var \TYPO3\CMS\Core\Database\Connection $connection */
-        $connection = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Database\ConnectionPool::class)
+        $connection = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getConnectionForTable(Redirect::TABLE);
 
         while ($row = $query->fetch()) {
@@ -108,6 +119,8 @@ class RealUrlRedirectsImport extends \TYPO3\CMS\Install\Updates\AbstractUpdate
             }
         }
 
+        $customMessages = '<p>Total migrated items: ' . $migrated . '</p>';
+
         return true;
     }
 
@@ -128,7 +141,7 @@ class RealUrlRedirectsImport extends \TYPO3\CMS\Install\Updates\AbstractUpdate
                         $pathInfo = pathinfo($urlParameters['path']);
                         if (empty($pathInfo['extension'])) {
                             $urlParameters['path'] = rtrim($urlParameters['path'], '/') . '/';
-                            $url = \TYPO3\CMS\Core\Utility\HttpUtility::buildUrl($urlParameters);
+                            $url = HttpUtility::buildUrl($urlParameters);
                         }
                     }
                 }
@@ -146,7 +159,7 @@ class RealUrlRedirectsImport extends \TYPO3\CMS\Install\Updates\AbstractUpdate
             } elseif (class_exists('TYPO3\CMS\Core\Utility\MathUtility')
                 && method_exists('TYPO3\CMS\Core\Utility\MathUtility', 'canBeInterpretedAsInteger')
             ) {
-                if (\TYPO3\CMS\Core\Utility\MathUtility::canBeInterpretedAsInteger($urlParameters['query'])) {
+                if (MathUtility::canBeInterpretedAsInteger($urlParameters['query'])) {
                     $url = 't3://page?uid=' . $urlParameters['query'];
                 }
             }
@@ -201,26 +214,26 @@ class RealUrlRedirectsImport extends \TYPO3\CMS\Install\Updates\AbstractUpdate
     }
 
     /**
-     * @return \KoninklijkeCollective\MyRedirects\Service\RedirectService|object
+     * @return RedirectService
      */
     protected function getRedirectService()
     {
-        return $this->getObjectManager()->get(\KoninklijkeCollective\MyRedirects\Service\RedirectService::class);
+        return static::getObjectManager()->get(RedirectService::class);
     }
 
     /**
-     * @return \KoninklijkeCollective\MyRedirects\Service\DomainService|object
+     * @return DomainService
      */
     protected function getDomainService()
     {
-        return $this->getObjectManager()->get(\KoninklijkeCollective\MyRedirects\Service\DomainService::class);
+        return static::getObjectManager()->get(DomainService::class);
     }
 
     /**
-     * @return \KoninklijkeCollective\MyRedirects\Service\RootPageService|object
+     * @return RootPageService
      */
     protected function getRootPageService()
     {
-        return $this->getObjectManager()->get(\KoninklijkeCollective\MyRedirects\Service\RootPageService::class);
+        return static::getObjectManager()->get(RootPageService::class);
     }
 }
