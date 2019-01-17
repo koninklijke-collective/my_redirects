@@ -89,7 +89,7 @@ class DomainTreeRedirects extends \TYPO3\CMS\Install\Updates\AbstractUpdate
             $info = $this->getRootPageByDomain((int)$row['domain']);
             $updateQuery->set('pid', (int)$info['uid'], false);
             $updateQuery->set('domain', (int)$row['domain'], false);
-            $updateQuery->set('root_page_domain', $info['uid'] . '-' . $row['domain'], false);
+            $updateQuery->set('root_page_domain', $info['uid'] . '-' . $row['domain']);
 
             $databaseQueries[] = $updateQuery->getSQL();
             if ($updateQuery->execute()) {
