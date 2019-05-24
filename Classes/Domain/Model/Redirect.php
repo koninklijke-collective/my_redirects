@@ -235,7 +235,7 @@ class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
                         $destination = 'Page: ' . $urn['pageuid'];
                         break;
                     case LinkService::TYPE_FILE:
-                        $destination = 'File: ' . $urn['file'];
+                        $destination = 'File: ' . $urn['file']->getName();
                         break;
                     case LinkService::TYPE_RECORD:
                         $destination = 'Record: ' . ($urn['identifier'] ?? $urn['uid']);
