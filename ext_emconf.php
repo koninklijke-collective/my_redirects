@@ -4,8 +4,8 @@ $EM_CONF[$_EXTKEY] = [
     'title' => 'My Redirects',
     'description' => 'Maintain your own redirects in the backend',
     'category' => 'module',
-    'version' => '4.1.1',
-    'state' => 'stable',
+    'version' => '4.2.0',
+    'state' => 'obsolete',
     'uploadFolder' => false,
     'clearCacheOnLoad' => true,
     'author' => 'Benjamin Serfhos',
@@ -13,14 +13,14 @@ $EM_CONF[$_EXTKEY] = [
     'author_company' => 'Rotterdam School of Management, Erasmus University',
     'constraints' => [
         'depends' => [
-            'typo3' => '8.7.16-8.7.99',
+            'typo3' => '8.5.0-9.5.99',
         ],
         'conflicts' => [],
         'suggests' => [],
     ],
     'autoload' => [
         'psr-4' => [
-            'KoninklijkeCollective\\MyRedirects\\' => 'Classes'
-        ]
+            'KoninklijkeCollective\\MyRedirects\\' => 'Classes',
+        ],
     ],
 ];
