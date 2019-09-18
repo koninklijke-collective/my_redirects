@@ -2,6 +2,8 @@
   * Description: Maintain your own redirects in the backend
   * Extension key: my_redirects
   * TER: http://typo3.org/extensions/repository/view/my_redirects
+  * Replaced in TYPO3 9.x by core ext:redirects
+    * Can be installed via ```composer require typo3/cms-redirects```
 
 
 Possible configuration:
