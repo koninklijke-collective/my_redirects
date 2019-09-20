@@ -12,8 +12,6 @@ use TYPO3\CMS\Install\Updates\AbstractUpdate;
 
 /**
  * Fix Redirects (hashes and unavailable items)
- *
- * @package KoninklijkeCollective\MyRedirects\Install\Updates
  */
 class FixRedirects extends AbstractUpdate
 {
@@ -109,7 +107,7 @@ class FixRedirects extends AbstractUpdate
     /**
      * @param array $row
      * @return array
-     * @throws InvalidRedirectException
+     * @throws \KoninklijkeCollective\MyRedirects\Exception\InvalidRedirectException
      * @throws \Exception
      */
     protected function getFixedFieldsForRedirect(array $row): array
@@ -153,7 +151,7 @@ class FixRedirects extends AbstractUpdate
     }
 
     /**
-     * @return RedirectService
+     * @return \KoninklijkeCollective\MyRedirects\Service\RedirectService
      */
     protected function getRedirectService(): RedirectService
     {

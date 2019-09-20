@@ -6,8 +6,6 @@ use KoninklijkeCollective\MyRedirects\Domain\Model\Redirect;
 
 /**
  * ExtBase Command: Refresh all redirects states
- *
- * @package KoninklijkeCollective\MyRedirects\Command
  */
 class ActiveLookupCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandController
 {

@@ -4,7 +4,6 @@ namespace KoninklijkeCollective\MyRedirects\Service;
 
 /**
  * Service: TCA Functions
- * @package KoninklijkeCollective\MyRedirects\Service
  */
 class TableConfigurationService implements \TYPO3\CMS\Core\SingletonInterface
 {
@@ -55,7 +54,7 @@ class TableConfigurationService implements \TYPO3\CMS\Core\SingletonInterface
     {
         $activeRootPage = 0;
         if ($active) {
-            list($activeRootPage) = \TYPO3\CMS\Core\Utility\GeneralUtility::intExplode('-', $active);
+            [$activeRootPage] = \TYPO3\CMS\Core\Utility\GeneralUtility::intExplode('-', $active);
         }
 
         $data = [];
@@ -71,13 +70,13 @@ class TableConfigurationService implements \TYPO3\CMS\Core\SingletonInterface
             if ($hasAccess || $pageId === $activeRootPage) {
                 $data[] = [
                     $page['title'],
-                    '--div--'
+                    '--div--',
                 ];
 
                 if ($hasAccess) {
                     $data[] = [
                         $this->translate('redirect.all.domains.in.root'),
-                        $pageId . '-' . '0'
+                        $pageId . '-' . '0',
                     ];
                     if (isset($items[$pageId])) {
                         // Only add possible selection when more than 1 page
@@ -86,7 +85,7 @@ class TableConfigurationService implements \TYPO3\CMS\Core\SingletonInterface
                                 if ($hasAccess || $active === $domain['pid'] . '-' . $domain['uid']) {
                                     $data[] = [
                                         $domain['domainName'],
-                                        $domain['pid'] . '-' . $domain['uid']
+                                        $domain['pid'] . '-' . $domain['uid'],
                                     ];
                                 }
                             }
@@ -98,7 +97,7 @@ class TableConfigurationService implements \TYPO3\CMS\Core\SingletonInterface
             } else {
                 $data[] = [
                     'No domains for root page found',
-                    ''
+                    '',
                 ];
             }
         }
@@ -107,7 +106,7 @@ class TableConfigurationService implements \TYPO3\CMS\Core\SingletonInterface
         if (!empty($items)) {
             $data[] = [
                 'Unknown',
-                '--div--'
+                '--div--',
             ];
 
             foreach ($items as $pageId => $rows) {
@@ -115,7 +114,7 @@ class TableConfigurationService implements \TYPO3\CMS\Core\SingletonInterface
                     if ($this->getBackendUserAuthentication()->isInWebMount($domain['pid']) || $active === $domain['pid'] . '-' . $domain['uid']) {
                         $data[] = [
                             $domain['pid'] . ': ' . $domain['domainName'],
-                            $domain['pid'] . '-' . $domain['uid']
+                            $domain['pid'] . '-' . $domain['uid'],
                         ];
                     }
                 }
@@ -126,7 +125,7 @@ class TableConfigurationService implements \TYPO3\CMS\Core\SingletonInterface
     }
 
     /**
-     * @return RootPageService|object
+     * @return \KoninklijkeCollective\MyRedirects\Service\RootPageService|object
      */
     protected function getRootPageService()
     {
@@ -134,7 +133,7 @@ class TableConfigurationService implements \TYPO3\CMS\Core\SingletonInterface
     }
 
     /**
-     * @return DomainService|object
+     * @return \KoninklijkeCollective\MyRedirects\Service\DomainService|object
      */
     protected function getDomainService()
     {

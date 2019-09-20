@@ -1,4 +1,5 @@
 <?php
+
 namespace KoninklijkeCollective\MyRedirects\ViewHelpers;
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;

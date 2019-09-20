@@ -4,8 +4,6 @@ namespace KoninklijkeCollective\MyRedirects\ViewHelpers;
 
 /**
  * ViewHelper: Domain Info for ui interaction
- *
- * @package KoninklijkeCollective\MyRedirects\ViewHelpers
  */
 class DomainInfoViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
 {

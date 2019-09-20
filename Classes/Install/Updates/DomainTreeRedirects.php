@@ -8,9 +8,7 @@ use KoninklijkeCollective\MyRedirects\Service\RootPageService;
 use TYPO3\CMS\Core\Utility\MathUtility;
 
 /**
- * Class RealUrlRedirectsImport
- *
- * @package KoninklijkeCollective\MyRedirects\Install\Updates
+ * Upgrade scripts: Domain Tree Redirects
  */
 class DomainTreeRedirects extends \TYPO3\CMS\Install\Updates\AbstractUpdate
 {
@@ -136,7 +134,7 @@ class DomainTreeRedirects extends \TYPO3\CMS\Install\Updates\AbstractUpdate
     }
 
     /**
-     * @return DomainService
+     * @return \KoninklijkeCollective\MyRedirects\Service\DomainService
      */
     protected function getDomainService()
     {

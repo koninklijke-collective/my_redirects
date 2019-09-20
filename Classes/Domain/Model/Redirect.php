@@ -9,8 +9,6 @@ use TYPO3\CMS\Core\Utility\MathUtility;
 
 /**
  * Model: Redirect
- *
- * @package KoninklijkeCollective\MyRedirects\Domain\Model
  */
 class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
 {
@@ -311,10 +309,10 @@ class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      */
     public static function getDomainInfo($domain)
     {
-        list($storage, $domainId) = \TYPO3\CMS\Core\Utility\GeneralUtility::intExplode('-', $domain);
+        [$storage, $domainId] = \TYPO3\CMS\Core\Utility\GeneralUtility::intExplode('-', $domain);
         return [
             'storage' => $storage,
-            'domain' => $domainId
+            'domain' => $domainId,
         ];
     }
 
@@ -523,11 +521,11 @@ class Redirect extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Create redirect object for rendering
      *
      * @param array $row
-     * @return Redirect
+     * @return \KoninklijkeCollective\MyRedirects\Domain\Model\Redirect
      */
     public static function create($row)
     {
-        /** @var Redirect $redirect */
+        /** @var \KoninklijkeCollective\MyRedirects\Domain\Model\Redirect $redirect */
         $redirect = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(Redirect::class);
         foreach ($row as $key => $value) {
             $method = 'set' . \TYPO3\CMS\Core\Utility\GeneralUtility::underscoredToUpperCamelCase($key);

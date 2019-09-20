@@ -11,8 +11,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Backend Module Controller: Redirects
- *
- * @package KoninklijkeCollective\MyRedirects\Controller
  */
 class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
 {
@@ -180,7 +178,7 @@ class RedirectController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
 
         $this->view->assignMultiple([
             'filter' => $filter,
-            'redirects' => $this->getRedirectRepository()->findAllByFilter($filter)
+            'redirects' => $this->getRedirectRepository()->findAllByFilter($filter),
         ]);
     }
 

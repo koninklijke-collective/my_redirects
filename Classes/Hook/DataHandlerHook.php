@@ -6,8 +6,6 @@ use KoninklijkeCollective\MyRedirects\Domain\Model\Redirect;
 
 /**
  * DataHandler: Hook to update needed lookup variables
- *
- * @package KoninklijkeCollective\MyRedirects\Hook
  */
 class DataHandlerHook
 {

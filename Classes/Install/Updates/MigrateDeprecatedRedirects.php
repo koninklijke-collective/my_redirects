@@ -3,6 +3,7 @@
 namespace KoninklijkeCollective\MyRedirects\Install\Updates;
 
 use KoninklijkeCollective\MyRedirects\Domain\Model\Redirect;
+use KoninklijkeCollective\MyRedirects\Service\DomainService;
 use KoninklijkeCollective\MyRedirects\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
@@ -106,17 +107,17 @@ final class MigrateDeprecatedRedirects implements UpgradeWizardInterface, Confir
                 'disabled' => (int)((bool)$row['active'] === 0),
                 'starttime' => 0,
                 'endtime' => 0,
-                'source_host' => $this->getDomainName($row['domain']),
-                'source_path' => $row['url'],
                 'is_regexp' => 0,
                 'force_https' => 0,
                 'keep_query_parameters' => 0,
                 'disable_hitcount' => 0,
 
+                'source_host' => $this->getDomainName($row['domain']),
+                'source_path' => '/' . $row['url'],
                 'target' => $row['destination'],
                 'target_statuscode' => $row['http_response'] > 0
                     ? $row['http_response']
-                    : ConfigurationUtility::getDefaultHeaderStatusCode(),
+                    : 302,
                 'hitcount' => (int)$row['counter'],
                 'lasthiton' => (int)$row['last_hit'],
             ])) {
@@ -134,10 +135,6 @@ final class MigrateDeprecatedRedirects implements UpgradeWizardInterface, Confir
      */
     public function updateNecessary(): bool
     {
-        if (!$this->checkIfTableIsPresentAndNotEmpty('sys_domain', 'domainName')) {
-            return false;
-        }
-
         if (!$this->checkIfTableIsPresentAndNotEmpty(Redirect::TABLE, 'url')) {
             return false;
         }
@@ -152,16 +149,7 @@ final class MigrateDeprecatedRedirects implements UpgradeWizardInterface, Confir
     protected function getDomainName(int $domainId): string
     {
         if (!isset($this->domains[$domainId])) {
-            $row = $this->getConnectionForTable('sys_domain')
-                ->select(
-                    ['domainName'],
-                    'sys_domain',
-                    ['uid' => $domainId],
-                    [],
-                    [],
-                    1
-                )
-                ->fetch(\PDO::FETCH_ASSOC);
+            $row = $this->getDomainService()->getDomain($domainId);
             $this->domains[$domainId] = $row['domainName'];
         }
 
@@ -202,5 +190,13 @@ final class MigrateDeprecatedRedirects implements UpgradeWizardInterface, Confir
         }
 
         return false;
+    }
+
+    /**
+     * @return \KoninklijkeCollective\MyRedirects\Service\DomainService
+     */
+    protected function getDomainService(): DomainService
+    {
+        return GeneralUtility::makeInstance(DomainService::class);
     }
 }

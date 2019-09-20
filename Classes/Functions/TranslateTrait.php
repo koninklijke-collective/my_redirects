@@ -6,8 +6,6 @@ use KoninklijkeCollective\MyRedirects\Utility\ConfigurationUtility;
 
 /**
  * Trait: Translate
- *
- * @package KoninklijkeCollective\MyRedirects\Functions
  */
 trait TranslateTrait
 {

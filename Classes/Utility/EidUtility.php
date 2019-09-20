@@ -11,8 +11,6 @@ use TYPO3\CMS\Frontend\Page\PageRepository;
 
 /**
  * Utility: Initialize objects inside EID usage
- *
- * @package KoninklijkeCollective\MyRedirects\Utility
  */
 class EidUtility
 {

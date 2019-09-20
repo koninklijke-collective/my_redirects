@@ -8,8 +8,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Service: Backend allowed Root Pages
- *
- * @package KoninklijkeCollective\MyRedirects\Utility
  */
 class RootPageService implements \TYPO3\CMS\Core\SingletonInterface
 {

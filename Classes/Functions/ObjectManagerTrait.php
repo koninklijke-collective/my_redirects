@@ -4,8 +4,6 @@ namespace KoninklijkeCollective\MyRedirects\Functions;
 
 /**
  * Trait: ObjectManager
- *
- * @package KoninklijkeCollective\MyRedirects\Functions
  */
 trait ObjectManagerTrait
 {

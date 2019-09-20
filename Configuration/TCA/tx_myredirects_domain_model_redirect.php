@@ -20,51 +20,51 @@ return [
         'typeicon_classes' => [
             'default' => 'tcarecords-' . Redirect::TABLE . '-default',
         ],
-        'searchFields' => 'url, destination, backend_note'
+        'searchFields' => 'url, destination, backend_note',
     ],
     'interface' => [
-        'showRecordFieldList' => 'url_hash, url, destination, last_referrer, counter, http_response, domain_limit, active, last_hit, last_checked, inactive_reason'
+        'showRecordFieldList' => 'url_hash, url, destination, last_referrer, counter, http_response, domain_limit, active, last_hit, last_checked, inactive_reason',
     ],
     'types' => [
         0 => [
             'showitem' => '--palette--;' . $translation . '.palette.from;from, --palette--;' . $translation . '.palette.to;to, --palette--;' . $translation . '.palette.information;information,'
                 . '--div--;' . $translation . '.div.health,'
-                . 'url_hash, --palette--;' . $translation . '.palette.visited;visited, --palette--;' . $translation . '.palette.response;response'
-        ]
+                . 'url_hash, --palette--;' . $translation . '.palette.visited;visited, --palette--;' . $translation . '.palette.response;response',
+        ],
     ],
     'palettes' => [
 
         'from' => [
             'showitem' => 'url, root_page_domain',
-            'canNotCollapse' => true
+            'canNotCollapse' => true,
         ],
         'to' => [
             'showitem' => 'destination, http_response',
-            'canNotCollapse' => true
+            'canNotCollapse' => true,
         ],
         'information' => [
             'showitem' => 'crdate, --linebreak--, backend_note',
-            'canNotCollapse' => true
+            'canNotCollapse' => true,
         ],
         'visited' => [
             'showitem' => 'counter, last_hit, last_referrer',
-            'canNotCollapse' => true
+            'canNotCollapse' => true,
         ],
         'response' => [
             'showitem' => 'last_checked, active, --linebreak--, inactive_reason',
-            'canNotCollapse' => true
+            'canNotCollapse' => true,
         ],
     ],
     'columns' => [
         'pid' => [
             'config' => [
-                'type' => 'passthrough'
-            ]
+                'type' => 'passthrough',
+            ],
         ],
         'tstamp' => [
             'config' => [
                 'type' => 'passthrough',
-            ]
+            ],
         ],
         'crdate' => [
             'exclude' => false,
@@ -74,8 +74,8 @@ return [
                 'type' => 'input',
                 'renderType' => 'inputDateTime',
                 'size' => 10,
-                'eval' => 'datetime'
-            ]
+                'eval' => 'datetime',
+            ],
         ],
         'url_hash' => [
             'exclude' => false,
@@ -84,7 +84,7 @@ return [
                 'readOnly' => true,
                 'type' => 'input',
                 'size' => 30,
-            ]
+            ],
         ],
         'url' => [
             'exclude' => false,
@@ -94,7 +94,7 @@ return [
                 'size' => 30,
                 'eval' => 'trim, required',
                 'max' => 65535,
-            ]
+            ],
         ],
         'destination' => [
             'exclude' => false,
@@ -103,7 +103,7 @@ return [
                 'type' => 'input',
                 'renderType' => 'inputLink',
                 'eval' => 'trim, required',
-            ]
+            ],
         ],
         'last_hit' => [
             'exclude' => false,
@@ -113,8 +113,8 @@ return [
                 'type' => 'input',
                 'renderType' => 'inputDateTime',
                 'size' => 10,
-                'eval' => 'datetime'
-            ]
+                'eval' => 'datetime',
+            ],
         ],
         'last_referrer' => [
             'exclude' => false,
@@ -123,7 +123,7 @@ return [
                 'readOnly' => true,
                 'type' => 'input',
                 'size' => 30,
-            ]
+            ],
         ],
         'counter' => [
             'exclude' => false,
@@ -135,7 +135,7 @@ return [
                 'range' => [
                     'lower' => 0,
                 ],
-            ]
+            ],
         ],
         'http_response' => [
             'exclude' => false,
@@ -147,34 +147,34 @@ return [
                 'items' => [
                     [
                         $translation . '.http_response.I.0',
-                        0
+                        0,
                     ],
                     [
                         $translation . '.http_response.I.301',
-                        301
+                        301,
                     ],
                     [
                         $translation . '.http_response.I.302',
-                        302
+                        302,
                     ],
                     [
                         $translation . '.http_response.I.303',
-                        303
+                        303,
                     ],
                     [
                         $translation . '.http_response.I.307',
-                        307
+                        307,
                     ],
                 ],
-            ]
+            ],
         ],
         'domain' => [
             'exclude' => false,
             'label' => $translation . '.domain',
 
             'config' => [
-                'type' => 'passthrough'
-            ]
+                'type' => 'passthrough',
+            ],
         ],
         'root_page_domain' => [
             'exclude' => false,
@@ -186,7 +186,7 @@ return [
                 'minitems' => 1,
 
                 'size' => 1,
-                'itemsProcFunc' => \KoninklijkeCollective\MyRedirects\Service\TableConfigurationService::class . '->addAllowedDomains'
+                'itemsProcFunc' => \KoninklijkeCollective\MyRedirects\Service\TableConfigurationService::class . '->addAllowedDomains',
             ],
             'displayCond' => 'USER:' . \KoninklijkeCollective\MyRedirects\Service\TableConfigurationService::class . '->hasAllowedDomains',
         ],
@@ -199,10 +199,10 @@ return [
                 'items' => [
                     [
                         $translation . '.active.I.0',
-                        ''
+                        '',
                     ],
-                ]
-            ]
+                ],
+            ],
         ],
         'last_checked' => [
             'exclude' => false,
@@ -212,8 +212,8 @@ return [
                 'type' => 'input',
                 'renderType' => 'inputDateTime',
                 'size' => 10,
-                'eval' => 'date'
-            ]
+                'eval' => 'date',
+            ],
         ],
         'inactive_reason' => [
             'exclude' => false,
@@ -234,7 +234,7 @@ return [
                 'type' => 'text',
                 'cols' => 48,
                 'rows' => 10,
-                'eval' => 'trim'
+                'eval' => 'trim',
             ],
         ],
     ],

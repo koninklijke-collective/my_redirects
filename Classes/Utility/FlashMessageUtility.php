@@ -9,8 +9,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Utility: FlashMessage
- *
- * @package KoninklijkeCollective\MyRedirects\Utility
  */
 class FlashMessageUtility
 {
@@ -27,7 +25,7 @@ class FlashMessageUtility
      */
     public static function enqueueMessage($message, $title = '', $severity = AbstractMessage::OK, $storeInSession = false)
     {
-        /** @var $flashMessage FlashMessage */
+        /** @var $flashMessage \TYPO3\CMS\Core\Messaging\FlashMessage */
         $flashMessage = GeneralUtility::makeInstance(
             FlashMessage::class,
             $message,
@@ -36,7 +34,7 @@ class FlashMessageUtility
             $storeInSession
         );
 
-        /** @var $flashMessageService FlashMessageService */
+        /** @var $flashMessageService \TYPO3\CMS\Core\Messaging\FlashMessageService */
         $flashMessageService = GeneralUtility::makeInstance(FlashMessageService::class);
         /** @var $flashMessageQueue \TYPO3\CMS\Core\Messaging\FlashMessageQueue */
         $flashMessageQueue = $flashMessageService->getMessageQueueByIdentifier(ConfigurationUtility::FLASH_MESSAGE_QUEUE_IDENTIFIER);

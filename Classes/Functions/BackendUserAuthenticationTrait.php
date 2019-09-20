@@ -3,7 +3,7 @@
 namespace KoninklijkeCollective\MyRedirects\Functions;
 
 /**
- * Trait UserAuthenticationTrait
+ * Trait: Backend User retrieval
  */
 trait BackendUserAuthenticationTrait
 {

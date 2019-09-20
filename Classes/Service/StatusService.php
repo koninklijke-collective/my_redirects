@@ -8,8 +8,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Service: Status of all redirects functionality
- *
- * @package KoninklijkeCollective\MyRedirects\Service
  */
 class StatusService
 {
@@ -18,7 +16,7 @@ class StatusService
     /**
      * Do an active lookup for redirect
      *
-     * @param Redirect $redirect
+     * @param \KoninklijkeCollective\MyRedirects\Domain\Model\Redirect $redirect
      * @param boolean $safeCheck
      * @return array
      */
@@ -52,7 +50,7 @@ class StatusService
                     } else {
                         $inactiveReason = 'Unknown: ' . ArrayUtility::arrayExport($details);
                     }
-                } elseif ($details['response']['url'] == $url) {
+                } elseif ($details['response']['url'] === $url) {
                     $active = false;
                     $inactiveReason = 'Redirect got stuck, could be timeout';
                 }
@@ -75,7 +73,7 @@ class StatusService
      *
      * @param string $url
      * @param array $info
-     * @param Redirect $redirect
+     * @param \KoninklijkeCollective\MyRedirects\Domain\Model\Redirect $redirect
      * @return \Psr\Http\Message\ResponseInterface
      */
     protected function getResponse($url, &$info = [], $redirect = null)
@@ -108,13 +106,13 @@ class StatusService
                         } else {
                             $info['error']['data'] = $stats->getHandlerErrorData();
                         }
-                    }
+                    },
                 ]);
                 $error = false;
                 $info['forwards'][] = $url;
 
                 if ($redirect && $response->hasHeader('X-Redirect-Handler')) {
-                    list($extension, $id) = GeneralUtility::trimExplode(
+                    [$extension, $id] = GeneralUtility::trimExplode(
                         ':',
                         reset($response->getHeader('X-Redirect-Handler'))
                     );
@@ -150,7 +148,7 @@ class StatusService
     }
 
     /**
-     * @return DomainService|object
+     * @return \KoninklijkeCollective\MyRedirects\Service\DomainService|object
      */
     protected function getDomainService()
     {

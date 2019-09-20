@@ -6,8 +6,6 @@ use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
 /**
  * Data Transfer Object: Filter
- *
- * @package KoninklijkeCollective\MyRedirects\Domain\Model\DTO
  */
 class Filter
 {
@@ -51,7 +49,7 @@ class Filter
         self::ORDER_DESTINATION,
         self::ORDER_LAST_HIT,
         self::ORDER_COUNTER,
-        self::ORDER_HAS_MOVED
+        self::ORDER_HAS_MOVED,
     ];
 
     /**

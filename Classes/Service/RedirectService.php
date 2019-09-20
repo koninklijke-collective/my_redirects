@@ -14,8 +14,6 @@ use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 /**
  * Service: Redirect
- *
- * @package KoninklijkeCollective\MyRedirects\Service
  */
 class RedirectService
 {
@@ -27,7 +25,7 @@ class RedirectService
      *
      * @param string $path
      * @param array $domain
-     * @return Redirect
+     * @return \KoninklijkeCollective\MyRedirects\Domain\Model\Redirect
      * @throws \Exception
      */
     public function findRedirect($path, $domain)
@@ -60,8 +58,7 @@ class RedirectService
             $query = $queryBuilder->execute();
             while ($row = $query->fetch()) {
                 // If domain matches the redirect, all good it should redirect to this row!
-                if (
-                    // Current domain matches record domain
+                if (// Current domain matches record domain
                     ($domainId && $row['domain'] === $domainId) ||
                     // Current root page matches redirects folder & is for all subdomains
                     ((int)$row['pid'] === $rootPageId && (int)$row['domain'] === 0)
@@ -85,7 +82,7 @@ class RedirectService
      * @param string $url target of current url without hostname so; ex: /index.php?id=12
      * @param array $keptParameters store skipped parameters for future redirect
      * @return string
-     * @throws BadRequestException
+     * @throws \TYPO3\CMS\Core\Error\Http\BadRequestException
      */
     public function generateUrlHash($url, &$keptParameters = null)
     {
@@ -125,9 +122,9 @@ class RedirectService
     /**
      * Handle redirect with core HTTP Response constants
      *
-     * @param Redirect $redirect
+     * @param \KoninklijkeCollective\MyRedirects\Domain\Model\Redirect $redirect
      * @return void
-     * @throws BadRequestException
+     * @throws \TYPO3\CMS\Core\Error\Http\BadRequestException
      */
     public function handleRedirect(Redirect $redirect)
     {
@@ -179,7 +176,7 @@ class RedirectService
     {
         try {
             EidUtility::initializeTypoScriptFrontendController(ConfigurationUtility::getDefaultRootPageId($link));
-            list($url, $hash) = explode('#', $link, 2);
+            [$url, $hash] = explode('#', $link, 2);
             // Remove hashbang and append at the end
             $_link = $this->getContentObjectRenderer()->typoLink_URL(
                 ['parameter' => $url]
@@ -191,7 +188,7 @@ class RedirectService
     }
 
     /**
-     * @return ContentObjectRenderer
+     * @return \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer
      */
     protected function getContentObjectRenderer()
     {

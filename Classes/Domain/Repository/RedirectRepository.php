@@ -8,8 +8,6 @@ use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
 /**
  * Repository: Redirects
- *
- * @package KoninklijkeCollective\MyRedirects\Domain\Repository
  */
 class RedirectRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
 {
@@ -28,11 +26,11 @@ class RedirectRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
     /**
      * Query specific redirects by filter object
      *
-     * @param Filter $filter
+     * @param \KoninklijkeCollective\MyRedirects\Domain\Model\DTO\Filter $filter
      * @return array|\TYPO3\CMS\Extbase\Persistence\QueryResultInterface
      * @throws \TYPO3\CMS\Extbase\Persistence\Exception\InvalidQueryException
      */
-    public function findAllByFilter(Filter $filter = null)
+    public function findAllByFilter(?Filter $filter = null)
     {
         $query = $this->createQuery();
 
@@ -63,7 +61,7 @@ class RedirectRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
                 if ($value = $filter->getSearch()) {
                     $constraints[] = $query->logicalOr([
                         $query->like('url', '%' . ltrim($value, '/') . '%', false),
-                        $query->like('destination', '%' . $value . '%', false)
+                        $query->like('destination', '%' . $value . '%', false),
                     ]);
                 }
 

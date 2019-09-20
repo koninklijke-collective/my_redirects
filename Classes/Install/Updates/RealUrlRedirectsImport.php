@@ -17,9 +17,7 @@ use TYPO3\CMS\Core\Utility\MathUtility;
 use TYPO3\CMS\Install\Updates\AbstractUpdate;
 
 /**
- * Class RealUrlRedirectsImport
- *
- * @package KoninklijkeCollective\MyRedirects\Install\Updates
+ * Upgrade script: RealUrl Redirects Import
  */
 class RealUrlRedirectsImport extends AbstractUpdate
 {
@@ -40,7 +38,7 @@ class RealUrlRedirectsImport extends AbstractUpdate
     /**
      * Checks if an update is needed
      *
-     * @param string &$description The description for the update
+     * @param  string &$description  The description for the update
      * @return bool Whether an update is needed (TRUE) or not (FALSE)
      */
     public function checkForUpdate(&$description)
@@ -69,14 +67,15 @@ class RealUrlRedirectsImport extends AbstractUpdate
                 }
             }
         }
+
         return $update;
     }
 
     /**
      * Performs the database migrations if requested
      *
-     * @param array &$databaseQueries Queries done in this update
-     * @param string &$customMessages Custom messages
+     * @param  array &$databaseQueries  Queries done in this update
+     * @param  string &$customMessages  Custom messages
      * @return boolean
      */
     public function performUpdate(array &$databaseQueries, &$customMessages)
@@ -93,7 +92,7 @@ class RealUrlRedirectsImport extends AbstractUpdate
             ->getConnectionForTable(Redirect::TABLE);
 
         while ($row = $query->fetch()) {
-            list($storage, $domainId) = $this->getDomainInfo((int)$row['domain_limit']);
+            [$storage, $domainId] = $this->getDomainInfo((int)$row['domain_limit']);
 
             $urlHash = $this->generateNewHash($row['url']);
             if ($urlHash) {
@@ -128,7 +127,7 @@ class RealUrlRedirectsImport extends AbstractUpdate
      * Correct url based on RealURL configuration
      * if defaultToHTMLsuffixOnPrev is not set, force the trailing / in url
      *
-     * @param string $url
+     * @param  string  $url
      * @return string
      */
     protected function correctUrl($url)
@@ -169,7 +168,7 @@ class RealUrlRedirectsImport extends AbstractUpdate
     }
 
     /**
-     * @param integer $domainId
+     * @param  integer  $domainId
      * @return array [storage, domainID]
      */
     protected function getDomainInfo($domainId)
@@ -195,13 +194,14 @@ class RealUrlRedirectsImport extends AbstractUpdate
             $rootPages = $this->getRootPageService()->getRootPages();
             $this->defaultRootPage = reset($rootPages)['uid'];
         }
+
         return $this->defaultRootPage;
     }
 
     /**
      * Generate hash with exception catch
      *
-     * @param string $url
+     * @param  string  $url
      * @return string
      */
     protected function generateNewHash($url)
@@ -214,7 +214,7 @@ class RealUrlRedirectsImport extends AbstractUpdate
     }
 
     /**
-     * @return RedirectService
+     * @return \KoninklijkeCollective\MyRedirects\Service\RedirectService
      */
     protected function getRedirectService()
     {
@@ -222,7 +222,7 @@ class RealUrlRedirectsImport extends AbstractUpdate
     }
 
     /**
-     * @return DomainService
+     * @return \KoninklijkeCollective\MyRedirects\Service\DomainService
      */
     protected function getDomainService()
     {
@@ -230,7 +230,7 @@ class RealUrlRedirectsImport extends AbstractUpdate
     }
 
     /**
-     * @return RootPageService
+     * @return \KoninklijkeCollective\MyRedirects\Service\RootPageService
      */
     protected function getRootPageService()
     {

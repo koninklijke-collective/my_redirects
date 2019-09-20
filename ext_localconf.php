@@ -1,5 +1,4 @@
 <?php
-
 defined('TYPO3_MODE') or die('Access denied.');
 
 call_user_func(function ($extension) {
@@ -16,10 +15,12 @@ call_user_func(function ($extension) {
     );
 
     $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] = \KoninklijkeCollective\MyRedirects\Command\ActiveLookupCommandController::class;
-    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass'][$extension] = \KoninklijkeCollective\MyRedirects\Hook\DataHandlerHook::class;
+    if (!\KoninklijkeCollective\MyRedirects\Utility\ConfigurationUtility::isDeprecated()) {
+        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass'][$extension] = \KoninklijkeCollective\MyRedirects\Hook\DataHandlerHook::class;
 
-    // Actual frontend hook for redirect invoke
-    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tslib/index_ts.php']['preprocessRequest'][$extension] = \KoninklijkeCollective\MyRedirects\Hook\RedirectActionHook::class . '->redirectAction';
+        // Actual frontend hook for redirect invoke
+        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['tslib/index_ts.php']['preprocessRequest'][$extension] = \KoninklijkeCollective\MyRedirects\Hook\RedirectActionHook::class . '->redirectAction';
+    }
 
     // Install tool migrations
     $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/install']['update'][$extension . '_fix_redirects'] = \KoninklijkeCollective\MyRedirects\Install\Updates\FixRedirects::class;

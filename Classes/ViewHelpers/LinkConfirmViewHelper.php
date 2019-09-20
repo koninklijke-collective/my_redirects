@@ -6,8 +6,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Displays link with sprite icon with confirm message
- *
- * @package KoninklijkeCollective\MyRedirects\ViewHelpers
  */
 class LinkConfirmViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper
 {

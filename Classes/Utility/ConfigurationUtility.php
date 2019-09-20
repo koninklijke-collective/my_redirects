@@ -2,13 +2,12 @@
 
 namespace KoninklijkeCollective\MyRedirects\Utility;
 
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\HttpUtility;
 
 /**
  * Utility: Extension Configuration
- *
- * @package KoninklijkeCollective\MyRedirects\Utility
  */
 class ConfigurationUtility
 {
@@ -27,7 +26,7 @@ class ConfigurationUtility
     /**
      * Get default root page id (from link or configuration)
      *
-     * @param string $link
+     * @param  string  $link
      * @return int
      */
     public static function getDefaultRootPageId($link): int
@@ -47,6 +46,7 @@ class ConfigurationUtility
         }
         // Fallback on default configuration
         $configuration = static::getConfiguration();
+
         return (int)($configuration['defaultRootPageId'] ?: ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['realurl']['_DEFAULT']['pagePath']['rootpage_id'] ?: 1));
     }
 
@@ -56,6 +56,7 @@ class ConfigurationUtility
     public static function getDefaultHeaderStatusCode(): string
     {
         $configuration = static::getConfiguration();
+
         return $configuration['defaultHeaderStatusCode'] ?? HttpUtility::HTTP_STATUS_302;
     }
 
@@ -70,7 +71,20 @@ class ConfigurationUtility
     }
 
     /**
+     * @return bool
+     */
+    public static function isDeprecated(): bool
+    {
+        $configuration = static::getConfiguration();
+
+        return $configuration['deprecated']
+            ?? ExtensionManagementUtility::isLoaded('redirects');
+    }
+
+    /**
      * Get Global Configuration from:
+     * $GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']['extension_key']
+     * - fallback on -
      * $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['extension_key']
      * - fallback on -
      * $GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['extension_key']
@@ -81,7 +95,9 @@ class ConfigurationUtility
     {
         static $configuration;
         if ($configuration === null) {
-            $data = $GLOBALS['TYPO3_CONF_VARS']['EXTCONF'][static::EXTENSION] ?: $GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][static::EXTENSION];
+            $data = $GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS'][static::EXTENSION]
+                ?? $GLOBALS['TYPO3_CONF_VARS']['EXTCONF'][static::EXTENSION]
+                ?? $GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][static::EXTENSION];
             if (!is_array($data)) {
                 $configuration = (array)unserialize($data);
             } else {

@@ -7,8 +7,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Hook: Frontend Request: Redirect controller
- *
- * @package KoninklijkeCollective\MyRedirects\Controller
  */
 class RedirectActionHook
 {

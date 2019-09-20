@@ -4,8 +4,6 @@ namespace KoninklijkeCollective\MyRedirects\Functions;
 
 /**
  * Trait: QueryBuilder
- *
- * @package KoninklijkeCollective\MyRedirects\Functions
  */
 trait QueryBuilderTrait
 {

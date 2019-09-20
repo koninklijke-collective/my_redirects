@@ -7,8 +7,6 @@ use TYPO3\CMS\Core\Database\Connection;
 
 /**
  * Service: Web Domains
- *
- * @package KoninklijkeCollective\MyRedirects\Utility
  */
 class DomainService implements \TYPO3\CMS\Core\SingletonInterface
 {
@@ -98,7 +96,7 @@ class DomainService implements \TYPO3\CMS\Core\SingletonInterface
     /**
      * Get domain by specific redirect
      *
-     * @param Redirect $redirect
+     * @param \KoninklijkeCollective\MyRedirects\Domain\Model\Redirect $redirect
      * @return array
      */
     public function getDomainNameByRedirect(Redirect $redirect)

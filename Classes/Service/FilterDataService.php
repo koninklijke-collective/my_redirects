@@ -6,8 +6,6 @@ use KoninklijkeCollective\MyRedirects\Domain\Model\DTO\Filter;
 
 /**
  * Service: Filter Data
- *
- * @package KoninklijkeCollective\MyRedirects\Service
  */
 class FilterDataService implements \TYPO3\CMS\Core\SingletonInterface
 {
@@ -18,7 +16,7 @@ class FilterDataService implements \TYPO3\CMS\Core\SingletonInterface
     /**
      * Loads module data for user settings or returns a fresh object initially
      *
-     * @return Filter
+     * @return \KoninklijkeCollective\MyRedirects\Domain\Model\DTO\Filter
      */
     public function loadModuleFilter()
     {
@@ -30,7 +28,7 @@ class FilterDataService implements \TYPO3\CMS\Core\SingletonInterface
     /**
      * Persists serialized module data to user settings
      *
-     * @param Filter $filter
+     * @param \KoninklijkeCollective\MyRedirects\Domain\Model\DTO\Filter $filter
      * @return void
      */
     public function persistModuleFilter(Filter $filter)
