@@ -20,7 +20,6 @@
     },
 
     "replace": {
-        "my_redirects": "self.version",
         "typo3-ter/my-redirects": "self.version"
     },
 
