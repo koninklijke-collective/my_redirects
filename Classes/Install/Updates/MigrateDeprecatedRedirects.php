@@ -150,7 +150,7 @@ final class MigrateDeprecatedRedirects implements UpgradeWizardInterface, Confir
     {
         if (!isset($this->domains[$domainId])) {
             $row = $this->getDomainService()->getDomain($domainId);
-            $this->domains[$domainId] = $row['domainName'];
+            $this->domains[$domainId] = $row['domainName'] ?? $this->domains[0];
         }
 
         return $this->domains[$domainId];
