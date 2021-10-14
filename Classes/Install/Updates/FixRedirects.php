@@ -113,7 +113,7 @@ class FixRedirects extends AbstractUpdate
     protected function getFixedFieldsForRedirect(array $row): array
     {
         if (empty($row['url'])) {
-            throw new InvalidRedirectException('Url can not be empty..', 1541594907513);
+            throw new InvalidRedirectException('Url can not be empty..', 1634209285);
         }
 
         $fields = [];
@@ -145,7 +145,7 @@ class FixRedirects extends AbstractUpdate
         }
 
         if (empty($fields)) {
-            throw new \Exception('No update needed.', 1541601434787);
+            throw new \Exception('No update needed.', 1634209290);
         }
         return $fields;
     }

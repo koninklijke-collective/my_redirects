@@ -148,7 +148,7 @@ class RedirectService
             }
 
             if (GeneralUtility::getIndpEnv('TYPO3_SITE_SCRIPT') === $destination) {
-                throw new BadRequestException('Endless loop ended, #' . $redirect->getUid() . '.', 1529501111463);
+                throw new BadRequestException('Endless loop ended, #' . $redirect->getUid() . '.', 1634209300);
             } else {
                 header('X-Redirect-Handler: my_redirects:' . $redirect->getUid());
 
