@@ -248,7 +248,7 @@ class Filter
         if (in_array($order, $this->_allowedOrders)) {
             $this->order = $order;
         } elseif (!empty($order)) {
-            throw new \InvalidArgumentException('Invalid order given', 1496135747866);
+            throw new \InvalidArgumentException('Invalid order given', 1634209275);
         }
         return $this;
     }
@@ -276,7 +276,7 @@ class Filter
         if (in_array($direction, $this->_allowedDirections)) {
             $this->direction = $direction;
         } elseif (!empty($direction)) {
-            throw new \InvalidArgumentException('Invalid direction given', 1496135702441);
+            throw new \InvalidArgumentException('Invalid direction given', 1634209281);
         }
         return $this;
     }
